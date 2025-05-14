@@ -1,0 +1,32 @@
+name: Add Planning Key
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  add_planning_key:
+    name: Add Planning Key to YAML Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Add planning key to root.yaml files
+        run: |
+
+          # Exécuter le script existant dans deployment/src/
+          echo "Exécution du script deployment/src/add-key-planning.py..."
+          python deployment/src/add-key-planning.py
