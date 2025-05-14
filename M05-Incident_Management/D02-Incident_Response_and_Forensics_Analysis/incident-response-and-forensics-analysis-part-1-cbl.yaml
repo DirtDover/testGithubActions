@@ -1,0 +1,40 @@
+slug: incident-response-and-forensics-analysis-part-1-cbl
+title: Incident Response and Forensics Analysis
+duration: 1 day
+kind: course
+notes:
+  content: 01-incident-handling-notes.mdx
+  resources: null
+children:
+  - content: L01-Forensic_Lab.mdx
+    duration: 50
+    resources: null
+    slug: forensic-lab-cbl
+    title: Forensic Lab
+    type: lecture
+  - content: L02-Hunting_Across_the_Enterprise.mdx
+    duration: 50
+    resources: null
+    slug: hunting-across-the-enterprise-cbl
+    title: Hunting Across the Enterprise
+    type: lecture
+  - content: L03-Acquisition.mdx
+    duration: 50
+    resources: null
+    slug: acquisition-cbl
+    title: Acquisition
+    type: lecture
+  - content: L04-Windows_Artifacts.mdx
+    duration: 50
+    resources: null
+    slug: windows-artifacts-cbl
+    title: Windows Artifacts
+    type: lecture
+  - content: 01-incident-handling.mdx
+    duration: 220
+    resources:
+      - target: Logs.zip
+        title: Logs.zip
+    slug: incident-handling-project-cbl
+    title: Incident Handling Project
+    type: project

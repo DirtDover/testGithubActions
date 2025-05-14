@@ -1,0 +1,130 @@
+# Incident Response Preparedness
+
+## Introduction
+
+Incident response refers to the strategic process companies, particularly IT and development teams, execute to swiftly address unplanned events or service interruptions. It aims to restore operational functionality and mitigate potential damages caused by cyber threats or breaches.
+
+### Incident Response Life Cycles
+
+The incident response life cycle is a comprehensive, step-by-step process that organizations follow to detect, respond to, and recover from service interruptions or security threats. Having an incident response plan in place is crucial for data protection, preventing breaches, and safeguarding the organization from potential infiltration. Preparedness is key in today's environment where data breach incidents are increasingly common. Effective incident response measures facilitate rapid containment and recovery, minimizing damage during high-pressure situations. A swift response is essential to prevent further harm, and thus, formulating a detailed incident response plan is vital.
+
+The industry standards for incident response management are set by two prominent institutes, NIST (National Institute of Standards and Technology) and SANS (SysAdmin, Audit, Network, and Security Institute).
+
+The [NIST](https://www.eccouncil.org/cybersecurity-exchange/incident-handling/what-is-incident-response-life-cycle/) incident response process involves several phases:
+
+- **Preparation:** Develop and implement methods to protect critical infrastructure.
+- **Detection and Analysis:** Regularly monitor systems, information assets, data, and operations to manage security risks effectively.
+- **Containment, Eradication, and Recovery:** Quickly restore affected systems while minimizing downtime.
+- **Post-Incident Activity:** Take necessary steps to prevent similar incidents in the future.
+
+Similarly, the [SANS](https://www.sans.org/media/score/504-incident-response-cycle.pdf) Incident Response Process includes:
+
+- **Preparation:** Review and codify the organization's security policy, conduct risk assessments, identify sensitive assets, establish critical security incidents, and form a Computer Security Incident Response Team (CSIRT).
+- **Identification:** Monitor IT systems to detect deviations from normal activities, assess potential security incidents, gather additional information, determine the incident's nature and severity, and log all details.
+- **Containment:** Implement short-term containment by isolating the threatened network segment, followed by long-term containment to allow continued use of systems while rebuilding clean versions.
+- **Eradication:** Remove malware, address the root cause, and implement measures to prevent future attacks.
+- **Recovery:** Restore affected production systems, ensuring they are secure before bringing them back online, and perform thorough testing and monitoring.
+- **Lessons Learned:** Conduct a retrospective analysis within two weeks of incident resolution, document the incident thoroughly, and evaluate the response process to identify areas for improvement.
+
+The entire process emphasizes preparation, rapid detection, effective containment, thorough eradication, secure recovery, and continuous learning to strengthen the organization's incident response capabilities.
+
+### Kill Chain
+
+In cybersecurity, it is well-known that attackers follow a specific methodology to carry out their malicious activities. However, it is equally important to recognize that defenders must also follow a structured methodology in their incident response efforts. This dual approach helps organizations effectively combat cyber threats and mitigate potential damage. One of the most renowned models for understanding the attacker's methodology is the Cyber Kill Chain, developed by Lockheed Martin. This framework not only sheds light on the stages of a cyberattack but also guides defenders on how to structure their response.
+
+![Kill_Chain](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D01-Fundamentals_of_Cyber_Crisis_Management/01-lectures/Kill_Chain.png)
+
+The Cyber Kill Chain outlines the steps an attacker takes to achieve their objective, from initial reconnaissance to exfiltration of data. By understanding these stages, defenders can better anticipate and disrupt the attacker's activities. The process starts with gathering information about the target to find vulnerabilities. The attacker then creates and delivers malicious payloads to exploit these vulnerabilities. Once inside the system, the attacker installs malware to maintain access, establishes a command and control channel to manage their activities, and finally, carries out their goals, such as stealing data or damaging systems.
+
+For defenders, understanding the Cyber Kill Chain provides several key benefits. It offers a comprehensive view of both the technical and human aspects of a cyberattack, facilitating better analysis and response. By organizing threat data systematically, the model enhances collaboration and information sharing among cybersecurity professionals. It also supports both proactive threat intelligence before an attack and reactive incident response after an attack, helping analysts gather and analyze valuable data effectively.
+
+By aligning the Cyber Kill Chain with incident response strategies, organizations can create a proactive and comprehensive defense plan. Understanding the stages of the Kill Chain allows defenders to anticipate attacker moves and disrupt their activities at various stages. For example, during the reconnaissance phase, defenders can use threat intelligence to detect and block suspicious scanning activities. In the delivery phase, robust email filtering and web security measures can prevent malicious payloads from reaching their targets.
+
+### Diamond Model
+
+The Diamond Model of Intrusion Analysis is a sophisticated cybersecurity framework designed to help organizations analyze and respond to cyber intrusions effectively. Introduced in a 2013 U.S. Department of Defense technical report by Sergio Caltagirone, Andrew Pendergast, and Christopher Betz, the model aims to identify attackers, understand their tactics and procedures, and improve the overall response to cyber incidents.
+
+![Diamond_Model](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D01-Fundamentals_of_Cyber_Crisis_Management/01-lectures/Diamond_Model.png)
+
+The Diamond Model is structured around four key components, analogous to the four points of a diamond: adversaries, infrastructure, capabilities, and targets. Each component represents a crucial aspect of a cyberattack:
+
+- **Adversary:** The attacker or group responsible for the cyber incident.
+- **Infrastructure:** The technical resources or assets (e.g., servers, domains, IP addresses) that the adversary uses during the attack.
+- **Capability:** The methods, tools, or techniques (e.g., malware, exploits) employed by the adversary.
+- **Victim:** The individual or organization targeted by the adversary.
+
+It emphasizes attribution, aiming to identify those responsible for cyber incidents. It is highly flexible, applicable to various types of attacks, from advanced persistent threats (APTs) to ransomware.
+
+In the context of incident response, the Diamond Model offers several key benefits. It provides a **holistic understanding** by considering both the technical and human aspects of a cyberattack, giving a comprehensive view of the incident. The model **excels in structured analysis, organizing and structuring data** related to cyber threats, which facilitates easier collaboration and information sharing among cybersecurity experts. Additionally, it **supports both proactive threat intelligence** before an attack and reactive incident response after an attack, helping analysts gather and analyze valuable data effectively.
+
+## Taskforce
+
+In the context of incident response in cybersecurity, a **taskforce** is a specialized team of experts, either external or internal, assembled to handle and resolve a specific security incident. This team is quickly formed in response to a threat or attack, focusing on containing, analyzing, eradicating, and recovering from the incident while minimizing its impact on the organization.
+
+For Operators of Vital Importance (OIVs), such as critical infrastructure providers, this taskforce is often supported by government agencies, like ANSSI (Agence nationale de la sécurité des systèmes d'information) in France, which provides additional expertise and resources to help manage and mitigate the incident.
+
+The taskforce plays a crucial role from the initial detection and identification of the incident. They analyze alerts and signs to confirm the presence of a security issue. Once confirmed, they implement measures to contain the threat and prevent it from spreading within the network, which can involve isolating affected systems or setting specific firewall rules.
+
+The taskforce can be composed of various specialized teams, each focusing on different aspects of the incident:
+
+1. **Incident Detection and Analysis Team:** This team is responsible for confirming the incident by analyzing alerts, logs, and signs of compromise. They determine the scope and nature of the threat.
+
+2. **Containment and Mitigation Team:** Once an incident is confirmed, this team focuses on containing the threat to prevent further damage. They may isolate affected systems, apply firewall rules, or disable compromised accounts.
+
+3. **Eradication Team:** This team works to eliminate the threat from the environment. Their tasks include removing malware, closing unauthorized access points, and applying necessary security patches.
+
+4. **Recovery Team:** After the threat is eradicated, the recovery team is responsible for restoring affected systems and services. They ensure everything is cleaned, secured, and fully operational before bringing systems back online.
+
+5. **Communication Team:** This team handles internal and external communications during the incident. They notify users, coordinate with public relations, and, if necessary, report to regulatory authorities.
+
+6. **Post-Incident Analysis Team:** After the incident is resolved, this team conducts a thorough review to learn from the event. They update security policies, train employees, and improve security tools and technologies.
+
+The importance of a taskforce lies in its ability to react quickly and effectively, whether composed of internal personnel familiar with the organization's systems or external experts bringing specialized knowledge. By assembling a taskforce with diverse expertise, the organization ensures a comprehensive and informed approach to incident management, coordinating efficiently across different teams and departments. This organized response not only reduces response time but also limits potential damage, ensuring that all actions are well-documented and compliant with regulations and internal policies.
+
+## Crisis Exercice
+
+Creating a crisis exercise involves a structured approach, beginning with clear objectives and concluding with a detailed analysis of the outcomes. Whether for a corporation, government agency, or educational institution, the steps to designing and executing a successful exercise are similar, though tailored to the unique needs of the organization. This guide will walk you through the process, using a fictional example of Naboo, a private cybersecurity school, that faces a ransomware attack.
+
+### Defining the Objective
+
+The first step in designing a crisis exercise is to establish specific objectives. These objectives should align with the organization’s needs and focus on areas that require testing or improvement. For Naboo, the goals might include testing their crisis communication strategy, evaluating the coordination between their IT and administrative teams, and assessing how well staff and students handle decision-making under pressure.
+
+For instance, Naboo may want to see how quickly the IT team can contain a ransomware infection, how effectively the communication team can manage media relations during a crisis, and how well the school's leadership can make critical decisions about whether to pay a ransom. These objectives will guide the development of the entire exercise, ensuring that each component is designed to test and enhance the organization’s crisis response capabilities.
+
+### Choosing the Format
+
+After setting the objectives, the next step is to choose the format of the exercise. There are generally two main formats to consider: tabletop exercises and simulations. For an organization like Naboo, which may not have extensive experience with crisis exercises, starting with a tabletop exercise could be ideal. In this format, key personnel would gather to discuss their responses to a hypothetical ransomware scenario, working through the problem in a controlled environment.
+
+However, if Naboo is looking for a more immersive and challenging experience, a simulation might be more appropriate. This would involve real-time interactions between various crisis cells, including the IT department, the communications team, and the school’s leadership. The simulation would unfold dynamically, with new developments being introduced based on the participants' decisions and actions.
+
+### Developing the Scenario
+
+Once the format is selected, the next step is to develop a realistic and challenging scenario. For Naboo, a relevant scenario could involve a ransomware attack that begins with a phishing email sent to one of the administrative staff members. The malware quickly spreads across the school's network, locking down critical systems, including the online learning platform, student records, and communication channels.
+
+As the situation escalates, the school’s leadership receives a ransom demand, threatening to release sensitive student data unless payment is made. Simultaneously, local media get wind of the attack and begin contacting the school for a statement, adding pressure to the already tense situation. Naboo’s IT team must work to identify the source of the infection, contain its spread, and begin the process of recovering encrypted data, all while the communications team manages the public relations aspect and the leadership team debates whether to negotiate with the attackers.
+
+### Preparing the Exercise
+
+Preparation is crucial to the success of the exercise. This involves creating a detailed chronogram that outlines the sequence of events and expected participant reactions. For Naboo, the exercise might begin with the IT team detecting unusual network activity, followed by the discovery of the ransomware. The chronogram would include specific times for when the ransom demand is received, when the media starts making inquiries, and when the school's leadership meets to discuss their options.
+
+Participants should be thoroughly briefed before the exercise begins. This briefing would cover the exercise’s objectives, the roles each participant will play, and the rules of engagement. For Naboo, this might involve explaining the importance of realistic decision-making and emphasizing that the exercise is designed to test the school’s preparedness, not to catch anyone out.
+
+### Conducting the Exercise
+
+During the exercise, it’s essential to follow the chronogram closely while remaining flexible enough to adapt to the participants’ actions. If Naboo’s IT team decides to isolate the infected systems immediately, the scenario might shift to focus on the recovery process. Conversely, if the team struggles to contain the ransomware, the scenario might introduce further complications, such as the infection spreading to backup systems.
+
+Throughout the exercise, the participants should experience the consequences of their decisions. For example, if the school’s leadership delays making a decision about the ransom, the attackers might increase the pressure by shortening the payment deadline or releasing a small sample of the stolen data. The goal is to create a realistic environment where participants can learn from their decisions and better understand the complexities of managing a crisis.
+
+### Post-Exercise Analysis
+
+After the exercise, it’s vital to conduct a thorough analysis of the outcomes. This begins with a hot debrief, an immediate feedback session where participants can share their initial impressions of the exercise. For Naboo, this might involve discussing what worked well, such as the IT team’s quick identification of the ransomware, and what didn’t, like a delay in communicating with students and parents.
+
+A more detailed cold debrief should follow a few weeks later. This session would involve a comprehensive review of the exercise, focusing on what the school can learn from the experience. For instance, Naboo might discover that while their technical response was strong, their communication strategy needs improvement, particularly in managing relations with the media and reassuring worried parents.
+
+Finally, the exercise should culminate in a detailed report. This document would summarize the events of the exercise, highlight the strengths and weaknesses identified, and provide recommendations for improving Naboo’s crisis response plan. The report might suggest further training for the communication team, updates to the school’s data backup procedures, or even a follow-up exercise to test the improvements made.
+
+## Resources
+
+- [What is Incident Response](https://www.paloaltonetworks.com/cyberpedia/what-is-incident-response)
+- [Cyber Kill Chain](https://www.crowdstrike.com/cybersecurity-101/cyber-kill-chain/)
+- [Diamond Model Explanation](https://teamt5.org/en/posts/what-is-diamond-model-of-intrusion-analysis/)

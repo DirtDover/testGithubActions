@@ -1,0 +1,15 @@
+slug: security-evaluation-and-testing-red-cbl
+title: Security Evaluation and Testing
+duration: 9 days
+halfDays: 18
+kind: track
+children:
+  - static-code-analysis-cbl
+  - dynamic-code-analysis-cbl
+  - web-pentesting-01-cbl
+  - web-pentesting-02-cbl
+  - api-pentesting-cbl
+  - ci-cd-pentesting-cbl
+  - cloud-pentesting-cbl
+  - cloud-iam-pentesting-cbl
+  - pentesting-activities-synthesis-cbl

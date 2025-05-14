@@ -1,0 +1,248 @@
+# Windows Artifacts: Advanced Forensic Analysis
+
+This course provides an in-depth exploration of Windows artifacts and their critical role in digital forensics. By examining various artifact types and utilizing specific methods for their identification and analysis, forensic analysts can reconstruct events and uncover potential security incidents.
+
+## Introduction to Windows Artifacts
+
+Digital forensics involves the **preservation**, **identification**, **extraction**, and **documentation** of computer evidence. In the context of Windows operating systems, various artifacts provide crucial information for forensic analysis. These artifacts can be found in different parts of the system, including **objects**, **disks**, **event logs**, **processes**, **networking**, **services**, **drivers**, the **kernel**, and the **GUI subsystem**.
+
+## File System Artifacts
+
+Understanding the file system is foundational to forensic analysis. The NTFS file system used by Windows includes numerous artifacts that provide insight into system activity and user behavior.
+
+### NTFS File System Artifacts
+
+The NTFS file system is rich with artifacts that record file and system activity:
+
+- **Master File Table (MFT)**: This central component of NTFS holds metadata for every file and directory. Analyzing the MFT can reveal file creation, modification times, and attributes.
+- **$LogFile**: Maintains a log of all changes to the file system, which is crucial for tracking recent transactions and recovering from system crashes.
+- **$UsnJrnl**: The Update Sequence Number Journal tracks modifications to files and directories, providing a historical record of changes.
+
+#### Tools and Commands:
+
+To analyze these artifacts, follow these steps:
+
+1. **Creating a Forensic Image**: Start by creating a secure copy of the disk using [FTK Imager](https://www.exterro.com/digital-forensics-software/ftk-imager). This ensures that the original data remains unaltered during analysis.
+
+![FTK_IMAGER](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/FTK_Imager.png)
+
+2. **Analyzing the MFT**: Use [MFTECmd](https://github.com/EricZimmerman/MFTECmd) to extract metadata from the MFT, which can be critical for identifying file activity and changes.
+
+```bash
+MFTECmd.exe -f "C:\path\to\$MFT" --csv "C:\output"
+```
+
+3. **Parsing the $LogFile**: Employ [LogFileParser](https://github.com/jschicht/LogFileParser) to examine file system transactions, which helps in understanding recent file operations.
+
+```bash
+LogFileParser.exe -f "C:\path\to\$LogFile" -o "C:\output"
+```
+
+### Important Files and Locations
+
+In addition to the key artifacts mentioned above, consider these significant files and locations:
+
+- **Prefetch Files**: Located in `C:\Windows\Prefetch`, these files store data about recently executed programs, helping in identifying user activities.
+- **Recycle Bin**: Found at `C:\$Recycle.Bin`, it contains deleted files that might be recoverable.
+- **Thumbcache**: Located at `C:\Users[username]\AppData\Local\Microsoft\Windows\Explorer`, it holds thumbnail images of files, which can provide insights into recently accessed files.
+
+## Registry Analysis
+
+The Windows Registry is a hierarchical database crucial for storing system and application settings. Analyzing the Registry provides a detailed view of system configuration and user activities.
+
+### Key Registry Locations
+
+Examine the following registry hives for critical information:
+
+- **HKEY_LOCAL_MACHINE\SYSTEM**: Contains system-wide settings and configurations.
+- **HKEY_LOCAL_MACHINE\SOFTWARE**: Stores details about installed software and application settings.
+- **HKEY_USERS**: Includes user-specific settings and configurations.
+
+#### Tools and Commands:
+
+1. **Extracting Registry Data**: Use [RegRipper](https://github.com/keydet89/RegRipper3.0) to extract information from registry hives.
+
+```bash
+rip.exe -r "C:\path\to\SYSTEM" -p all
+```
+
+2. **Analyzing Registry Hives**: Utilize [Registry Explorer](https://download.mikestammer.com/net6/RegistryExplorer.zip) for a more detailed examination of individual registry files.
+
+```bash
+RegistryExplorer.exe "C:\path\to\NTUSER.DAT"
+```
+
+## Event Log Analysis
+
+Windows Event Logs are vital for understanding system and application events. They help trace activities and detect anomalies.
+
+### Important Event Logs
+
+Focus on these key event logs:
+
+- **Security.evtx**: Contains security-related events, including login attempts and account changes.
+- **System.evtx**: Records system events such as hardware and software issues.
+- **Application.evtx**: Captures events related to application operations and errors.
+
+#### Tools and Commands:
+
+1. **Using Event Viewer**: Start by inspecting logs manually with Windows Event Viewer.
+
+```bash
+eventvwr.msc
+```
+
+2. **Parsing Event Logs**: Use [EvtxECmd](https://github.com/EricZimmerman/evtx) to convert logs into a more analyzable format.
+
+```bash
+EvtxECmd.exe -f "C:\Windows\System32\winevt\Logs\Security.evtx" --csv "C:\output"
+```
+
+3. **Querying with PowerShell**: For specific event queries, such as successful logins, use PowerShell.
+
+```powershell
+Get-WinEvent -LogName Security | Where-Object {$_.ID -eq 4624} | Select-Object TimeCreated, Message
+```
+
+## Memory Analysis
+
+Memory analysis can reveal critical information about running processes, network connections, and other volatile data.
+
+#### Tools and Commands:
+
+1. **Capturing Memory**: Use [DumpIt](https://www.magnetforensics.com/fr/resources/magnet-dumpit-pour-windows/) to create a memory dump for analysis.
+
+```bash
+DumpIt.exe /O C:\memdump.raw
+```
+
+2. **Analyzing Memory Dumps**: Analyze the dump with [Volatility](https://github.com/volatilityfoundation/volatility) to identify processes, network connections, and potential threats.
+
+```bash
+volatility -f memdump.raw --profile=Win10x64_19041 pslist
+volatility -f memdump.raw --profile=Win10x64_19041 netscan
+```
+
+## Browser Artifacts
+
+Browser artifacts can provide valuable insights into user activities and potential data exfiltration.
+
+### Key Browser Locations
+
+Examine these directories for browser artifacts:
+
+- **Chrome**: Located at `C:\Users\[username]\AppData\Local\Google\Chrome\User Data\Default`.
+- **Firefox**: Found in `C:\Users\[username]\AppData\Roaming\Mozilla\Firefox\Profiles`.
+
+#### Tools and Commands:
+
+1. **Chrome Analysis**: Use [Hindsight](https://github.com/obsidianforensics/hindsight) to analyze Chrome browser artifacts.
+
+```bash
+hindsight.exe -i "C:\Users\[username]\AppData\Local\Google\Chrome\User Data\Default" -o "C:\output"
+```
+
+2. **Firefox Data**: Utilize [firefox_decrypt](https://github.com/unode/firefox_decrypt) to analyze Firefox browser artifacts.
+
+```bash
+python firefox_decrypt.py
+```
+
+## Windows Artifacts Database (WADb)
+
+The Windows Artifacts Database is an essential resource for forensic analysts. It provides comprehensive details on various Windows artifacts, including their locations and formats.
+
+### Accessing WADb:
+
+1. Visit the [WADb GitHub Repository](https://github.com/ForensicArtifacts/artifacts).
+2. Clone the repository:
+
+```bash
+git clone https://github.com/ForensicArtifacts/artifacts.git
+```
+
+3. Use the YAML files in the repository to guide your artifact collection and analysis.
+
+## Timeline Analysis
+
+Creating a timeline of events helps understand the sequence of activities on a system. This process is crucial for reconstructing events and identifying patterns.
+
+#### Tools and Commands:
+
+1. **Generating a Timeline**: Use [**log2timeline**](https://github.com/log2timeline/plaso) (Plaso) to create a comprehensive timeline of system activities.
+
+```bash
+log2timeline.py --storage-file timeline.plaso C:\
+psort.py -o L2tcsv -w timeline.csv timeline.plaso
+```
+
+2. **Analyzing the Timeline**: Use [**Timeline Explorer**](https://download.mikestammer.com/net6/TimelineExplorer.zip) to visualize and analyze the generated timeline.
+
+```bash
+TimelineExplorer.exe timeline.csv
+```
+
+## Objects and Disk Analysis
+
+In Windows, **objects** include files, folders, registry entries, and system processes. Analyzing these objects can reveal information about system usage, user activities, and the presence of malicious software. For example, examining **file metadata** can show creation, modification, and access times, while **registry analysis** can uncover software installations and user preferences.
+
+The **disk** is a primary source of evidence. It contains the operating system, user data, and application files. Analyzing the disk can lead to **recovering deleted files**, identifying **hidden partitions**, and examining the **file system** for artifacts. For example, hidden partitions or unusual directory structures may indicate attempts to conceal data. Disk analysis often involves creating a **bit-by-bit image** to maintain the integrity of the original data.
+
+<Note type="tip" title="What is a bit-by-bit image">
+A **bit-by-bit image** is an exact copy of a storage device, capturing every bit of data, including deleted files, file slack, and unallocated space. This type of imaging is crucial in digital forensics as it preserves the integrity of the original data, allowing investigators to analyze the image without altering the original evidence.
+</Note>
+
+## Event Logs and Other Logs
+
+**Windows event logs** record a wide range of system and application events, crucial for tracing activities and detecting suspicious behavior.
+
+### User Accounts and Lateral Movement
+
+Event logs related to user accounts provide details on **user logins**, **account creations**, and **deletions**. For instance, an unexpected new admin account might signal suspicious activity. Logs can also reveal attempts at **lateral movement** within the network, suggesting that an attacker is moving from one system to another to access more sensitive resources.
+
+### Malicious Services and Malware Execution
+
+Logs can identify **malicious services** by showing their creation, modification, and execution. For example, a service running with elevated privileges without a clear purpose may be suspicious. Logs of **software installations** can also reveal unauthorized applications, including malware. If an application is installed at an unusual time, it may indicate a security breach. Additionally, logs detailing **malware execution** provide information about malicious code, the user or process that executed it, and its impact on the system. For example, a malicious script running immediately after user login suggests that the user's computer might be compromised.
+
+### Anti-Forensics Activities and Script Execution
+
+Events related to **command-line and script execution** can shed light on user or automated process activities. Frequent use of these tools may indicate attempts to automate malicious tasks. Logs may also show attempts to **delete or alter log entries**, suggesting efforts to conceal evidence. For example, log deletions following suspicious activity may indicate attempts to hide an intrusion.
+
+### Other Logs: In-Memory and Disk
+
+**In-memory logs** include transient data present while the system is running, such as active processes, network connections, and system state information. Capturing and analyzing memory provides a snapshot of the system's state at a specific time. **Disk logs** are persistent logs stored on the hard drive, including system logs, application logs, and security logs, offering a long-term record of activities.
+
+## Processes and Networking
+
+The analysis of **running processes** reveals active programs, system tasks, and potentially malicious software. By examining process trees, investigators can understand process relationships and identify suspicious activities. For example, an unknown process with high resource usage might indicate hidden malware.
+
+**Network artifacts** encompass network connections, traffic patterns, and communication endpoints. Analyzing network logs can detect signs of **unauthorized access**, **data exfiltration**, and other network-based attacks. For instance, unusual data transfers to external IP addresses might indicate data theft.
+
+## Services, Drivers, Kernel, and GUI Subsystem
+
+**Windows services** are background processes that typically run with elevated privileges. Analyzing these services can uncover both legitimate functions and malicious services installed by attackers. For example, a service that starts automatically and is not part of standard Windows services might be malware.
+
+**Drivers** are low-level components interacting with hardware devices. Malicious drivers can provide persistent access to a system. Forensic analysis of drivers can identify unauthorized or malicious drivers. For instance, a driver that does not match known hardware could indicate a rootkit.
+
+The Windows **kernel** manages system resources and hardware interactions. Analyzing kernel artifacts can reveal system modifications and rootkits operating at the kernel level. For instance, kernel memory modifications might suggest the presence of advanced persistent threats.
+
+The **GUI subsystem** manages the graphical interface of Windows. Forensic analysis may include examining user interface artifacts such as opened windows, user interactions, and graphical session details. These artifacts help reconstruct user activities and identify suspicious behaviors. For example, analyzing recent document history or clipboard contents can provide insights into user actions.
+
+## Automation Tools: DFIR-ORC (DFIR Orchestrated Response Console)
+
+**DFIR-ORC** is a powerful automation framework designed to streamline and orchestrate artifact collection across multiple systems. It helps forensic teams manage large-scale investigations more efficiently.
+
+![DFIR_ORC](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/DFIR_ORC.png)
+
+1. **Centralized Artifact Collection**: DFIR-ORC automates the collection of system artifacts like event logs, memory dumps, running processes, registry data, and network configurations from multiple endpoints, facilitating rapid evidence gathering without physical access to each system.
+
+2. **Customizable Collection Profiles**: Investigators can create and deploy custom profiles that specify artifact types to collect based on the investigation’s nature. For example, profiles can focus on memory and network data for malware incidents, or on event logs and file access history for data breaches.
+
+3. **Scalability and Remote Operations**: Designed for enterprise environments, DFIR-ORC allows forensic teams to run collections remotely across hundreds of systems simultaneously. This is particularly useful in large organizations requiring quick incident response. DFIR-ORC integrates with remote execution tools to reduce the need for on-site access.
+
+4. **Ease of Use and Automation**: With a user-friendly interface and automation features, DFIR-ORC minimizes the learning curve for forensic investigators. It accelerates the investigation process, aiding in quicker identification of indicators of compromise (IoCs) and faster decision-making.
+
+## Resources
+
+- [Hack&Tricks Windows Artifacts](https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics)
+- [Introduction to Windows Artifacts](https://medium.com/@peace_o_O/introduction-to-windows-artifacts-your-gateway-to-effective-incident-response-cc39172af3a3)

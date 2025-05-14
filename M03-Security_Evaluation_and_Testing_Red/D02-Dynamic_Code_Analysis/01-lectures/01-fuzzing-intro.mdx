@@ -1,0 +1,208 @@
+# Fuzzing: an introduction
+
+## What you will learn in this course 🧐🧐
+
+- Understand what fuzzing is and why it's important
+- Learn about the different types of fuzzing
+- Discover how fuzzing generally works
+- Explore the pros and cons of fuzzing
+- Get to know some famous examples of fuzzing in action
+
+You are about to discover a world you never suspected! This little word that sounds like a gentle buzz holds many secrets, as it’s a tool that has been used for decades to find vulnerabilities (sometimes 0-day!).
+
+## Wait, what and why!
+
+![What is fuzzing](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D03-Dynamic_Code_Analysis/01-lectures/what-is-fuzzing.png)
+
+Did we pique your interest? Let's start by understanding what fuzzing is. **Fuzzing is a contraction of fuzz and testing.**
+
+The term "fuzz" refers to **generating random or semi-random data inputs to provoke unexpected behavior in software**. It’s a set of techniques aimed at testing a program by feeding it these random inputs. This may seem ineffective, but don’t be fooled! It is extremely efficient at uncovering memory errors, uncontrolled access issues, and many other unexpected problems that traditional testing methods might miss.
+
+You might be familiar with the [Infinite Monkey Theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem). In essence, it states that a monkey randomly hitting keys on a keyboard could almost surely produce a given text. This theorem mainly implies that with enough time and computational power, one can find or produce anything.
+
+**Why fuzz?** Mainly because **it's hard to test every possible case** in a program. Developers can also have biases and may not think of all possible scenarios.
+
+We could imagine hiring people to test many inputs, but that can be expensive. We could ask developers to ensure this, and it’s an excellent idea that should already be in practice. Developers should be able to test their code at different levels (unit, integration, system, and acceptance – but that goes beyond the scope of this course). Yet, despite all these efforts, a well-hidden bug might persist. Clever minds have thus invented automated tests to test software without human intervention. There have been two approaches: static code analysis (which we have already seen!) and dynamic code analysis.
+
+To recap, static code analysis involves analyzing the inert, non-executed code as written by the developer or compiled by the compiler. Dynamic code analysis involves analyzing the code by executing it. There are numerous techniques for this: Unit Testing, Integration Testing (which we discussed), Regression Testing, Fuzzing, Performance Testing, Memory Leak Detection, Profiling, Code Coverage, Dynamic Slicing, and so on!
+
+Fuzzing is part of **dynamic code analysis**.
+
+Why do we focus particularly on fuzzing? It’s a technique that has repeatedly proven its effectiveness in finding vulnerabilities (sometimes 0-day!) across a wide range of programs and infrastructures (we're talking about networking, binaries, mobile apps, web apps, etc.).
+
+## History of Fuzzing
+
+### Last season on "The Fuzzing Chronicles"...
+
+It all started back in 1988 during a [grad class](https://pages.cs.wisc.edu/~bart/fuzz/) at the University of Wisconsin. **Professor Barton Miller** had a bright idea: why not test UNIX command line programs by bombarding them with random inputs and commands until they crashed?
+
+This zany experiment was called fuzz testing, and guess what? It worked! **Miller's team managed to crash 25-33% of the utilities they tested**. They even shared their tools and results with the world, paving the way for what we now know as black box, generational, unstructured (or "classic") fuzzing. Pretty cool, right?
+
+Fast forward a few years, and fuzzing was making headlines. In 2012, **Google launched [ClusterFuzz](https://google.github.io/clusterfuzz/)**, a cloud-based fuzzing powerhouse for the Chromium browser.
+
+Then came **the infamous Shellshock vulnerabilities in 2014**, uncovered using the fuzzer AFL. Hanno Böck later showed [how AFL could have caught the Heartbleed bug](https://blog.hboeck.de/archives/868-How-Heartbleed-couldve-been-found.html), a serious flaw in OpenSSL that had everyone in a tizzy.
+
+And let's not forget **DARPA's 2016 Cyber Grand Challenge**, where automated fuzzing bots battled it out to find and fix software flaws in real-time. Talk about an epic showdown!
+
+Recently, tech giants have been supercharging fuzzing tools. Microsoft rolled out **Project Springfield in 2016** and followed up with **OneFuzz in 2020**, a self-hosted fuzzing service that’s all about finding bugs.
+
+**Google joined the party with [OSS-Fuzz](https://github.com/google/oss-fuzz)**, continuously fuzzing critical open-source projects since 2016. These advancements highlight how fuzzing has evolved from a classroom experiment to a crucial tool in keeping our software safe and sound. Who knew crashing programs could be so revolutionary and fun?
+
+Today, fuzzing is part of the arsenal of every respectable bug hunter.
+
+### Famous Examples
+
+It's not the only vulnerability found through fuzzing. In fact, fuzzing has uncovered a multitude of vulnerabilities. **Google reported that 37.2% of 0-day vulnerabilities** ([source page 15](https://i.blackhat.com/USA-19/Thursday/us-19-Hawkes-Project-Zero-Five-Years-Of-Make-0day-Hard.pdf)) were discovered using fuzzing, which is quite impressive, isn't it?
+
+Here is a table of some vulnerabilities discovered through fuzzing techniques:
+
+| **Name**                               | **CVE**        | **Description**                                                                                                                                                                                                                                 | **Source**                                                                                                              |
+| -------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Exposure of Sensitive Information      | CVE-2015-0061  | Discovered using American Fuzzy Loop (AFL), this vulnerability in Microsoft Windows involved improper memory initialization for TIFF images, allowing attackers to remotely obtain sensitive information from process memory.                   | [Article source](https://www.code-intelligence.com/blog/5-cves-found-with-feedback-based-fuzzing)                       |
+| Out-Of-Bounds Read in Suricata         | CVE-2019-16411 | Found with CI Fuzz, this vulnerability in the Intrusion Detection System Suricata involved sending multiple IPv4 packets with invalid options, leading to memory access outside the intended buffer, potentially causing crashes or data leaks. | [Article source](https://www.code-intelligence.com/blog/5-cves-found-with-feedback-based-fuzzing)                       |
+| Exposure to Sensitive Information      | CVE-2017-3732  | Discovered by the Google OSS-Fuzz team, this vulnerability in OpenSSL was due to carry propagation bugs in large integer operations, potentially allowing attackers to recover encryption keys.                                                 | [Article source](https://www.code-intelligence.com/blog/5-cves-found-with-feedback-based-fuzzing)                       |
+| Memory Corruption in Adobe Reader      | CVE-2016-6978  | Identified by Trend Micro's zero-day initiative using AFL, this vulnerability involved memory operations outside intended boundaries, allowing arbitrary code execution or Denial-of-Service (DoS) attacks.                                     | [Article source](https://www.code-intelligence.com/blog/5-cves-found-with-feedback-based-fuzzing)                       |
+| NULL Pointer Dereference in ZINT       | CVE-2020-9385  | Discovered using CI Fuzz, this vulnerability in the barcode generator library libzint involved mishandling multiple "+" characters, leading to application crashes.                                                                             | [Article source](https://www.code-intelligence.com/blog/5-cves-found-with-feedback-based-fuzzing)                       |
+| NULL Pointer Dereference in FlightCrew | CVE-2019-13032 | Found using AFL, this vulnerability in the EPUB validator FlightCrew involved a NULL pointer dereference, causing crashes but with limited security impact.                                                                                     | [Article source](https://salvatoresecurity.com/fun-with-fuzzers-or-how-i-discovered-three-vulnerabilities-part-1-of-3/) |
+| LibreOffice UI Crashes                 | N/A            | Fuzzing with AFL was used to find UI crashes in LibreOffice by generating random input data to test the robustness of the software's UI components.                                                                                             | [Caolan McNamara's Blog](https://caolanm.blogspot.com/2015/10/finding-ui-crashes-by-fuzzing-input.html)                 |
+| FFmpeg Vulnerabilities                 | Various        | Fuzzing tools like zzuf and AFL were used to find vulnerabilities in FFmpeg, particularly in the H264 decoder, by exposing the software to corrupted input data.                                                                                | [OBE TV Article](https://www.obe.tv/fuzzing-ffmpeg-for-fun-and-profit/)                                                 |
+| Firefox Browser Issues                 | Various        | Mozilla employs fuzzing extensively to identify security and quality issues in Firefox, using tools like libFuzzer and Grizzly to manage and report detected issues.                                                                            | [Mozilla Hacks](https://hacks.mozilla.org/2021/02/browser-fuzzing-at-mozilla/)                                          |
+| cURL Security Assessment               | Various        | Trail of Bits used advanced fuzzing techniques to improve cURL's fuzzing code, identifying areas with low coverage and introducing new seed files to enhance testing.                                                                           | [Trail of Bits Blog](https://blog.trailofbits.com/2024/03/01/toward-more-effective-curl-fuzzing/)                       |
+| Hyper-V 0-Day Vulnerability            | CVE-2021-28476 | The hAFL1 fuzzer was used to discover a critical vulnerability in Hyper-V's virtual network switch driver, allowing remote code execution.                                                                                                      | [Akamai Blog](https://www.akamai.com/blog/security/discovering-a-critical-0-day)                                        |
+| Vim Vulnerabilities                    | N/A            | Fuzzing was applied to Vim to discover vulnerabilities by generating random input data to test the software's handling of various inputs.                                                                                                       | [InputZero Blog](https://www.inputzero.io/2020/03/fuzzing-vim.html)                                                     |
+
+And we could go on and on, as the examples are plentiful.
+
+It's clear: fuzzing is now an indispensable tool for organisations aiming to protect themselves from bugs and vulnerabilities. It helps detect errors that we humans might not have thought possible. Now, let's dive deeper into how to implement fuzzing by exploring the tools available.
+
+## The Fuzzing Process
+
+Although there are many approaches to fuzzing, we've summarised it into six steps.
+
+**Step 1: pick a target** (but the client will do that for you 😉)
+
+First things first, you need to decide which program or component you want to test. It could be anything from a web application to a system utility.
+
+As consultant, it is the client who will decide which program or component you will test most of the time.
+
+**Step 2: identify inputs**
+
+Next, figure out what kinds of inputs your target program accepts. This step is crucial because the inputs are what you'll be manipulating to see if you can make the program crash or behave unexpectedly. Inputs can come in many forms: files that the program reads, network packets that it receives, or user inputs like text fields and command line arguments.
+
+**Step 3: pick a fuzzing tool (or write your own)**
+
+Now it's time to choose your weapon—uh, I mean tool! There are plenty of fuzzing tools out there, like AFL, libFuzzer, or Honggfuzz (we'll discuss on that later). If you're feeling adventurous, you can even [write your own custom fuzzer](https://carstein.github.io/2020/04/18/writing-simple-fuzzer-1.html). The goal is to have a tool that can generate random or mutated inputs for your target.
+
+**Step 4: make your target and tool work together**
+
+This step is like setting up a playdate for your target and fuzzing tool. You need to configure them so they can communicate effectively. This might involve some scripting or configuration tweaks to ensure the fuzzer's inputs reach the target program correctly.
+
+Worry not, it is the hardest part of the job.
+
+**Step 5: fuzz until done**
+
+Let the fuzzing begin! Start your fuzzing tool and let it run. The tool will continuously generate and send inputs to your target, looking for any crashes or unexpected behaviors. This step can take some time, so sit back, relax, and maybe grab a coffee.
+
+**Step 6: triage the results**
+
+Finally, it's time to review the results. Your fuzzing tool will have found some crashes or issues — now you need to figure out which ones are real bugs worth fixing. Analyze the crashes, understand their causes, and prioritize them for fixing. This is where the real detective work happens. 🕵️
+
+It's a tough and time-consuming part.
+
+## Pros and Cons
+
+One of the coolest things about fuzzing is how easy **it is to set up**. You don’t need to be a wizard who knows the intricate details of the system you’re testing. Just set it up, let it run, and watch it do its magic!
+
+It's incredibly effective at uncovering vulnerabilities that might slip through traditional testing methods. By throwing a vast array of inputs at a program, fuzzing increases the chances of finding those sneaky bugs.
+
+Also, **fuzzing tools can run autonomously**, testing huge amounts of data in no time. This speeds up the vulnerability detection process and makes it much more efficient than manual testing.
+
+By identifying and fixing the vulnerabilities discovered through fuzzing, developers can significantly boost the security, reliability, and overall quality of their products.
+
+Now, every hero has a few weaknesses, and fuzzing is no exception. Here are some of the challenges.
+
+Fuzzing might not be as effective for finding bugs in well-known, rigorously tested protocols like HTTP, where inputs are tightly controlled. It’s like trying to find a needle in a haystack that’s already been combed through.
+
+To get around the limitations of traditional fuzzing, you might need more sophisticated methods like smart fuzzing or mutation-based fuzzing. These techniques can be more complex to implement and require a deeper understanding of the system.
+
+**Fuzzing can be a bit of a resource hog**, needing significant computing power to generate and test vast amounts of data. Plus, if you're using gray-box fuzzing, it may impact performance if the source code isn’t available.
+
+No fuzzer can guarantee it will find every possible vulnerability. You need a diverse set of fuzzing methods to maximize test coverage, but managing all these tools and techniques can get pretty complex.
+
+Despite these challenges, fuzzing remains an essential tool in the cybersecurity arsenal, offering a fun and dynamic way to uncover and fix vulnerabilities before they become a problem.
+
+## Fuzzing in Development Cycles
+
+Let's see how fuzzing fits into a development cycle in a large company. The constraints here are different from a one-off mission.
+
+In a one-off mission, you set the mission's duration and try to do your best within that time. In a production cycle, it's better not to slow down the cycle too much (unless everyone agrees). Fuzzing, however, can take a lot of time.
+
+So, you need to make several decisions. Skipping fuzzing means missing out on a powerful tool for detecting vulnerabilities and bugs while automatically increasing our code coverage (without false positives – hello static analysis!).
+
+Remember, fuzzing can also help prevent crises by discovering 0-day vulnerabilities, for example.
+
+So, how do we integrate it? And which other tools can we combine it with to create a top-notch security pipeline? That's what we'll discuss in the rest of this article.
+
+Let's see how fuzzing fits into the Software Development Lifecycle (SDL) or even better Secure Development Lifecycle (SDLC). Of course, these tips need to be adapted to each company and context. One company might use a waterfall project management approach, while another might use AGILE methods.
+
+We'll provide you with key insights to help you decide the best time to implement fuzzing.
+
+### What should we fuzz?
+
+Ah! Well, you tell me! Okay, here are some tips to help you out.
+
+Sometimes, fuzzing an entire application isn't possible. In such cases, focus on the critical security areas, usually where there's a lot of data flow.
+
+This can be: an API, user inputs, data parsing, loading points, communication channels, etc.
+
+Don't limit yourself to just testing UIs or user inputs. It's much broader than that. Check where files are transferred, objects, databases, settings, etc. Basically, anywhere an attacker might gain control.
+
+Also, don't forget to fuzz error handling. It's often neglected and that's a serious mistake. We want to fail gracefully (at least handle the error) and not crash badly. So, include error handling and uncommon paths in your fuzzing.
+
+### When should we do fuzzing?
+
+The obvious answer is **as soon as possible**. That means as soon as you're about to release a new feature or set of features that include critical security areas. Fuzzing adds an extra layer to unit tests and other tests developers implement to ensure increased code coverage.
+
+<Note type="note">
+
+Code coverage is a measure that indicates how many lines of code are tested by automated tests. It shows which parts of the code are checked for potential errors or vulnerabilities, and which are not. High code coverage means most of the code is tested, helping to identify and fix bugs and security flaws more effectively.
+
+</Note>
+
+And when does it end? The fuzzing phase ends when all identified critical areas have been sufficiently fuzzed. It's up to us to decide when it's enough (especially by knowing the tools we use and whether we need to continue or not).
+
+### How often?
+
+Good question! Do we need to fuzz every day?!
+
+Ideally, **you should run fuzzing in the early stages** (for example, as soon as a PR is pushed). But that's not always possible. You need to adapt. Running it pre-release is quite common, especially during the bug-hunting phase (assuming your project includes such a phase).
+
+If you're using AGILE, there's no need to fuzz after every sprint. Instead, define a regular schedule for your fuzzing campaigns. Fuzzing can be a bit harder to integrate smoothly with some agile methods (though this depends on the tool and constraints).
+
+### How do we do it?
+
+The first thing to remember is not to fuzz everything and anything. **Fuzzing is effective when done thoughtfully.** Some languages, like [Go](https://go.dev/doc/security/fuzz/), incorporate fuzzing tools in their standard libraries. Check if fuzzing can be integrated directly into your development tests, as it might simplify things.
+
+Fuzzing isn't free. It costs time, money, and can also create priority issues. Fuzzing might require equipment and skills that you don't have in-house (even if you're learning!). Fuzzing campaigns can conflict with time-to-market strategies, impacting the product significantly. Plan ahead to include these constraints in your budget and schedule.
+
+People often ask me how to integrate fuzzing into a CI/CD pipeline, as it needs to be fast (at least that's the goal). It can't take hours or weeks. Many tools include optimisations to speed up fuzzing. As mentioned, there's no need to fuzz everything. You can fuzz in parallel with your application's test suite. There are several optimisations you can implement to improve fuzzing time. If that's not suitable, integrate it at another point in your workflow.
+
+Finally, tools like [ClusterFuzz](https://github.com/google/clusterfuzz) allow better integration of fuzzing with other ticket management tools like Jira. This helps quickly iterate on the problem by escalating it to the developers.
+
+### Static Analysis and Dynamic Analysis
+
+Fuzzing belongs to a category of code analysis known as dynamic analysis (not entirely true, but mostly). Dynamic analysis relies on analysing executed code. Most fuzzing techniques are based on this – though some researchers try to use abstractions like ASTs.
+
+Fuzzing pairs well with static code analysis and other SAST tools. It's often a winning combination.
+
+SAST provides quick feedback (daily) to developers. However, static code analysis is prone to false positives, which can waste time.
+
+Fuzzing doesn't have false positives. It finds bugs, period. However, it takes a bit more time to run, providing feedback to developers less frequently.
+
+According to the [Microsoft Security Development Lifecycle](https://download.microsoft.com/download/B/8/2/B8282D75-433C-4B7E-B0A0-FFA413E20060/microsoft_security_development_lifecycle.pdf), static analysis tools are implemented during the implementation phase (typically when developers are working), while fuzzing happens during the verification phase (when devsecops step in).
+
+## Resources 📚📚
+
+- [OWASP Fuzzing article](https://owasp.org/www-community/Fuzzing)
+- [How fuzzing was invented?](https://pages.cs.wisc.edu/~bart/fuzz/Foreword1.html)
+- [Effectiveness and Scalability of Fuzzing Techniques in CI/CD Pipelines](https://arxiv.org/pdf/2205.14964)

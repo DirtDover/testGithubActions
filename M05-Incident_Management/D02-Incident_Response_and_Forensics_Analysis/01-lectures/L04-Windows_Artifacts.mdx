@@ -1,0 +1,54 @@
+# Windows Artifacts
+
+Digital forensics involves the **preservation**, **identification**, **extraction**, and **documentation** of computer evidence. In the context of Windows operating systems, various artifacts provide crucial information for forensic analysis. These artifacts can be found in different parts of the system, including **objects**, **disks**, **event logs**, **processes**, **networking**, **services**, **drivers**, the **kernel**, and the **GUI subsystem**.
+
+## Objects and Disk Analysis
+
+In Windows, **objects** refer to entities managed by the operating system, such as files, folders, registry entries, and system processes. Forensic analysis of these objects can reveal information about system usage, user activities, and the presence of malicious software. For example, examining **file metadata** can show creation, modification, and access times, while **registry analysis** can uncover software installations and user preferences.
+
+The **disk** is a primary source of evidence in forensic investigations. It contains the operating system, user data, and application files. By analyzing the disk, forensic experts can **recover deleted files**, identify **hidden partitions**, and examine the **file system** for artifacts. For instance, finding hidden partitions or unusual directory structures can indicate attempts to conceal data. Disk analysis often involves creating a **bit-by-bit image** to ensure the integrity of the original data.
+
+<Note type="tip" title="What is a bit-by-bit image">
+A **bit-by-bit image** is an exact copy of a storage device, capturing every bit of data, including deleted files, file slack, and unallocated space. This type of imaging is crucial in digital forensics as it preserves the integrity of the original data, allowing investigators to analyze the image without altering the original evidence. 
+</Note>
+
+## Event Logs and Other Logs
+
+**Windows event logs** are also crucial for forensic investigators as they record a wide range of system and application events. Analyzing these logs helps trace activities on a system and detect suspicious behavior.
+
+### User Accounts and Lateral Movement
+
+Event logs related to user accounts provide details on **user logins**, **account creations**, and **deletions**. For example, if a new admin account is created without a clear reason, it might indicate suspicious activity. These logs also reveal attempts at **lateral movement** within the network, such as access to remote systems or use of administrative tools, suggesting an attacker is trying to move from one computer to another to access more sensitive resources.
+
+### Malicious Services and Malware Execution
+
+They can also identify **malicious services** by showing their creation, modification, and execution. For instance, a service running with elevated privileges without a clear reason can be suspicious. Logs of **software installations** can also reveal new applications, including malware. If an unauthorized application is installed at an unusual time, it may indicate a security breach. Logs showing **malware execution** are critical, detailing the malicious code, the user or process that executed it, and its impact on the system. For example, if a malicious script runs right after a user logs in, it suggests the user's computer might be compromised.
+
+### Anti-Forensics Activities and Script Execution
+
+There may be events related to **command-line and script execution** provide insight into activities performed by users or automated processes. Frequent use of command-line tools or scripting languages can indicate attempts to automate malicious tasks. Logs can also show attempts to **delete or alter log entries**, indicating efforts to cover tracks. For instance, if log deletion events occur after suspicious activity, it suggests someone is trying to hide evidence of an intrusion.
+
+### Other Logs: In-Memory and Disk
+
+Apart from event logs, other logs also play a significant role in forensic investigations. **In-memory logs** include transient data that is present while the system is running, such as active processes, network connections, and system state information. Capturing and analyzing memory can provide a snapshot of the system's state at a specific point in time. **Disk logs** include persistent logs stored on the hard drive, encompassing system logs, application logs, and security logs. They provide a long-term record of system and application activities.
+
+## Processes and Networking
+
+The analysis of **running processes** can reveal active programs, system tasks, and potentially malicious software. By examining process trees, investigators can understand the relationships between different processes and identify suspicious activities. For instance, discovering an unknown process with high resource usage could indicate a hidden malware operation.
+
+**Network artifacts** include information about network connections, traffic patterns, and communication endpoints. By analyzing network logs, investigators can detect signs of **unauthorized access**, **data exfiltration**, and other network-based attacks. For example, unusual data transfers to external IP addresses can signify data being stolen.
+
+## Services, Drivers, Kernel, and GUI Subsystem
+
+**Windows services** are background processes that typically run with elevated privileges. Analyzing these services can uncover legitimate system functions as well as malicious services that may have been installed by attackers. For example, a service that starts automatically and is not part of the standard Windows services could be a malware.
+
+**Drivers** are low-level software components that interact with hardware devices. Malicious drivers can provide attackers with persistent access to a system. Forensic analysis of drivers can identify unauthorized or malicious drivers that have been installed. For instance, finding a driver that does not match known hardware can indicate a rootkit.
+
+The Windows **kernel** is the core of the operating system, managing system resources and hardware interactions. Analyzing kernel artifacts can reveal deep-level system modifications and rootkits that operate at the kernel level. For instance, modifications in the kernel memory areas can suggest the presence of advanced persistent threats.
+
+The **GUI subsystem** handles the graphical interface of Windows. Forensic analysis can include examining user interface artifacts such as opened windows, user interactions, and graphical user session details. These artifacts can help reconstruct user activities and identify suspicious behaviors. For example, the analysis of recent document history or clipboard contents can provide insights into a user's actions.
+
+## Resources
+
+- [Hack&Tricks Windows Artifacts](https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics)
+- [Tools for collecting Windows Artifacts](https://medium.com/@peace_o_O/introduction-to-windows-artifacts-your-gateway-to-effective-incident-response-cc39172af3a3)

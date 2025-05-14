@@ -1,0 +1,48 @@
+slug: preparation-for-cybersecurity-consulting-cbl
+title: Preparation for Cybersecurity Consulting
+duration: 1 day
+kind: course
+notes:
+  content: 01-BIA_project_solution.mdx
+  resources:
+    - target: ADB_Business_Impact_Analysis.pdf
+      title: ADB_Business_Impact_Analysis.pdf
+children:
+  - content: 01-Introduction_to_Business_Continuity.mdx
+    duration: 40
+    resources: null
+    slug: introduction-to-business-continuity-cbl
+    title: Introduction to Business Continuity
+    type: lecture
+  - content: 02-Essential_Criteria_for_Business_Continuity.mdx
+    duration: 40
+    resources: null
+    slug: essential-criteria-for-business-continuity-cbl
+    title: Essential Criteria for Business Continuity
+    type: lecture
+  - content: 03-Business_Impact_Analysis.mdx
+    duration: 40
+    resources: null
+    slug: business-impact-analysis-cbl
+    title: Business Impact Analysis
+    type: lecture
+  - content: 04-Developing_Continuity_Strategies_and_Plans.mdx
+    duration: 40
+    resources: null
+    slug: developing-continuity-strategies-and-plans-cbl
+    title: Developing Continuity Strategies and Plans
+    type: lecture
+  - content: 05-Implementing_and_Monitoring_Continuity_Plans.mdx
+    duration: 50
+    resources: null
+    slug: implementing-and-monitoring-continuity-plans-cbl
+    title: Implementing and Monitoring Continuity Plans
+    type: lecture
+  - content: 01-BIA_project.mdx
+    duration: 210
+    resources:
+      - target: BIA_WORKSHEET.xlsx
+        title: BIA_WORKSHEET.xlsx
+    slug: bia-project-cbl
+    title: BIA Project
+    type: project

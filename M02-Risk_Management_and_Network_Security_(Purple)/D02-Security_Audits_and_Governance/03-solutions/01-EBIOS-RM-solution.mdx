@@ -1,0 +1,237 @@
+# TA Brief: Day 2 – EBIOS RM Risk Analysis Exercise
+
+Today, the students will apply the EBIOS RM methodology, which they have studied during the morning lecture. Your role as a TA is to facilitate this exercise, challenge students’ reasoning, and encourage them to delve deeper into their risk analysis for the fictional International Banking Corporation (IBC)’s online banking application.
+
+## Overview and Objectives
+
+Focus: Guiding students through a simulated risk analysis exercise using EBIOS RM. Students will identify key risks, assess them, and propose risk management strategies for IBC’s online banking application.
+
+## Exercise Format and Tools
+
+Duration: 13:30 – 17:30 (Workshops) + 17:30 – 17:45 (General Debrief)  
+Methodology: EBIOS RM  
+Tool: A shared Google Sheets template (one sheet per workshop)
+
+### Learning Objectives
+
+- Act as various IBC stakeholders (CISO, IT Infrastructure Manager, Application Project Manager, User Representative) during simulated interviews.
+- If multiple TAs are available, split the class into smaller groups with one TA by group. Each TA runs the simulation in parallel for their group.
+- Challenge students’ assumptions, push for clearer rationales, and ensure they properly apply EBIOS RM methodology.
+- Keep track of timing and ensure students adhere to the schedule.
+
+Today’s session focuses on applying all 5 EBIOS RM workshops to the online banking application scenario. Remind students that the morning’s lecture and the professor’s example serve as a reference. Their job is to reproduce the reasoning process on their own. Your job is to challenge their approach, ensuring they properly follow the methodology rather than just copying the example.
+
+### Timing Guidance
+
+- 09:30 - 12:30: Teaching
+
+- 12:30 - 13:30: Lunch Break
+
+- 13:30 – 13:45: Introduction, sharing of the Google Sheet template, and forming groups.
+- 13:45 – 14:30: Workshop 1 – Scoping and Security Foundations
+- 14:30 – 15:15: Workshop 2 – Risk Sources
+- 15:15 – 16:00: Workshop 3 – Strategic Scenarios
+- 16:00 – 16:10: Break
+- 16:10 – 16:50: Workshop 4 – Operational Scenarios
+- 16:50 – 17:30: Workshop 5 – Risk Treatment
+- 17:30 – 17:45: Common Debrief
+- 17:45 - 18:00: Daily Recap and Closing
+  - Summarize the day's activities.
+  - Provide an overview of tomorrow's schedule and objectives.
+  - Remind student to look at the next day's courses.
+
+Encourage students to keep track of their progress. If they fall behind, gently prompt them to move on to the next workshop.
+
+## Exercise Instructions
+
+### Instructions
+
+Students must each create a personal copy of the provided Google Sheets template. This template includes one worksheet for each of the EBIOS RM workshops. Students will fill it out as they gather information and perform their analysis. The final deliverable will be a completed spreadsheet plus a summary of their proposed risk treatments.
+
+Key Point: Workshop 1 (Scoping & Security Foundations) is the most crucial. It sets the stage for all subsequent steps. Students must clearly define the application’s scope, identify critical assets, and outline security requirements.
+
+The subsequent workshops build on this foundation:
+
+1. Workshop 1 – Scoping and Security Foundations:  
+   Students define the boundaries of the online banking application analysis, identify critical assets (e.g., customer data, transaction systems), and establish the core security requirements (confidentiality, integrity, availability).
+
+   - TA Tip: Ask probing questions. Do they consider compliance requirements (e.g., GDPR)? Are they recognizing all sensitive assets? Are they including technical, human, and third-party aspects?
+
+2. Workshop 2 – Risk Sources:  
+   Students identify and classify risk sources (threat actors, vulnerabilities, and conditions leading to risk).
+
+   - TA Tip: Challenge them on their likelihood and impact estimations. Ask why they consider a certain threat “high” or “low.” Push for justifications tied to the scenario.
+
+3. Workshop 3 – Strategic Scenarios:  
+   Students create high-level strategic risk scenarios.
+
+   - TA Tip: Ensure they’re connecting these scenarios back to the scope and assets identified. Are scenarios realistic and aligned with the previously identified risk sources?
+
+4. Workshop 4 – Operational Scenarios:  
+   Students break down the strategic scenarios into more detailed, operational-level situations.
+
+   - TA Tip: Ask how these scenarios would actually unfold. Encourage them to think about affected systems, user experience, operational impact, and detection/response capabilities.
+
+5. Workshop 5 – Risk Treatment:  
+   Students propose risk management strategies: mitigation, acceptance, transfer, or avoidance.
+   - TA Tip: Ensure recommendations are actionable and map back to identified risks. Are they leveraging best practices from ISO 27002 or other standards discussed in the morning sessions?
+
+### Acting as Different Stakeholders
+
+Students will interview you to gather information. You will alternate between different roles to simulate a realistic environment. Provide information based on the questions asked, but don’t give everything away upfront. Encourage them to probe for details.
+You are allowed to improvise within the scenario’s boundaries to challenge students’ assumptions and encourage critical thinking.
+
+You will act as the following stakeholders:
+
+#### Role 1: Chief Information Security Officer (CISO)
+
+Security Requirements:
+
+- Confidentiality of customer data is paramount.
+- Integrity of transactions must be ensured.
+- Availability is critical for customer satisfaction and financial stability.
+
+Possible Answers:
+
+- Confidentiality: Only authorized employees can access customer data; encryption is in place.
+- Integrity: Transactions are monitored to ensure no tampering.
+- Availability: Redundancy and backups exist, but DDoS attacks are a concern.
+
+Student Guidance:  
+Urge students to ask about past incidents, compliance expectations (e.g., GDPR), and the criticality of different assets.
+
+#### Role 2: IT Infrastructure Manager
+
+Technologies in Place:
+
+- Hybrid cloud architecture with critical servers on-prem and non-critical services in the public cloud.
+- Firewalls, Intrusion Detection Systems, anti-DDoS measures.
+- Current authentication relies on username/password, with MFA planned.
+
+Possible Answers:
+
+- Technical Vulnerabilities: Some servers lack recent patches; phishing attempts on staff are increasing.
+- Access Management: IAM gaps exist, and privileged access could be better controlled.
+- Past Incidents: A targeted attack on APIs detected in 2023 was narrowly averted.
+
+Student Guidance:  
+Encourage questions about system maintenance, incident management, and access controls.
+
+#### Role 3: Application Project Manager
+
+Application Features:
+
+- Users perform transfers, check balances, and update personal info.
+- Investment and credit management features are planned.
+- Transactions use two-factor verification (e.g., SMS codes), but there are known verification process flaws.
+
+Possible Answers:
+
+- Functional Risks: A vulnerability in transaction verification might allow unauthorized account access.
+- Security Testing: Pentests were done at launch, but not since recent updates.
+- Recent Incident: Unauthorized transactions reported by a user triggered an internal investigation.
+
+Student Guidance:  
+Push them to explore potential functional weaknesses and past incidents in more detail.
+
+#### Role 4: User Representative
+
+User Expectations:
+
+- Fast, secure login; any downtime or breach is unacceptable.
+- Multi-device access (web, mobile) increases security needs.
+
+Possible Answers:
+
+- Reported Issues: Some users find authentication too complex; others worry about transaction security.
+- User Priorities: While ease of use is important, protecting personal data and transaction integrity is the top concern.
+
+Student Guidance:  
+Encourage students to question user security expectations and feedback on security issues.
+
+## Group Management
+
+- Group Size: Up to 10 students per TA.
+- Parallel Sessions: If multiple TAs are present, split the class into groups so that each TA acts as the CISO for their group.
+- Monitoring Progress: Move from student to student (or breakout rooms), ensuring they are filling their worksheets and applying the methodology. Address misunderstandings and encourage them to use EBIOS RM steps properly.
+
+## End-of-Day Debrief (17:45 – 18:00)
+
+At the end, reconvene all groups to share their findings. This short session should allow students to discuss their results, compare approaches, and highlight difficulties. You can ask:
+
+- What were the main challenges in applying EBIOS RM?
+- How did their scenario development evolve from strategic to operational?
+- Did their risk treatments align with the identified risks?
+
+Encourage students to reflect on how the methodology helped structure their risk analysis.
+
+## Tips and Common Issues
+
+- Students might focus too narrowly: Prompt them to consider all dimensions: technical, human, organizational, and third-party.
+- Students may not justify their likelihood and impact scores: Remind them that risk analysis requires rationale, not just gut feeling.
+- Time Management: Keep them on schedule. If Workshop 1 takes too long, they might not complete all workshops.
+
+---
+
+# Solution: EBIOS RM
+
+Use the following criteria to evaluate and challenge the students’ work. These criteria are meant to guide your feedback and ensure that students apply the EBIOS RM methodology thoroughly and logically. As a TA, you should use these points to ask probing questions, highlight gaps, and encourage students to refine their analysis.
+
+### 1. Methodological Rigor
+
+- **Clarity of Scope (Workshop 1):**
+  - Have students clearly defined what is included and excluded from the analysis?
+  - Are all critical assets (data, systems, processes) identified and understood?
+- **Adherence to EBIOS RM Steps:**
+  - Are students following the workshops in sequence, using the results of one to inform the next?
+  - Do they demonstrate understanding of each workshop’s purpose?
+
+### 2. Completeness of Risk Identification
+
+- **Depth of Risk Sources (Workshop 2):**
+  - Have students identified a variety of risk sources (technical, human, organizational, third-party)?
+  - Are they only focusing on obvious technical threats, or have they considered insider threats, supplier vulnerabilities, and user-related issues as well?
+- **Justification of Likelihood and Impact:**
+  - Are students explaining why they rated certain threats as "high likelihood" or "low impact"?
+  - Do they provide evidence or references to scenario details, past incidents, or industry best practices?
+
+### 3. Scenario Development Quality
+
+- **Strategic Scenarios (Workshop 3):**
+  - Are the high-level strategic scenarios realistic, relevant, and directly connected to previously identified risks and assets?
+  - Do the scenarios reflect meaningful threats that could significantly affect the bank’s operations or reputation?
+- **Operational Scenarios (Workshop 4):**
+  - Do students break strategic scenarios down into actionable, detailed sequences of events?
+  - Have they considered the technical steps an attacker would take, the internal detection mechanisms, response processes, and potential user impact?
+
+### 4. Alignment of Risk Treatment with Identified Risks
+
+- **Risk Treatment Strategies (Workshop 5):**
+  - Are proposed treatments logically connected to the identified scenarios and risk sources?
+  - Do they consider realistic and actionable measures (e.g., implementing MFA, improving patch management, training staff, conducting regular audits)?
+- **Prioritization and Feasibility:**
+  - Have students prioritized risks based on criticality and addressed the most significant ones first?
+  - Are the recommended measures practical given the bank’s context (e.g., budget, technology stack, regulatory constraints)?
+
+### 5. Use of Standards and Best Practices
+
+- **Referencing Frameworks:**
+  - Are students leveraging hints from ISO 27002 or other standards discussed during the lecture?
+  - Do they connect controls or treatments to known best practices rather than proposing vague, unsubstantiated solutions?
+
+### 6. Critical Thinking and Justification
+
+- **Challenging Assumptions:**
+  - Have students questioned their initial assumptions?
+  - Can they explain why certain risks or controls take precedence over others?
+- **Evidence-Based Analysis:**
+  - Do they cite information you provided in your different roles (CISO, IT Manager, etc.) to justify decisions?
+  - Are their conclusions supported by scenario details, past incidents, or realistic threat trends?
+
+### 7. Presentation and Clarity
+
+- **Structured Documentation:**
+  - Is the Google Sheets template filled out systematically and coherently for each workshop?
+  - Do their notes and final summaries clearly state the identified risks, their ratings, scenarios, and treatments?
+- **Communication of Results:**
+  - During the debrief, can students clearly articulate their reasoning, defend their choices, and respond to your challenges logically?

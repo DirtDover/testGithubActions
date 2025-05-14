@@ -1,0 +1,133 @@
+# Risk Management Process
+
+## What you will learn in this course 🧐🧐
+
+- Understand the risk management process in cybersecurity
+- Learn how to identify and assess threats and vulnerabilities
+- Use risk matrices to prioritise risks
+
+## Asset Identification
+
+Identifying assets is a crucial step in the cybersecurity risk management process. Imagine you own a treasure and want to protect it. The first thing to do is to know exactly what your treasure contains, its value, and how each element is connected to the others. This is exactly what a cybersecurity consultant does when identifying a company's assets.
+
+### Asset Classification and Valuation
+
+A company's assets include:
+
+- **Data** (e.g., databases, flat files);
+- **Software** (e.g., operating systems, business applications);
+- **Hardware** (e.g., servers, laptops, hard drives);
+- **Cloud resources** used (e.g., SaaS, PaaS, IaaS);
+- Logical or physical **communication channels** (e.g., fibre optics, Wi-Fi, Internet, verbal exchanges, couriers);
+- **Paper records** (e.g., printed documents, photocopies);
+- **Physical locations and facilities** housing the aforementioned elements (e.g., data centres, offices).
+
+Each asset must be carefully **classified and valued** based on its importance to the business.
+
+Classifying assets involves using security criteria and impact scales to determine the criticality of each asset. Each company can use its own classification criteria.
+
+A common way to classify assets is by following the **DICT criteria** (Availability, Integrity, Confidentiality, Traceability). For each criterion, a four-level scale (low, moderate, high, very high) is used to value each asset.
+
+| Criterion       | Very High                                                                                                                                                        | High                                                                                                                        | Moderate                                                                                            | Low                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Availability    | Assets that must be available at all times, such as air traffic control systems or emergency services.                                                           | Assets requiring high availability for daily operations, e.g., application servers for online customer services.            | Assets where temporary interruption is acceptable but should be minimised.                          | Assets where availability is not critical and interruptions can be tolerated.             |
+| Integrity       | Assets where any unauthorised alteration could have severe impacts, such as control software for critical infrastructures.                                       | Assets requiring high integrity, e.g., financial transaction databases.                                                     | Assets where alterations could cause moderate inconvenience or malfunctions.                        | Assets where integrity is less critical and alterations have no significant consequences. |
+| Confidentiality | Assets containing highly sensitive information, the unauthorised disclosure of which could have severe consequences for the organisation, such as state secrets. | Sensitive information whose disclosure could seriously harm the organisation, e.g., financial data or customer information. | Internal information that should not be disclosed but whose leak would not have major consequences. | Public or non-critical information where confidentiality is not a priority.               |
+| Traceability    | Assets requiring full traceability for compliance or audit reasons, such as security logs.                                                                       | Assets where high traceability is needed for internal control processes.                                                    | Assets where some traceability is desired but not essential.                                        | Assets where traceability is not a priority and records can be limited.                   |
+
+To facilitate this task, several asset management tools can be used. Software asset management tools, like those offered by Freshworks and ManageEngine, help track software licenses, manage inventories, and provide information on software usage.
+
+In the context of ISO 27001, assets are defined as anything of value to an organisation where information is stored, processed, or accessible. This includes both non-physical and physical assets. Non-physical assets encompass information (or data), intellectual property, brand, reputation, and individuals such as employees, temporary staff, contractors, and volunteers. Physical assets include hardware (computer servers, network equipment, workstations, mobile devices), software (purchased or custom-built), services (such as database systems, email), and sites and buildings (offices, data centres).
+
+All these assets must be inventoried and classified according to different criteria, such as classification (public, internal, confidential), type of information (personal, sensitive, business), and their financial or non-financial value. Each asset must also have a designated owner to ensure accountability. This approach ensures that all critical elements for information security are correctly identified, protected, and managed, which is essential for maintaining the integrity, confidentiality, and availability of an organisation's information. An auditor will expect to see a comprehensive inventory covering all these aspects as part of the Information Security Management System (ISMS).
+
+### Identifying Dependencies and Interdependencies
+
+Once you've identified and classified assets, it's crucial to **understand the dependencies** between them. For example, a server hosting several critical applications might depend on a specific network or a particular database.
+
+Mapping these dependencies helps assess potential impacts if an asset is compromised. Tools like [Miro](https://miro.com/) or [XMind](https://xmind.app/) (also used for creating mind maps) are particularly useful for this task. They allow you to model and visualise the relationships between assets, create dependency diagrams, and see how each asset interacts with others.
+
+## Identifying and Assessing Threats and Vulnerabilities
+
+### Techniques to Identify Internal and External Threats
+
+To identify and assess internal and external threats in a business, start by **analysing logs and network traffic**.
+
+Find out or ask the company which Security Information and Event Management (SIEM) tools they use to collect and analyse security logs. Monitor network traffic to detect abnormal behaviours or intrusion attempts, and analyse data flows to spot suspicious exfiltrations.
+
+Don't hesitate to delve into **previous audit reports**. They can reveal recurring attack patterns or vulnerabilities.
+
+Also, evaluate the company's **security posture**. Use automated assessment tools to measure security maturity, perform penetration tests to simulate real attacks, and evaluate system and application configurations. A good old pentest, basically.
+
+For internal threats, check if the company has **User Behaviour Analytics (UBA)** systems. These monitor privileged access and suspicious activities.
+
+### Using Vulnerability Scans and Audits
+
+Tools like Nessus, OpenVAS, or Qualys perform regular network scans, often weekly or monthly. Use their scan reports to identify threats.
+
+These scans detect security weaknesses and help prioritise vulnerabilities based on their severity and asset exposure.
+
+Additionally, manual vulnerability scans can provide a more in-depth analysis.
+
+Auditing is also a crucial tool for the organisation. Different types of audits (configuration, code, compliance) and their various frequencies offer a better understanding of the information system and its evolution.
+
+## Using Risk Matrices
+
+### Creating and Using Risk Matrices
+
+<img src="https://cyber-lead-assets.s3.amazonaws.com/M02-Risk_Management_and_Network_Security_(Purple)/D02-Security_Audits_and_Governance/01-lectures/RisqueMatrice.png" style={{width: '100%', maxWidth: '500px', margin: '0 auto',}} />
+
+Using risk matrices is a common method in information security risk management.
+
+It's a simple yet powerful visual tool that represents **risks** based on two dimensions: **likelihood of occurrence** and **potential impact**.
+
+The first step in creating a risk matrix is to **define the scales for likelihood and impact**. Likelihood is typically rated on a scale of 1 to 5, where 1 represents a very low likelihood and 5 a very high likelihood. Similarly, impact is also rated on a scale of 1 to 5, where 1 represents a negligible impact and 5 a catastrophic impact.
+
+These scales standardise risk assessment and allow for consistent comparisons.
+
+Next, you need to **list the identified risks**. This includes collecting all potential risks identified in previous steps, such as vulnerability scans and security audits. Each risk should be clearly described and documented for accurate evaluation.
+
+Once you have listed the risks, the next step is to **assess them**. This involves assigning a likelihood score and an impact score to each risk. For example, a cyberattack risk on a critical server might receive a likelihood score of 4 (high) and an impact score of 5 (catastrophic).
+
+After assigning scores to each risk, you **place them in the risk matrix**. The matrix is typically a grid where the vertical axis represents likelihood and the horizontal axis represents impact. By positioning each risk on this matrix, it becomes easy to visualise which risks require immediate attention. Risks in the high likelihood and high impact areas are the most critical and should be prioritised.
+
+### Prioritising Risks Based on Impact and Likelihood
+
+**Prioritising risks** is a key step. To do this, we use a simple formula:
+
+$$
+\text{Criticality} = \text{Likelihood} \times \text{Impact}
+$$
+
+This formula calculates a **criticality score** for each risk. The risks are then ranked based on this score.
+
+For example, if a risk has a likelihood of 4 and an impact of 5, its criticality score will be 20, making it a high-priority risk. Risks with lower scores can be addressed later.
+
+### Developing Risk Treatment Plans
+
+Once the risks are prioritised, you can develop **risk treatment plans**.
+
+These plans include various strategies to manage risks:
+
+- **Preventive Measures**
+
+The goal is to **reduce the likelihood of the risk occurring**. This can include regularly updating software, strengthening security policies, and training employees.
+
+- **Detection Measures**
+
+These measures aim to quickly identify security incidents when they occur. Implementing intrusion detection systems (IDS), continuous log monitoring, and regular security audits are examples of detection measures. This allows for a rapid response to incidents and helps **reduce the impact**.
+
+- **Response Measures**
+
+This involves responding effectively when an incident occurs. It includes preparing incident response plans, setting up rapid response teams, and establishing procedures for containing and eradicating threats.
+
+- **Recovery Measures**
+
+The goal is to restore normal operations after an incident. This includes setting up disaster recovery plans (DRP), performing regular backups, and testing recovery procedures to ensure data can be restored quickly and effectively.
+
+These last two points are very important and will be covered in another course!
+
+## Resources 📚📚
+
+- [How to Perform an IT Risk Assessment](https://blog.netwrix.fr/2019/04/03/comment-realiser-une-evaluation-des-risques-informatiques/)
+- [DICT Criteria](https://securid.novaclic.com/securite-internet/les-criteres-de-classification-de-l%E2%80%99information-dicp.html)

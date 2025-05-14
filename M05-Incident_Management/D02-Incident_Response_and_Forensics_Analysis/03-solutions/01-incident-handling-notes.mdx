@@ -1,0 +1,123 @@
+# TA Brief: Active Directory Forensics Investigation – IBC Subsidiary
+
+Welcome to Day 2 of the Incident Response (IR) module. This brief provides you, the Teaching Assistant (TA), with guidance on how to lead students as they conduct a forensic investigation into a potential Active Directory (AD) compromise at an IBC subsidiary. Students will analyze logs, network captures, and system events to identify the root cause, scope, and impact of a security breach. They will then prepare a non-technical PowerPoint report for top management, summarizing findings and recommending remediation measures.
+
+## Overview and Objectives
+
+**Module:** Incident Response - Active Directory Forensics  
+**Focus:** Investigating AD compromise, privilege escalation, lateral movement, and presenting findings to non-technical stakeholders.
+
+### Learning Objectives
+
+- **Forensic Analysis Techniques:**  
+  Help students use the provided data (workstation logs, DC logs, Sysmon events, PCAPs) to identify suspicious activity, potential malware execution, and evidence of privilege escalation or lateral movement.
+
+- **AD Compromise Detection:**  
+  Guide students in recognizing indicators of Active Directory attacks (e.g., Kerberoasting, DC Sync) and understanding their implications for the organization’s security posture.
+
+- **Clear Communication to Non-Technical Stakeholders:**  
+  Ensure students can translate technical findings into a concise, visually appealing PowerPoint presentation for top management, emphasizing business impact and actionable recommendations.
+
+## Daily Schedule
+
+- **13:30 - 13:45: Recap and Context**
+
+  - Recap the IBC scenario and the reported suspicious activity.
+  - Emphasize the importance of correlating logs and network traffic to identify AD-related compromises.
+
+- **13:45 - 16:00: Investigative Analysis**
+
+  - Students review Sysmon and Security logs from the workstation, Domain Controller logs, and the PCAP file.
+  - Encourage them to look for signs of malware, unauthorized privileged account usage, suspicious Kerberos ticket requests, or unusual DC replication requests.
+  - Prompt them to correlate workstation and DC events with network traffic patterns to build a complete attack narrative.
+
+- **16:00 - 16:10: Break**
+
+- **16:10 - 17:00: Consolidating Findings & Drafting the Presentation**
+
+  - Students summarize key discoveries: potential AD compromise, privilege escalations, and attacker lateral movement.
+  - Guide them in framing these findings in business terms for top management: focus on what systems or data may be at risk and the operational impact.
+
+- **17:00 - 17:30: Refining the PowerPoint Report**
+
+  - Students refine their slides to ensure clarity, minimal jargon, and strong visual aids.
+  - Encourage highlighting top three risks, the extent of the breach, and clear, actionable recommendations (e.g., improved phishing defenses, stricter AD monitoring).
+
+- **17:30 - 17:45: Q&A and Peer Feedback**
+
+  - Students can present a draft version of their slides to you or their peers.
+  - Offer feedback on clarity, relevance, and the balance between technical detail and executive-level messaging.
+
+- **17:45 - 18:00: Wrap-Up and Next Steps**
+  - Reinforce the importance of these skills in real-world IR scenarios.
+  - Remind them that the goal is to provide management with a clear understanding of the incident and confidence in the proposed remediation steps.
+
+## TA Responsibilities
+
+### During Investigative Analysis
+
+1. **Prompt a Systematic Approach:**
+
+   - Encourage students to start from workstation logs, move to DC logs, and then validate findings with network traffic.
+   - Suggest looking for anomalies: unauthorized login attempts, suspicious processes, unusual PowerShell commands, or abnormal Kerberos ticket usage.
+
+2. **Highlight AD Attack Patterns:**
+
+   - If they struggle, hint at known AD exploitation techniques like Kerberoasting or DC Sync.
+   - Suggest searching for event IDs linked to credential theft, replication requests, or service ticket anomalies.
+
+3. **Encourage Correlation of Evidence:**
+   - If a suspicious process is identified, prompt checking corresponding network traffic or related DC log entries.
+   - Stress the importance of building a cohesive timeline or story of the attacker’s moves.
+
+### During Presentation Preparation
+
+- **Simplifying the Narrative:**  
+  Remind students that top management cares about the overall risk, not technical minutiae. Encourage them to use clear bullet points, timelines, and diagrams rather than complex log entries.
+
+- **Actionable Recommendations:**  
+  Urge concrete advice:
+  - Enhanced phishing defenses and security awareness training.
+  - Stronger AD monitoring and alerts for unusual ticket requests.
+  - Regular audits of privileged accounts and their activities.
+  - Network segmentation to prevent lateral movement.
+
+### General Support
+
+- **Monitor Student Progress:**  
+  Identify students who struggle with interpreting logs or correlating events and provide hints without giving away full solutions.
+
+- **Foster Collaboration:**  
+  Encourage students to share insights. If one group discovered Kerberoasting attempts, have them explain how they identified it so others can learn.
+
+- **Answer Questions in Context:**  
+  Provide references to known AD attack techniques or event ID documentation. Avoid overloading them with too many technical details.
+
+## Common Issues and Solutions
+
+- **Difficulty Identifying AD Attacks:**  
+  Prompt them to consider known patterns. Ask if they’ve noticed abnormal Kerberos requests or unexpected DC replication activity.
+
+- **Too Technical Slides:**  
+  If their drafts are too granular, remind them: “Management wants to know what happened, why it matters, and how to fix it—not all the technical steps.”
+
+- **Generic Recommendations:**  
+  If suggestions are too vague, push for specifics: “Implement MFA for all admin accounts,” “Set alerts on anomalous Kerberos ticket activity,” or “Deploy stricter least-privilege policies.”
+
+## Additional Tips
+
+- **Emphasize Real-World Significance:**  
+  Remind students that AD compromises are often at the heart of major breaches. Clear communication of risks and solutions is key in professional IR roles.
+
+- **Time Management:**  
+  If they get stuck in raw log analysis, encourage them to move forward and start drafting the presentation. They need to deliver a polished final product.
+
+- **Positive Reinforcement:**  
+  Acknowledge logical analysis, clear explanations, or well-structured slides. Positive feedback helps them improve continuously.
+
+By following this TA brief, you will help students develop critical incident response capabilities, from deep forensic investigation to effective executive communication. They will learn to identify AD compromises, correlate multiple data sources, and present their findings in a manner that drives strategic security decisions at the organizational level.
+
+---
+# Solution
+
+https://github.com/strandjs/IntroLabs/blob/master/IntroClassFiles/Tools/IntroClass/PoisoningtheWellIR-main/navigate.md

@@ -1,0 +1,48 @@
+# Active Directory Forensics Investigation – IBC Subsidiary
+
+## **Context**
+
+As a consultant at **Correlia**, you have been asked to assist in a critical **cybersecurity investigation** at **IBC International**, a subsidiary of IBC Bank. A potential breach has been reported involving the workstation of an employee, where suspicious activity has raised concerns about a broader compromise within the network.
+
+You have been provided with **log files** and **network captures** with various workstations and the **Domain Controller (DC)** to help identify the root cause of the incident. The **top management** of IBC International is particularly concerned about whether the breach has affected the **Active Directory (AD)** and compromised sensitive systems.
+
+Your task is to conduct a forensic investigation to determine:
+
+- The origin of the suspicious activity.
+- Whether any **privilege escalation** or **lateral movement** has occurred within the network.
+- The full extent of the attack and any potential damage to the AD environment.
+
+Your findings will be used to inform **remediation efforts** and **security enhancements** to prevent similar incidents in the future.
+
+## **Consultant’s Notes**
+
+- **Target System**: **workstations** and **Active Directory**.
+- **Suspicious Activity**: An employee noticed an unknown process on her machine and reported unusual system behavior.
+- **Logs Provided**: Logs from workstations **Sysmon and Security events**, **Domain Controller logs**, and a **PCAP network capture** are available for analysis.
+- **Objective**: Investigate the nature of the attack and assess whether the attacker has compromised the **Active Directory** or escalated privileges.
+
+## **Task**
+
+Your task is to investigate the attack and prepare a **PowerPoint presentation** for **top management** at IBC International. The presentation should:
+
+1. **Summarize your investigation**: Explain how the attacker may have breached an employee workstation, escalated privileges, and potentially compromised the Active Directory.
+2. **Highlight key findings**: Focus on evidence of malware execution, unauthorized privilege escalation (e.g., **Kerberoasting**), or Active Directory compromise (e.g., **DC Sync attack**).
+3. **Propose high-level recommendations**: Provide clear and actionable steps for preventing similar incidents in the future, focusing on **security improvements** and **risk mitigation** strategies.
+
+## **Deliverables**
+
+Prepare a **PowerPoint report** that covers:
+
+- **Incident Overview** – Briefly describe the incident and the scope of the investigation.
+- **Key Findings** – Summarize the main points discovered during the investigation, including any malware execution, suspicious processes, and network traffic.
+- **Privilege Escalation** – If applicable, highlight any signs of privilege escalation and how the attacker moved within the network.
+- **Active Directory Compromise** – If applicable, explain the impact on the Active Directory and any potential data exfiltration or control gained by the attacker.
+- **Recommendations** – Present high-level recommendations for **security improvements**, such as enhancing **phishing defenses**, improving **network segmentation**, and implementing stronger **logging and monitoring**.
+
+### Presentation Tips
+
+- Keep your slides **clear and concise**. The top management will not be technical experts, so avoid too much technical jargon.
+- Focus on **key takeaways** and **business impact**. The goal is to communicate the severity of the attack and how it can be prevented in the future.
+- Use **visual aids** like diagrams, timelines, and charts to make the data more accessible.
+
+This exercise challenges you to not only investigate the attack but also to present your findings in a clear, non-technical way that is understandable for IBC International’s top management. The goal is to ensure that they understand the risks and take action to strengthen their security posture.

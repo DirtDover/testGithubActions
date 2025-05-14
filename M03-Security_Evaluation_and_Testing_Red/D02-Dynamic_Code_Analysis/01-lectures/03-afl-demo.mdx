@@ -1,0 +1,215 @@
+# AFL++ Demo
+
+## What you will learn in this course 🧐🧐
+
+- Learn how to set up AFL++ for grey-box fuzzing
+
+Let's discover how AFL++ works!
+
+## Setup
+
+We will see how to start grey-box fuzzing with AFL++. As a reminder, grey-box fuzzing involves having some knowledge of the code and often access to it in order to practice. This often speeds up the process of finding bugs or vulnerabilities.
+
+AFL++ enables this by instrumenting the source code. This is where it excels. It can also fuzz [closed binaries](https://aflplus.plus/docs/fuzzing_binary-only_targets/) in a black box manner. It is effective, but less so because total black box searching often takes more time.
+
+To perform fuzz tests with available source code, we will follow three steps:
+
+- We will "instrument the target," meaning we compile the code with AFL to prepare it for testing.
+- Next, we will prepare our corpus of inputs to test.
+- Finally, we will start the fuzzing process by mutating the inputs and evaluating if the input has taken a new path in the binary.
+
+As mentioned earlier, fuzzing is very resource-intensive. This is also true for AFL++! There are ways to finely manage your machine's resources with AFL++, but we will not cover that here.
+
+Here is a C++ code (from this [repository](https://github.com/wolframroesler/afl-demo)) with a vulnerability. Can you find it?
+
+```c
+#include <fstream>
+#include <iostream>
+
+const char *uridecode(const char *s) {
+	static char ret[100];
+	for(auto *p=ret;*s;++s) {
+		if (*s=='%') {
+			auto const a = *++s;
+			auto const b = *++s;
+			*p++ = (a<='9' ? a-'0' : a-'a') * 16 + (b<='9' ? b-'0' : b-'a');
+		} else if (*s=='+') {
+			*p++ = ' ';
+		} else {
+			*p++ = *s;
+		}
+	}
+
+	return ret;
+}
+
+int main() {
+	auto const uri = std::string(
+		std::istreambuf_iterator<char>(std::cin),
+		std::istreambuf_iterator<char>()
+	);
+	std::cout << uridecode(uri.c_str());
+}
+```
+
+We have a loop that leads us to a buffer overflow. Instead of analysing it ourselves, let's use our new friend AFL++.
+
+## Instrument the target
+
+Copy and paste the contents of this program into a file named `vuln.cpp`. Run the following command:
+
+```bash
+afl-clang-fast++ -o vuln vuln.cpp
+```
+
+We use `afl-clang-fast++` to compile our C++ file with AFL. This generates a binary file, just like `g++`, but it also injects functions that allow deeper testing of our program. This is the instrumentation step, which is very handy for uncovering hidden errors or bugs.
+
+To confirm this, we can visualise the binary with [Binary Ninja](https://binary.ninja/) and its HLIL graph view mode. You'll see that AFL has injected specific functions to log and enable fuzzing of our program.
+
+![]()
+
+![]()
+
+You might have noticed that AFL++ allows us to use [multiple compilers](https://aflplus.plus/docs/fuzzing_in_depth/#a-selecting-the-best-afl-compiler-for-instrumenting-the-target). AFL++ offers different versions depending on our environment's capabilities. If possible, use `afl-clang-lto/afl-clang-lto++`, if not, go with `afl-clang-fast/afl-clang-fast++`, then `afl-gcc-fast/afl-g++-fast`, and finally `afl-gcc/afl-g++` as a last resort. What are the differences? Mainly better optimisations for potentially better results.
+
+You can also [add parameters](https://aflplus.plus/docs/fuzzing_in_depth/#b-selecting-instrumentation-options) for instrumentation. We won't delve deeper into this, but it's one of the available options.
+
+Another topic to remember, which we won't cover in this demo, is the choice of sanitizers. A sanitizer helps find bugs that don't necessarily cause a crash. You can use the Address Sanitizer (ASAN) to detect use-after-free, NULL pointer dereference, buffer overflow, etc. The only downside with sanitizers is that they require more resources, so it's recommended to choose only one per fuzzing campaign.
+
+## Prepare campaign
+
+Now we need to prepare the inputs that AFL++ will use for fuzzing.
+
+A good practice is to create an `inputs` folder where we will place several `.txt` files with example inputs that AFL++ can use. In our case, we'll use simple strings. However, AFL++ accepts all types of inputs: images, and even unknown inputs! You can find a set of examples [here](https://github.com/AFLplusplus/AFLplusplus/tree/stable/testcases).
+
+If you're running a campaign with many inputs, don't hesitate to sort them ([AFL++ can handle this](https://aflplus.plus/docs/fuzzing_in_depth/#b-making-the-input-corpus-unique) for you) to reduce the number of inputs and ensure better results.
+
+AFL++ will use these inputs to transform (mutate) them and test new inputs based on the provided ones. A good method is to start with many inputs and refine them over time.
+
+Let's create some input files:
+
+```bash
+echo "hello" > inputs/simple.txt
+echo "hello+world" > inputs/medium.txt
+echo "hello%21" > hard.txt
+```
+
+## Fuzz!
+
+The final step is to start fuzzing. We use the `afl-fuzz` utility for this:
+
+```bash
+afl-fuzz -i inputs -o outputs ./vuln
+```
+
+And we’re off! Let `afl-fuzz` run for 5 minutes and watch the magic happen before our amazed eyes.
+
+![AFL Fuzzing](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D03-Dynamic_Code_Analysis/01-lectures/AFL_fuzzing.png)
+
+Two things happen: the interface updates before our eyes, and AFL++ starts its work.
+
+What is AFL++ doing right now? It takes the test cases we provided and loads them into a queue.
+
+Then, it takes each input file one by one and reduces it to its minimal size without altering the program's measured behaviour. The file is then repeatedly mutated using various strategies. If a mutation triggers a new state transition recorded by the instrumentation, this mutation is added to the queue as a new entry.
+
+This process is cyclic, and test cases are regularly discarded if they are surpassed by more recent and comprehensive findings. Meanwhile, AFL++ creates a corpus of interesting test cases, useful for other intensive testing regimes.
+
+Pretty cool, right?
+
+Now, let's talk about the interface. It might look intimidating at first, but it's actually quite straightforward.
+
+At the top, we have the _process timing_. Here, we see the elapsed time since the fuzzing started and the time since AFL++ last discovered a crash or a hang (a hang is when the program gets stuck).
+
+On the top right, we have the _overall results_, which kindly inform us of the number of crashes and hangs found. We also see the number of cycles. A cycle corresponds to a complete search as explained above.
+
+Jumping to the _stage progress_, this shows us live what `afl-fuzz` is doing. We can see it switching from `havoc` to `interest` or `splice`. These are different strategies for generating input. AFL++ tries to do this as intelligently as possible to optimise the search.
+
+You now know the essentials to observe our fuzzer in action. If you want more detailed descriptions of each section, [the official documentation](https://aflplus.plus/docs/afl-fuzz_approach) is well worth a read.
+
+## Monitoring
+
+In real life, a fuzzing campaign can last from a few hours to... a few weeks! Yes, really!
+
+The AFL++ documentation recommends waiting for at least one complete cycle or more. Depending on the software's complexity, this can take time. If AFL++ stops finding new paths, it means you can stop the search as it's unlikely to find anything further.
+
+So, you have a choice: take a well-deserved holiday or choose a good server to run your fuzzing while you enjoy playing LoL (right?). In that case, the best approach is to run `afl-fuzz` in a terminal multiplexer to ensure the process continues running even if you're no longer connected to the server.
+
+Additionally, AFL++ comes with a handy utility: `afl-whatsup`, which you can run by specifying the path to your `findings` folder.
+
+## Interpreting the results
+
+It's time to stop our fuzzing with a `Ctrl-C` (otherwise, it will run indefinitely). Congratulations! You've conducted a successful campaign. But beware, this is not the end of the journey. Oh no! Now you need to interpret the results, and let's say you've only completed 30% of the work, hehe.
+
+If we go to the `findings` folder, we should see something like this (we've shortened the list because it was very long):
+
+```
+findings
+└── default
+    ├── cmdline
+    ├── crashes
+    │   ├── id:000000,sig:11,src:000010,time:12608,execs:15601,op:havoc,rep:13
+    │   ├── id:000001,sig:11,src:000013+000028,time:13556,execs:16745,op:splice,rep:2
+    │   ├── id:000025,sig:11,src:000028,time:17396,execs:19679,op:havoc,rep:6
+    │   ├── id:000026,sig:11,src:000028,time:17400,execs:19682,op:havoc,rep:7
+    │   ├── id:000027,sig:11,src:000028,time:17408,execs:19687,op:havoc,rep:10
+    │   ├── ...
+    │   └── README.txt
+    ├── fuzz_bitmap
+    ├── fuzzer_setup
+    ├── fuzzer_stats
+    ├── hangs
+    ├── plot_data
+    └── queue
+        ├── id:000000,time:0,execs:0,orig:01.txt
+        ├── id:000001,time:0,execs:0,orig:02.txt
+        ├── id:000002,time:0,execs:0,orig:03.txt
+        ├── id:000003,src:000002,time:32,execs:36,op:havoc,rep:1,+cov
+        ├── id:000004,src:000002,time:56,execs:48,op:havoc,rep:2,+cov
+        ├── id:000005,src:000002,time:80,execs:60,op:havoc,rep:1
+        ├── id:000006,src:000002,time:108,execs:73,op:havoc,rep:2
+        ├── id:000007,src:000002,time:124,execs:81,op:havoc,rep:2
+        ├── id:000008,src:000002,time:144,execs:91,op:havoc,rep:1
+        ├── id:000009,src:000002,time:172,execs:109,op:havoc,rep:2,+cov
+        ├── id:000010,src:000002,time:196,execs:122,op:havoc,rep:1
+        ├── id:000011,src:000002,time:228,execs:138,op:havoc,rep:1
+        ├── id:000012,src:000002,time:244,execs:146,op:havoc,rep:2
+        ├── id:000013,src:000002,time:268,execs:162,op:havoc,rep:2,+cov
+        ├── id:000014,src:000002,time:292,execs:173,op:havoc,rep:2
+        ├── id:000015,src:000002,time:320,execs:193,op:havoc,rep:1
+        ├── id:000016,src:000002,time:380,execs:247,op:havoc,rep:2
+        ├── id:000017,src:000002,time:412,execs:271,op:havoc,rep:2
+        ├── id:000018,src:000002,time:488,execs:350,op:havoc,rep:1
+        ├── id:000019,src:000002,time:516,execs:373,op:havoc,rep:2
+        ├── id:000020,src:000002,time:548,execs:396,op:havoc,rep:2
+        ├── id:000021,src:000002,time:588,execs:433,op:havoc,rep:2
+        ├── id:000022,src:000002,time:612,execs:449,op:havoc,rep:2
+        ├── id:000023,src:000002,time:1012,execs:941,op:havoc,rep:2
+        ├── id:000024,src:000002,time:4000,execs:4716,op:havoc,rep:2
+        ├── id:000025,src:000010,time:11388,execs:14087,op:havoc,rep:16
+        └── ...
+```
+
+We see that AFL++ has created files with a specific naming convention. Let's take one at random: `id:000000,sig:11,src:000010,time:12608,execs:15601,op:havoc,rep:13`
+
+- `id:000000`: unique identifier of the crash. It usually starts at 000000 and increments for each new crash.
+- `sig:11`: signal that caused the crash. In this case, 11 corresponds to SIGSEGV (Segmentation fault). Other common values include 6 (SIGABRT), 8 (SIGFPE), etc.
+- `src:000010`: identifier of the source test case in the queue that was mutated to produce this crash.
+- `time:12608`: time elapsed in seconds from the start of fuzzing when this crash was discovered.
+- `execs:15601`: number of executions performed before finding this crash.
+- `op:havoc`: mutation operation that produced this crash.
+- `rep:13`: number of mutations applied to the original input to produce this crash.
+
+In the `crashes` folder, you'll find all the inputs that caused a crash. In `hangs`, you'll find those that caused a hang. And in `queue`, you'll see all the interesting paths that AFL++ explored.
+
+From here, we have two options. We can use our best debugger, like GDB, to start understanding the causes of the errors. Or, we can refine the search using the "crash exploration" mode (with `-C` on `afl-fuzz`), which focuses on the crashing paths. You can also use `afl-tmin` to minimise the files, which should improve the entire process.
+
+Last but not least, `afl-plot` (requires `gnuplot` installation) allows us to create beautiful visualisations like this:
+
+![AFL Plot](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D03-Dynamic_Code_Analysis/01-lectures/AFL_plot.png)
+
+That wraps up this demo on AFL++. Of course, there are many more things to explore, such as black box fuzzing with AFL++ and QEMU. Feel free to dive into the resources below if you're eager to learn more.
+
+## Resources
+
+- [AFL++: Fuzzing in Depth](https://aflplus.plus/docs/fuzzing_in_depth)
+- [A Look at AFL++ Under The Hood](https://blog.ritsec.club/posts/afl-under-hood/)

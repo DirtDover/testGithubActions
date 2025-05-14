@@ -1,0 +1,438 @@
+# Introduction to Advanced Static Techniques
+
+## Disassembly Techniques
+
+At its core, **disassembly** is the process of transforming **machine code**—the binary instructions executed directly by a computer’s processor—into **assembly code**, which is a more human-readable form of low-level programming. Machine code consists of sequences of bytes that represent specific instructions, but because these bytes are not intuitive for humans to read, disassembly converts them into **mnemonics** (symbolic names for instructions) and other elements of assembly language that are easier to understand.
+
+When reverse engineers disassemble a program, they essentially translate the machine’s native language into something they can work with. However, this is not a one-to-one translation from machine code back to the original high-level programming language (like C or Python). Disassembly provides assembly code, which is closer to what the processor "sees," but far more readable to an engineer.
+
+![Disassembly](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Disassembly.png)
+
+For example, if a processor executes a machine code instruction like `0x55`, a disassembler might convert this into a more understandable assembly instruction like `PUSH EBP`, which means to push the current base pointer register value onto the stack. This instruction tells the reverse engineer what the program is doing in terms of manipulating memory or control flow.
+
+Various disassemblers facilitate this process by transforming machine code into human-readable assembly language. Among the most popular tools are IDA Pro, Ghidra, and objdump. [IDA Pro](https://hex-rays.com/ida-pro/) is a highly powerful interactive disassembler that supports numerous processor architectures. [Ghidra](https://ghidra-sre.org/), an open-source reverse engineering framework developed by the NSA, offers both disassembly and decompilation capabilities. [objdump](https://man7.org/linux/man-pages/man1/objdump.1.html), part of the GNU suite, is another tool capable of disassembling binary files.
+
+### Symbolic and Interactive Disassembly
+
+**Symbolic disassembly** refers to the use of symbolic information such as function names, variable names, and other metadata when generating assembly code from a binary. This symbolic information can come from special files, like **PDB (Program Database) files** in Windows, which contain debugging and symbolic data that was originally used by the compiler. By leveraging this information, the disassembler can label different parts of the code, making it much easier for engineers to understand the purpose and flow of the program. Instead of seeing an unknown memory address or register being used, the engineer might see a familiar function name or variable, providing critical context that simplifies analysis.
+
+In contrast to purely symbolic disassembly, **interactive disassembly tools** offer a more hands-on and flexible approach. These tools allow reverse engineers to interact with the disassembled code, offering features like:
+
+1. **Annotations:** Engineers can add their own comments or notes directly into the disassembled code to help explain certain behaviors or hypotheses about how the code works.
+
+2. **Marking Functions and Variables:** Reverse engineers can manually define or adjust the names of functions, variables, and other important code elements if they weren't included in the symbolic information, or if the disassembler guessed incorrectly.
+
+3. **Tracking Function Calls and Jumps:** Interactive disassemblers often include visual aids and navigation features that allow engineers to easily follow jumps between different parts of the program, like function calls, loops, or conditional branches. This makes it easier to map out the overall control flow of a program.
+
+4. **Cross-referencing and Navigation:** Engineers can quickly move between related pieces of code, such as jumping from a function call to its definition, or finding all instances where a particular variable or function is referenced. This is particularly useful when reverse-engineering complex programs with multiple layers of abstraction or obfuscated logic.
+
+By combining symbolic information with interactive features, reverse engineers can more effectively understand and manipulate a program’s inner workings. Whether trying to uncover hidden functionality, fix bugs, or discover security vulnerabilities, symbolic and interactive disassembly greatly enhances the reverse engineering process.
+
+### Techniques for Bypassing Disassemblers
+
+Bypassing techniques make code analysis and reverse engineering significantly more complex. Here is a detailed overview of two major techniques: obfuscation and self-modifying code, as well as strategies to overcome them.
+
+#### Detection and Decryption of Obfuscation
+
+Obfuscation is a protection method where code is modified to obscure its logic, making analysis more challenging. Obfuscators use several approaches to achieve this goal. Common techniques include renaming symbols, introducing redundant or misleading code, and creating obscure control structures.
+
+For example this is how we can obscure the logic of a simple print to console:
+
+![Obfuscation](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Obfuscation.png)
+
+To detect and decrypt obfuscation, a thorough analysis is required. An effective approach is to use static analysis tools to examine patterns and structures in the code, which can reveal signs of obfuscation. These tools can identify anomalies and recurring patterns typical of obfuscation.
+
+In parallel, dynamic analysis allows for real-time observation of the code's behavior. This can help understand how different parts of the obfuscated code interact and function. When the code is encrypted or encoded, it is essential to decrypt this data to access the actual executable code. This step often involves extracting decryption routines and executing them to reveal the hidden code.
+
+#### Analysis of Self-Modifying Code
+
+Self-modifying code is a technique where the code changes during program execution, complicating disassembly. When a program uses self-modifying code, the version of the code visible in a disassembler may not reflect the code actually executed.
+
+To analyze self-modifying code, the use of dynamic debuggers is crucial. Debuggers allow for real-time tracking of the program's execution, observing memory changes, and studying how and when the code is modified. By setting breakpoints and monitoring changes, one can understand the dynamics of these modifications.
+
+Another effective method is instrumentation, where tracing code is added to monitor changes made to the code during execution. This approach helps analyze the effects of modifications on the program. Finally, analyzing the routines responsible for code modifications is also important. By examining these routines, one can understand how they alter the code and how this affects the overall execution flow.
+
+## Decompilation Techniques
+
+**Decompilation**, on the other hand, goes one step further by attempting to recover a higher-level representation of the program, similar to the **source code** in which the program was originally written. Instead of outputting low-level assembly, decompilers aim to reconstruct high-level constructs like functions, loops, and variable names, producing code in languages such as C, Java, or Python. However, because a lot of information (such as variable names and comments) is lost during compilation, decompiled code often lacks the full clarity and structure of the original source code.
+
+In compiled programs, high-level code is transformed into machine-readable binary or bytecode, which is executed by the computer. However, during this process, much of the original structure and readability of the code is lost variables are renamed, comments are removed, and higher-level constructs like loops or conditionals are turned into more basic machine instructions.
+
+Decompilers are software tools that perform this transformation, converting machine code or bytecode into high-level source code. Some popular decompilers include [JD-GUI](https://github.com/java-decompiler/jd-gui) specifically designed for Java .class files, [Procyon](https://github.com/ststeiger/procyon) effectively handles new features of the Java language, [CFR](https://www.benf.org/other/cfr/) focuses on the readability of the decompiled code, and [Ghidra](https://ghidra-sre.org/) in addition to its disassembly capabilities, provides decompilation functionalities for multiple architectures.
+
+### Reconstruction of Code Structure and Handling Obfuscation
+
+Decompilers aim to reconstruct the original structure of source code, including functions, classes, and control structures such as loops and conditions. This process involves identifying function entry points and their boundaries, as well as recognizing loops, conditions, and other control structures to translate them into high-level constructs.
+
+Software may also be obfuscated to make decompilation more challenging. Advanced decompilers incorporate techniques to manage obfuscation effectively. These include deobfuscation methods to reverse the effects of obfuscation, such as restoring variable and function names, and data flow analysis to track the flow of data through the program, thereby understanding transformations and manipulations.
+
+### Symbolic and Interactive decompilation
+
+Some decompilations may use symbolic information if available, such as function and variable names, to improve the readability of the decompiled code. Interactive decompilation tools allow engineers to navigate through decompiled code, add annotations, and track function calls.
+
+### Bypassing Anti-Decompilation Measures
+
+Bypassing anti-decompilation measures is crucial for analyzing software designed to resist such efforts. These measures often involve code injection and encryption. Here’s a closer look at how these challenges are addressed.
+
+#### Detection and Removal of Superfluous Code
+
+To avoid decompilation, developers may inject superfluous or deceptive code into their software. This can include fictitious instructions and dead code. **Fictitious instructions** are operations that do not impact the program’s outcome but are intended to obfuscate the code. For instance, inserting irrelevant arithmetic operations or redundant function calls can make it more difficult to discern the actual purpose of the code. Similarly, **dead code** refers to sections of the code that do not execute or contribute to the program’s functionality, yet are included to create confusion. This might involve code paths that are never reached due to unsatisfied conditions.
+
+Reverse engineering engineers use several strategies to address these issues. They start with **code analysis and simplification**, employing tools to map out all code paths. By **examining control flow graphs and data flow**, they can differentiate between functional and non-functional code. **Static analysis**, which involves inspecting the code without executing it, helps identify suspicious patterns or anomalies, while **dynamic analysis**, which involves running the software in a controlled environment, allows for the observation of the program’s behavior and the determination of which parts of the code are active. After identifying unnecessary or deceptive code, engineers can remove it through a process known as **code stripping**. This simplification helps focus on the core functionality of the software without altering its intended behavior.
+
+#### Decrypting the Code
+
+Encryption is a common technique used to protect code by making it unreadable or non-executable directly. To bypass encryption, engineers follow a series of steps. Initially, they need to identify the encryption mechanisms in use. This often involves analyzing the binary to locate decryption routines and key management mechanisms. Common encryption techniques include symmetric algorithms, such as AES and DES, and asymmetric algorithms like RSA.
+
+The next step involves extracting encryption keys, which are often stored or generated at runtime. Engineers may use techniques such as memory dumps or tracking key generation functions to obtain these keys, which are essential for decrypting the code. During execution, encrypted code is decrypted and executed. Engineers utilize dynamic analysis techniques, such as debugging and execution flow monitoring, to capture the decrypted code at runtime. Tools like dynamic binary instrumentation, for example, DynamoRIO, can interface with decryption routines and record decrypted instructions.
+
+In some cases, engineers may need to reverse the encryption algorithm itself, especially if it is customized or obfuscated. This process involves understanding how the encryption transforms the code and applying the reverse process to recover the original instructions. Advanced techniques, such as environment emulation, allow engineers to simulate the execution environment to observe how the encrypted code is decrypted and executed.
+
+## Recognizing C Code
+
+Understanding C is crucial for reverse engineering because it is commonly used in operating systems, embedded software, and mission-critical applications. C provides direct control over memory management and pointers, making it essential for identifying and analyzing security vulnerabilities. A solid grasp of C helps in analyzing binaries and using debugging and disassembly tools effectively, allowing engineers to interpret machine code and detect potential vulnerabilities.
+
+In this context, recognizing C code involves identifying various C code constructs and their corresponding representations in compiled code. This guide details how to recognize and understand these constructs by comparing C code with its compiled assembly language output. Depending on the compiler, the assembly language generated may vary slightly, but its overall structure and operations will remain similar.
+
+### Variables
+
+Variables in C are named storage locations in memory that hold data. They are declared with a specific data type, such as `int`, `float`, `char`, etc. They can be global, local, static, or automatic, depending on their scope and lifetime.
+
+#### Syntax:
+
+```c
+type variableName;
+```
+
+#### Example:
+
+```c
+int a = 10;
+float b = 20.5;
+char c = 'A';
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov dword [ebp-4], 10    ; int a = 10
+fld dword [ebp-8], 20.5  ; float b = 20.5
+mov byte [ebp-9], 'A'    ; char c = 'A'
+```
+
+### Arithmetic
+
+Arithmetic operations in C involve using operators to perform mathematical calculations. These operations follow a hierarchy of precedence, similar to standard mathematical rules.
+
+#### Operators:
+
+- Addition: `+`
+- Subtraction: `-`
+- Multiplication: `*`
+- Division: `/`
+- Modulus: `%`
+
+#### Example:
+
+```c
+int a = 5;
+int b = 10;
+int sum = a + b; // sum = 15
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov eax, [ebp-4]      ; load value of a
+add eax, [ebp-8]      ; add value of b
+mov [ebp-12], eax     ; store result in sum
+```
+
+### If Statement
+
+The `if` statement is a control structure that executes a block of code based on a condition. It can be extended with `else if` and `else` for multiple conditions.
+
+#### Syntax:
+
+```c
+if (condition) {
+    // code to be executed if condition is true
+}
+```
+
+#### Example:
+
+```c
+int a = 5;
+if (a > 0) {
+    printf("a is positive");
+}
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov eax, [ebp-4]         ; load a
+cmp eax, 0               ; compare a with 0
+jle .L1                  ; jump if a <= 0
+push offset msg          ; push message onto the stack
+call printf              ; call printf
+.L1:
+```
+
+### Loops
+
+Loops are used to execute a block of code repeatedly until a specified condition is met. They are essential for tasks that require repetition.
+
+#### Types of Loops:
+
+- **For Loop:** Executes a block of code a specific number of times.
+
+    ```c
+    for (int i = 0; i < 10; i++) {
+        printf("%d\n", i);
+    }
+    ```
+
+- **While Loop:** Executes a block of code as long as a condition is true.
+
+    ```c
+    int i = 0;
+    while (i < 10) {
+        printf("%d\n", i);
+        i++;
+    }
+    ```
+
+- **Do-While Loop:** Executes a block of code at least once, then repeats as long as a condition is true.
+
+    ```c
+    int i = 0;
+    do {
+        printf("%d\n", i);
+        i++;
+    } while (i < 10);
+    ```
+
+#### Compiled Code Equivalent (For Loop):
+
+```asm
+mov dword [ebp-4], 0        ; initialize i = 0
+.L1:
+cmp dword [ebp-4], 10       ; compare i with 10
+jge .L2                     ; jump if i >= 10
+push dword [ebp-4]          ; push i to stack
+call printf                 ; call printf
+add dword [ebp-4], 1        ; increment i
+jmp .L1                     ; jump to start of loop
+.L2:
+```
+
+### Function Call
+
+A function call invokes a function to perform a specific task. It can return values and take parameters to operate on.
+
+#### Syntax:
+
+```c
+functionName(arguments);
+```
+
+#### Example:
+
+```c
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int result = add(5, 10);
+    printf("%d", result); // Output: 15
+    return 0;
+}
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+push 5                 ; push argument a
+push 10                ; push argument b
+call add               ; call the add function
+add esp, 8             ; clean the stack
+mov eax, [ebp-12]      ; store result in eax
+push eax               ; push result to printf
+call printf            ; call printf
+```
+
+### Switch
+
+The `switch` statement is used to execute one block of code among many based on the value of a variable. It is an alternative to multiple `if-else` statements.
+
+#### Syntax:
+
+```c
+switch(expression) {
+    case value1:
+        // code to be executed if expression == value1
+        break;
+    case value2:
+        // code to be executed if expression == value2
+        break;
+    default:
+        // code to be executed if expression doesn't match any case
+}
+```
+
+#### Example:
+
+```c
+int day = 3;
+switch(day) {
+    case 1:
+        printf("Monday");
+        break;
+    case 2:
+        printf("Tuesday");
+        break;
+    case 3:
+        printf("Wednesday");
+        break;
+    default:
+        printf("Invalid day");
+}
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov eax, [ebp-4]           ; load value of day
+cmp eax, 1                 ; compare day with 1
+je .L1                     ; jump to case 1 if equal
+cmp eax, 2                 ; compare day with 2
+je .L2                     ; jump to case 2 if equal
+cmp eax, 3                 ; compare day with 3
+je .L3                     ; jump to case 3 if equal
+jmp .Ldefault              ; jump to default if no match
+.L1:
+push offset msg1           ; push "Monday"
+call printf                ; call printf
+jmp .Lend
+.L2:
+push offset msg2           ; push "Tuesday"
+call printf                ; call printf
+jmp .Lend
+.L3:
+push offset msg3           ; push "Wednesday"
+call printf
+.Ldefault:
+push offset msgdefault     ; push "Invalid day"
+call printf
+.Lend:
+```
+
+### Arrays
+
+An array is a collection of elements of the same type stored in contiguous memory locations. They allow efficient storage and access of multiple values using indices.
+
+#### Syntax:
+
+```c
+type arrayName[size];
+```
+
+#### Example:
+
+```c
+int numbers[5] = {1, 2, 3, 4, 5};
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov dword [ebp-20], 1       ; numbers[0] = 1
+mov dword [ebp-16], 2       ; numbers[1] = 2
+mov dword [ebp-12], 3       ; numbers[2] = 3
+mov dword [ebp-8],  4       ; numbers[3] = 4
+mov dword [ebp-4],  5       ; numbers[4] = 5
+```
+
+### Structs
+
+A `struct` is a user-defined data type that groups related variables of different types. They are used to create complex data types that represent real-world entities.
+
+#### Syntax:
+
+```c
+struct StructName {
+    type1 member1;
+    type2 member2;
+    // more members
+};
+```
+
+#### Example:
+
+```c
+struct Person {
+    char name[50];
+    int age;
+};
+
+struct Person person1;
+person1.age = 30;
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov dword [ebp-56], 30  ; person1.age = 30
+```
+
+### Linked List
+
+A linked list is a data structure consisting of nodes, where each node contains data and a pointer to the next node. It allows dynamic memory allocation and efficient insertion/deletion of elements.
+
+#### Node Definition:
+
+```c
+struct Node {
+    int data;
+    struct Node* next;
+};
+```
+
+#### Example:
+
+```c
+struct Node* head = NULL;
+struct Node* second = NULL;
+struct Node* third = NULL;
+
+head = (struct Node*)malloc(sizeof(struct Node));
+second = (struct Node*)malloc(sizeof(struct Node));
+third = (struct Node*)malloc(sizeof(struct Node));
+
+head->data = 1;
+head->next = second;
+
+second->data = 2;
+second->next = third;
+
+third->data = 3;
+third->next = NULL;
+```
+
+#### Compiled Code Equivalent:
+
+```asm
+mov dword [ebp-8], 1         ; node1->data = 1
+mov dword [ebp-12], [
+
+ebp-8]  ; node1->next = node2
+```
+
+## Resources
+
+- [Introduction to Disassembling and Decompiling](https://www.scip.ch/en/?labs.20211202)
+- [Interactive Disassembler - IDA Pro](https://www.socinvestigation.com/the-interactive-disassembler-ida-pro/https://www.socinvestigation.com/the-interactive-disassembler-ida-pro/)
+- [Introduction to C](https://www.w3schools.com/c/c_intro.php)

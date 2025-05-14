@@ -1,0 +1,54 @@
+slug: static-code-analysis-cbl
+title: Static Code Analysis
+duration: 1 day
+kind: course
+notes: 
+  content: Static_Code_Analysis_solution.mdx
+  resources:
+    - target: application_TA.zip
+      title: application_TA.zip
+    - target: solution.zip
+      title: solution.zip
+children:
+  - content: 01-static-analysis-intro.mdx
+    duration: 50
+    resources: null
+    slug: static-analysis-intro-cbl
+    title: Static Analysis Intro
+    type: lecture
+  - content: 02-static-analysis-methodology.mdx
+    duration: 50
+    resources:
+      - target: ShowAST.ipynb
+        title: ShowAST.ipynb
+      - target: lintme.py
+        title: lintme.py
+    slug: static-analysis-methodology-cbl
+    title: Static Analysis Methodology
+    type: lecture
+  - content: 03-static-analysis-tools.mdx
+    duration: 50
+    resources: null
+    slug: static-analysis-tools-cbl
+    title: Static Analysis Tools
+    type: lecture
+  - content: 04-sonarqube-demo.mdx
+    duration: 50
+    resources:
+      - target: bad_code.php
+        title: bad_code.php
+      - target: good_code.php
+        title: good_code.php
+      - target: index.php
+        title: index.php
+    slug: sonarqube-demo-cbl
+    title: SonarQube Demo
+    type: lecture
+  - content: 01-c-application-static-analysis.mdx
+    duration: 210
+    resources:
+      - target: application.zip
+        title: application.zip
+    slug: code-review-mission-for-ibc-cbl
+    title: Code Review Mission for IBC
+    type: project

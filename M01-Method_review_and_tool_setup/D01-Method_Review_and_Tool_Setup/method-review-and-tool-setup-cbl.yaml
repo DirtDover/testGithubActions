@@ -1,0 +1,50 @@
+slug: method-review-and-tool-setup-cbl
+title: Method Review and Tool Setup
+duration: 1 day
+kind: course
+notes: 
+  content: 01-brief-corellia-teacher-notes.mdx
+  resources: null
+children:
+  - content: 01-How_To_Learn_Cyber.mdx
+    duration: 10
+    resources: null
+    slug: how-to-learn-cyber-cbl
+    title: How To Learn Cyber
+    type: lecture
+  - content: 02-Learning_objectives.mdx
+    duration: 50
+    resources: null
+    slug: learning-objectives-cbl
+    title: Learning Objectives 🥅
+    type: lecture
+  - content: 03-Engagements.mdx
+    duration: 60
+    resources: null
+    slug: engagements-cbl
+    title: Engagements
+    type: lecture
+  - content: 04-Best_Practices_for_Writing_a_Report.mdx
+    duration: 90
+    resources: null
+    slug: best-practices-for-writing-a-report-cbl
+    title: Best Practices for Writing a Report ✍️
+    type: lecture
+  - content: 02-Crafting_a_report.mdx
+    duration: 200
+    resources:
+      - target: SECUREBANK_Audit.zip
+        title: SECUREBANK_Audit.zip
+      - target: Template.docx
+        title: Template.docx
+      - target: vulnerabilities.yml
+        title: vulnerabilities.yml
+    slug: crafting-a-report-cbl
+    title: Let's Craft a Report!
+    type: exercice
+  - content: 01-brief-corellia.mdx
+    duration: 10
+    resources: null
+    slug: brief-corellia-cbl
+    title: Welcome to Corellia - Cybersecurity Consulting
+    type: project

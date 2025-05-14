@@ -1,0 +1,34 @@
+{
+  "name": "notebooktomdx",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "CLI to convert Jupyter Notebooks into MDX files.",
+  "main": "./bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jupyter",
+    "notebook",
+    "ipython",
+    "MDX"
+  ],
+  "author": "Alain Demenet <alain@jedha.com>",
+  "license": "MIT",
+  "bin": {
+    "notebooktomdx": "./bin/index.js"
+  },
+  "dependencies": {
+    "htmltojsx": "^0.3.0",
+    "nanoid": "^3.1.22",
+    "prettier": "^3.1.1",
+    "prompt-sync": "^4.2.0",
+    "remark": "^15.0.1",
+    "remark-math": "^6.0.0",
+    "remark-mdx": "^3.0.0",
+    "unified": "^11.0.4",
+    "unist-util-visit": "^5.0.0",
+    "vfile-reporter": "^8.1.0",
+    "yargs": "^16.2.0"
+  }
+}

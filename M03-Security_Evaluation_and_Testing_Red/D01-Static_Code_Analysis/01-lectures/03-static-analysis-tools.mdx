@@ -1,0 +1,220 @@
+# SAST Tools
+
+## What you will learn in this course 🧐🧐
+
+- Discover the different SAST tools available
+- How to choose the right SAST tool for your project
+- How to configure a SAST tool
+
+Let's now look at existing solutions for implementing SAST. There are plenty. We won't list all the tools here, just a few that are often used or mentioned.
+
+If you want to explore more, here are some lists we found useful:
+
+- [A great list](https://github.com/analysis-tools-dev/static-analysis) updated with many languages
+- [The OWASP list](https://owasp.org/www-community/Source_Code_Analysis_Tools)
+- [The Wikipedia list](https://en.wikipedia.org/wiki/List_of_tools_for_static_code_analysis)
+- An [Awesome list](https://github.com/Awesome-Library/awesome-static-analysis) with several open-source tools
+
+## Different SAST solutions
+
+While there are many proprietary, often heavy and paid solutions like [Checkmarx](https://checkmarx.com/), there are also numerous open-source, ready-to-use solutions with reasonable execution times. [SonarQube](https://www.sonarsource.com/products/sonarqube/) and [Semgrep](https://semgrep.dev/) are notable example.
+
+Other solutions integrate directly with platforms like GitHub with [CodeQL](https://codeql.github.com/).
+
+Some well-known open-source tools include: [find-sec-bugs](https://find-sec-bugs.github.io/) (Java), [bandit](https://github.com/PyCQA/bandit) (Python), [brakeman](https://brakemanscanner.org/) (Ruby), [ESLint security plugin](https://github.com/nodesecurity/eslint-plugin-security) (JavaScript), [MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF) (Android) and [checkov](https://github.com/bridgecrewio/checkov) (this one is for Infrastructure as Code).
+
+Note that even though we focus only on SAST in this course for brevity, you can always complement your SAST with an SCA tool like [audit-ci](https://www.npmjs.com/package/audit-ci) (JavaScript), [DependencyCheck](https://github.com/jeremylong/DependencyCheck) (Java), or [Trivy](https://github.com/aquasecurity/trivy) (Docker). It's not mandatory, but consider yourself warned 😛!
+
+Here are some suggestions for SAST tools by language:
+
+### Multi-language Tools
+
+- [SonarQube](https://www.sonarsource.com/products/sonarqube/) - Supports 29+ languages including Java, C/C++, JavaScript, Python, C#.
+- [PMD](https://pmd.github.io/) - Analyzes Java, JavaScript, Salesforce Apex, PLSQL, XML, and more.
+- [Semgrep](https://semgrep.dev/) - Supports many languages including Python, Java, Go, JavaScript, C, and more.
+
+### Java
+
+- [SpotBugs](https://spotbugs.github.io/) - Detects bug patterns in Java code.
+- [Checkstyle](https://checkstyle.sourceforge.io/) - Checks Java code for adherence to a coding standard.
+- [FindBugs](https://findbugs.sourceforge.net/) - Looks for bugs in Java code.
+
+### C/C++
+
+- [Clang Static Analyzer](https://clang-analyzer.llvm.org/) - For C, C++, and Objective-C.
+- [Cppcheck](http://cppcheck.sourceforge.net/) - Detects bugs and focuses on undefined behavior in C/C++.
+- [Flawfinder](https://dwheeler.com/flawfinder/) - Examines C/C++ source code for security flaws.
+
+### JavaScript
+
+- [ESLint](https://eslint.org/) - Linter for JavaScript and TypeScript.
+- [JSHint](https://jshint.com/) - A community-driven fork of JSLint.
+- [Google's Closure Compiler](https://developers.google.com/closure/compiler) - JavaScript optimizer and checker.
+
+### Python
+
+- [Pylint](https://pylint.pycqa.org/en/latest/) - Checks for coding standards and error detection in Python.
+- [Bandit](https://bandit.readthedocs.io/en/latest/) - Finds common security issues in Python code.
+- [Mypy](http://mypy-lang.org/) - Optional static typing for Python.
+
+### Ruby
+
+- [RuboCop](https://rubocop.org/) - A Ruby static code analyzer and formatter.
+- [Brakeman](https://brakemanscanner.org/) - Security vulnerability scanner for Ruby on Rails applications.
+
+### PHP
+
+- [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) - Detects violations of a defined coding standard in PHP.
+
+### Go
+
+- [Staticcheck](https://staticcheck.dev/) - Linter for Go.
+
+## How to Choose the right SAST?
+
+The [OWASP](https://owasp.org/www-community/Source_Code_Analysis_Tools) recommends prioritising these criteria:
+
+- Compatibility with the language(s) and framework(s) you use
+- Coverage of the OWASP top 10
+- Rate of false positives and false negatives
+- Integration with the IDE
+- Ease of configuration and use
+- Ability to integrate into your CI
+- Usage conditions (licence)
+
+These criteria are good and help narrow down the extensive lists of SAST tools you can find above.
+
+## Configuration
+
+Most tools come with sets of pre-written, ready-to-use rules. However, be cautious because these rules are generic and may not fit your needs, potentially generating more false positives.
+
+Moreover, poorly adapted rules might hinder the tool's adoption by development teams who will have to adjust the code based on the SAST feedback. At best, this can slow them down, or worse, they might start ignoring warnings if they find them too difficult to manage.
+
+How do you choose these rules? You can't just invent them. Often, these rules come from a document called the "Secure Coding Policy." This could be a PDF, a wiki, or any other format that defines the technical choices for securing the application as well as necessary compromises (in terms of security, feasibility, performance, and compatibility). The SAST will help ensure compliance with this policy.
+
+Configuring a SAST usually happens iteratively in communication with the teams using it (developers, DevOps, you). This helps find a balance, the sweet spot, for everyone to ensure its broad adoption.
+
+Here are some general tips to keep in mind for configuration:
+
+- Set thresholds correctly: Most of the time, you can configure the analysis rules and their severity thresholds. Start with the vulnerabilities that seem critical to you and refine gradually.
+- Prioritise the results: Interpreting the results is crucial. The goal here is to group and filter the results to ensure you work on critical true positives.
+
+Different tools have different ways of being configured. For example, with Semgrep, you just create a YAML file to define completely custom rules:
+
+```yaml
+rules:
+  - id: assigned-undefined
+    languages:
+      - javascript
+      - typescript
+    message:
+      '`undefined` is not a reserved keyword in Javascript, so this is "valid" Javascript but highly confusing and likely
+      to result in bugs.'
+    pattern-either:
+      - pattern: undefined = $X;
+      - pattern: var undefined = $X;
+      - pattern: let undefined = $X;
+      - pattern: const undefined = $X;
+    severity: WARNING
+    metadata:
+      category: best-practice
+      technology:
+        - javascript
+```
+
+In this example, we defined a warning rule to prevent using the `undefined` keyword as a variable name. This creates confusion because `undefined` is a reserved keyword in JavaScript. You can test your rules directly in the [Semgrep playground](https://semgrep.dev/playground/new). You can find more rules for various languages [at this link](https://github.com/semgrep/semgrep-rules) (where the above example comes from).
+
+Similarly, SonarQube allows us to configure precise rules for Java, PHP, C#, and Python. This time, it's in the form of JSON.
+
+```json
+{
+  "S3649": {
+    "sources": [
+      {
+        "methodId": "my.namespace.ServerRequest.get_query"
+      }
+    ],
+    "sanitizers": [
+      {
+        "methodId": "str_replace",
+        "args": [1]
+      }
+    ],
+    "validators": [
+      {
+        "methodId": "my.namespace.regex.matches",
+        "args": [1]
+      }
+    ],
+    "passthroughs": [
+      {
+        "methodId": "my.namespace.RawUrl",
+        "isWhitelist": true,
+        "args": [1]
+      }
+    ],
+    "sinks": [
+      {
+        "methodId": "mysql_query",
+        "args": [1]
+      },
+      {
+        "methodId": "my.namespace.SqlStatement.execute",
+        "isMethodPrefix": true,
+        "args": [0, 1]
+      },
+      {
+        "methodId": "my.namespace.SqlStatement.run",
+        "interval": {
+          "fromIndex": 1
+        }
+      }
+    ]
+  },
+  "S5131": {
+    "sources": [
+      {
+        "methodId": "my.namespace.ServerRequest.get_query_string"
+      }
+    ],
+    "sinks": [
+      {
+        "methodId": "my.namespace.Server.write(",
+        "isMethodPrefix": true,
+        "interval": {
+          "fromIndex": 1
+        }
+      }
+    ]
+  },
+  "common": {
+    "sources": [
+      {
+        "methodId": "my.namespace.Input.get_input"
+      }
+    ]
+  }
+}
+```
+
+Here we define rules to detect vulnerabilities related to SQL injections and XSS (Cross-Site Scripting) in the source code:
+
+- Rule `S3649` is designed to detect SQL injection vulnerabilities. It has several subsections:
+
+  - `sources` define the methods that retrieve potentially unsafe input data. In this example, the method `my.namespace.ServerRequest.get_query` is considered a source.
+  - `sanitizers` are methods that clean the input data to make it safe. Here, the method `str_replace` is considered a sanitizer.
+  - `validators` are methods that validate the input data against a certain pattern or regular expression. The method `my.namespace.regex.matches` is defined as a validator.
+  - `passthroughs` are methods that transmit input data without modifying it. The method `my.namespace.RawUrl` is defined as a passthrough with the `isWhitelist` option set to true, meaning it is considered safe.
+  - `sinks` are methods that execute SQL queries with the input data. Here, the methods `mysql_query`, `my.namespace.SqlStatement.execute`, and `my.namespace.SqlStatement.run` are defined as sinks.
+
+- Rule `S5131` is designed to detect XSS vulnerabilities. It also has several similar subsections for you to interpret.
+
+<Note type="hint" title="What is isMethodPrefix?">
+
+The method `my.namespace.Server.write(` is defined as a sink with the `isMethodPrefix` option set to true, meaning all methods starting with `my.namespace.Server.write(` are considered sinks.
+
+</Note>
+
+- The `common` section defines a common source for all rules. The method `my.namespace.Input.get_input` is defined as a source.
+
+A bit more verbose than before, but it has its fans!

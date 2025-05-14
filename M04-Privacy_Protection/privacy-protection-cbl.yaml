@@ -1,0 +1,9 @@
+slug: privacy-protection-cbl
+title: Privacy Protection
+duration: 3 days
+halfDays: 6
+kind: track
+children:
+  - fundamentals-of-data-protection-cbl
+  - data-protection-impact-assessment-dpia-cbl
+  - privacy-consulting-strategies-cbl

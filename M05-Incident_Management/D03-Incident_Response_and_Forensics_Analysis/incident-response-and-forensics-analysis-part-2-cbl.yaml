@@ -1,0 +1,47 @@
+slug: incident-response-and-forensics-analysis-part-2-cbl
+title: Incident Response and Forensics Analysis
+duration: 1 day
+kind: course
+children:
+  - content: L01_Linux_Artifacts.mdx
+    duration: 45
+    resources: null
+    slug: linux-artifacts-cbl
+    title: Linux Artifacts
+    type: lecture
+  - content: L02_Timeline_Analysis.mdx
+    duration: 45
+    resources: null
+    slug: timeline-analysis-cbl
+    title: Timeline Analysis
+    type: lecture
+  - content: L03_Data_Hiding.mdx
+    duration: 45
+    resources: null
+    slug: data-hiding-cbl
+    title: Data Hiding
+    type: lecture
+  - content: L04_Report_Writing.mdx
+    duration: 45
+    resources: null
+    slug: incident-response-report-writing-cbl
+    title: Report Writing
+    type: lecture
+  - content: L05_Demo_of_SIFT.mdx
+    duration: 45
+    resources: null
+    slug: demo-of-sift-cbl
+    title: Demo of SIFT
+    type: lecture
+  - content: 01-Data_Loss_incident_response.mdx
+    duration: 210
+    resources:
+      - target: cfreds_2015_data_leakage_pc.7z.001
+        title: cfreds_2015_data_leakage_pc.7z.001
+      - target: cfreds_2015_data_leakage_pc.7z.002
+        title: cfreds_2015_data_leakage_pc.7z.002
+      - target: cfreds_2015_data_leakage_pc.7z.003
+        title: cfreds_2015_data_leakage_pc.7z.003
+    slug: data-loss-incident-response-cbl
+    title: Data Loss Incident Response
+    type: project

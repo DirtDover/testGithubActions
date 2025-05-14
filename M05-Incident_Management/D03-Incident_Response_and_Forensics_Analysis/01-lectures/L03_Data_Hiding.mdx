@@ -1,0 +1,252 @@
+# Data Hiding
+
+To hide data on a Windows or Linux system, several techniques can be used. These techniques can be classified into three main categories: OS-based, partitions, and bad clusters. Here's a detailed explanation of each method and how they can be detected in forensic analysis.
+
+## OS-Based Techniques
+
+### Alternate Data Streams (ADS)
+
+ADS (only available on Windows) is an NTFS file system feature that allows storing additional data in a file without affecting its main visible content. A file can have multiple data streams, with the primary stream being the visible content and alternate streams potentially containing hidden data. By default, all data is stored in a file's main unnamed data stream, but by using the syntax `file:stream`, you can read and write to alternate streams.
+
+**Creating an ADS**:
+
+```shell
+echo "Secret Data" > file.txt:secret.txt
+```
+
+**Reading an ADS**:
+
+```shell
+more < file.txt:secret.txt
+```
+
+**Detecting ADS**:
+
+Use tools like [streams.exe](https://learn.microsoft.com/en-us/sysinternals/downloads/streams) from [SysInternals](https://learn.microsoft.com/en-us/sysinternals/), which examine the files and directories you specify and inform you of the name and sizes of any named streams it encounters within those files.
+
+```shell
+streams.exe -s C:\path\to\file
+```
+
+Or PowerShell:
+
+```shell
+Get-Item -Path C:\path\to\file -Stream *
+```
+
+### Hidden File Attributes
+
+Files and folders can be made invisible by setting the "hidden" attribute. Here's how it works:
+
+1. **Changing attributes to hide a file**:
+
+To hide a file or folder on Windows, use the `attrib` command:
+
+```shell
+attrib +h C:\path\to\file_or_folder
+```
+
+`+h`: Adds the hidden attribute to the specified file or folder.
+
+- **Detecting hidden files**:
+
+To list hidden files and folders in a directory via the command line, use:
+
+```shell
+dir /a:h C:\path\to\folder
+```
+
+`/a:h`: Displays only files and folders with the hidden attribute.
+
+On Linux, simply rename files to start with a dot (.), making them invisible by default.
+
+```shell
+mv visible.txt .hidden.txt
+```
+
+You can then detect them easily with `find` or `ls` to display all files, including hidden ones.
+
+```shell
+find / -name ".*" -type f
+ls -a
+```
+
+### Preserving Data Integrity
+
+In forensic analysis, it's crucial to maintain the current state of the entire system and each file. Therefore, we can use the immutable attribute to lock any file. An "immutable" attribute on Linux prevents any modifications to the file. When set, the file cannot be:
+
+- Modified
+- Deleted
+- Renamed
+- Linked to
+
+Even the root user cannot perform these actions while the immutable attribute is set. This attribute is especially useful for protecting critical system files from accidental or malicious changes.
+
+#### Setting the Immutable Attribute
+
+To set the immutable attribute on a file or directory, use the `chattr` command with the `+i` option:
+
+```shell
+sudo chattr +i /path/to/file
+```
+
+#### Removing the Immutable Attribute
+
+To remove the immutable attribute, use the `chattr` command with the `-i` option:
+
+```shell
+sudo chattr -i /path/to/file
+```
+
+#### Checking the Immutable Attribute
+
+To check if a file or directory has the immutable attribute set, use the `lsattr` command:
+
+```shell
+lsattr /path/to/file
+```
+
+The output of `lsattr` will include an "i" in the attribute list if the immutable attribute is set.
+
+## Disk
+
+### Obscuring Entire Partitions
+
+This technique involves creating a hidden partition on a hard drive, making the data invisible to standard forensic tools. Hidden partitions are not listed in the main partition table and require specialized tools for detection.
+
+Our goal here is to detect these methods to find potential traces that could help in incident response.
+
+- **Disk space analysis**: Use tools like `fdisk`, `gparted`, or `parted` to examine disk space and spot inconsistencies in the total disk size.
+
+```bash
+sudo fdisk -l
+```
+
+- **Searching for unmounted partitions**: Tools like `TestDisk` can help discover and recover hidden partitions.
+
+```bash
+sudo testdisk
+```
+
+- **Analyzing partition signatures**: Examine partition signatures with hex editors to identify unlisted partitions.
+
+```bash
+sudo hexedit /dev/sdX
+```
+
+### Unallocated Space
+
+Data can be hidden in the unallocated space of a hard drive, i.e., sectors not assigned to a specific partition or file. This space can contain fragments of deleted files or intentionally placed data.
+
+As previously mentioned, it's impossible to detect this manually. Specialized tools are required.
+
+### Searching for Specific Patterns
+
+Searching for specific patterns in unallocated space involves analyzing the raw data of a hard drive to identify byte sequences characteristic of certain types of files or data. This method is often used when important data is suspected to have been deleted or hidden in the unallocated areas of the disk.
+
+#### Using Hex Editors
+
+Hex editors allow viewing and modifying raw data on a disk or in a file. They are especially useful for searching specific patterns by examining data byte by byte.
+
+`xxd` is a command-line utility that creates a hex dump of a file or device, allowing raw data to be viewed. We can use it with this command to display the hex content of the disk from a specified offset.
+
+```bash
+sudo xxd -s <offset> /dev/sdX
+```
+
+#### File Carving
+
+**File carving** is a technique used in forensics and data recovery to extract files from storage media, even in the absence of file system metadata. Here's a detailed explanation of this technique.
+
+File carving reconstructs files by analyzing the raw data of a hard drive or other storage media. This method is especially useful when file systems are damaged, corrupted, or missing. It relies on identifying file signatures, such as headers and footers, to determine the beginnings and ends of files.
+
+We can perform this carving in various ways:
+
+- **Header and Footer Based Carving**
+
+This method identifies files based on their headers (start of the file) and footers (end of the file). For example, a JPEG file starts with a specific signature (header) and ends with another specific signature (footer).
+
+- **Example Signature for JPEG**:
+
+    - Header: `0xFFD8`
+    - Footer: `0xFFD9`
+
+- **Raw Content Based Carving**
+
+This method analyzes the raw content of the data to identify patterns or structures specific to files. It is used when files do not have clear signatures or when headers and footers are missing.
+
+```bash
+sudo foremost -i /dev/sdX -o /output/directory
+```
+
+### Hiding Data in HPA
+
+The Host Protected Area (HPA) is a reserved area on a hard drive, invisible to the operating system. Rootkits and other malware can write data to HPA, making it difficult for antivirus tools and the operating system to detect. Detecting and analyzing these protected areas is crucial in forensic investigations to uncover hidden data.
+
+#### Checking Disk Parameters
+
+To detect anomalies, compare the disk parameters reported by the BIOS with those detected by the operating system. Differences can indicate the presence of an HPA or a hidden area.
+
+The `hdparm` tool is particularly useful for this task. Here's how to use it to check disk parameters:
+
+```bash
+sudo hdparm -N /dev/sdX
+```
+
+This command queries the disk to obtain the current visible size, which can be compared to the actual size of the disk. A difference may indicate the existence of an HPA.
+
+#### Analyzing Disk Configuration
+
+For further analysis and manipulation of protected areas on the disk, `hdparm` offers other advanced options like `--dco-identify`, which identifies the Device Configuration Overlay (DCO) configuration of the disk.
+
+```bash
+sudo hdparm --dco-identify /dev/sdX
+```
+
+### **Bad Clusters**
+
+Bad clusters are portions of the hard drive marked as unusable by the operating system. However, malicious individuals can exploit these clusters to hide data, as they are generally ignored during standard read/write operations. Clusters can be intentionally marked as bad to exclude them from normal use and hide data. This makes the data difficult to detect by conventional means.
+
+#### **Detecting Bad Clusters**
+
+To identify bad clusters, you can use the following tools:
+
+On Windows:
+
+```shell
+chkdsk C: /r /v
+CHKDSK is verifying files (stage 1 of 5)...
+  123456 file records processed.
+File verification completed.
+CHKDSK is verifying indexes (stage 2 of 5)...
+  654321 index entries processed.
+Index verification completed.
+CHKDSK is verifying security descriptors (stage 3 of 5)...
+  78910 security descriptors processed.
+CHKDSK is verifying file data (stage 4 of 5)...
+Windows has scanned the file system and found no problems.
+No further action is required.
+
+   20971520 KB total disk space.
+   10485760 KB in 12345 files.
+       512 KB in 789 indexes.
+         0 KB in bad sectors.
+      2048 KB in use by the system.
+   10485760 KB available on disk.
+```
+
+This command checks the disk for bad sectors and attempts to recover readable data.
+
+On Linux:
+
+```shell
+sudo badblocks -v /dev/sda
+Checking for bad blocks in read-only mode
+From block 0 to 20971519
+Checking for bad blocks (
+```
+
+## Resources
+
+- [Introduction to Hiding & Finding data in linux](https://www.giac.org/paper/gsec/3133/introduction-hiding-finding-data-linux/105105)
+- [AntiForensic how to defend against it](https://www.itgovernance.eu/blog/en/anti-forensics-what-it-is-examples-and-how-to-defend-against-it)

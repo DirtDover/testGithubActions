@@ -1,0 +1,249 @@
+# TA Brief: Privacy Diagnostic (Day 1)
+
+**Module:** Privacy Assessment  
+**Focus:** Conducting a Preliminary Privacy Diagnostic
+
+This brief guides you, the Teaching Assistant (TA), through the afternoon session in which students begin their Privacy Diagnostic of IBC. You’ll facilitate a role-play scenario where students simulate a consultant-client relationship, using course concepts to assess IBC’s privacy posture.
+
+## Overview and Objectives
+
+- **Scenario-Based Role-Play:**  
+  Students interact with you (TA) as if you were IBC’s DPO or Privacy Officer.  
+  They’ll ask for clarifications about data flows, consent mechanisms, retention policies, and compliance with GDPR.
+
+- **Leveraging Course Concepts:**  
+  Encourage them to reference the fundamental GDPR principles, data subject rights, Privacy by Design/Default, and relevant frameworks presented in the course.
+
+- **Preliminary Findings:**  
+  By session’s end, students produce initial data mapping and identify early compliance gaps.
+
+## Afternoon Schedule
+
+- **13:30 - 13:45: Introduction to the Scenario**
+
+  - Brief students on their consultant role.
+  - Introduce the mock documents (data flow map, partial policy excerpts).
+  - Explain that they can ask you targeted questions as if you are IBC’s DPO.
+
+- **13:45 - 15:30: Q&A**
+
+  - They ask you (TA) questions: “Do we have a retention schedule for HR data?”, “Where do we store customer emails?”, “How do we handle data subject requests?”
+  - TA Role: Provide consistent, scenario-based answers. If they ask for details about consent handling, respond as IBC staff would (maybe incomplete answers to show them gaps).
+
+- **15:30 - 15:40: Break**
+
+- **15:40 - 17:00: Regulatory Alignment & Initial Gap Notes**
+
+  - Students map data categories to GDPR principles and note where IBC may not comply. For instance, they might realize IBC collects more personal data than needed (data minimization breach) or lacks a clear consent mechanism (lawfulness issue).
+  - TA Role: Encourage them to be systematic. If they struggle, nudge them: “Have you considered how data subject rights apply to customer transaction logs?”
+
+- **17:00 - 17:30: Q&A, Group Discussion, and Feedback**
+
+  - Students share initial observations.
+  - TA Role: Provide general guidance, commend thorough mapping, and hint at areas they might have missed.
+
+- **17:30 - 17:45: Daily Recap and Closing**
+  - Summarize what was accomplished.
+  - Remind students that tomorrow they’ll dive deeper into specific gaps and propose potential solutions.
+
+## TA Responsibilities
+
+### During Document Review & Q&A
+
+- **Prompt Thorough Exploration:**
+  Encourage students to consider all principles: Are they thinking about purpose limitation, data minimization, accuracy, storage limitation, integrity/confidentiality, and accountability?
+
+- **Offer Relevant Clues:**
+  If they’re stuck, provide subtle hints. For example, if no mention of encryption is found in policies, mention vaguely that “IBC has some old servers without encryption,” prompting them to note a gap in integrity/confidentiality.
+
+### During Regulatory Alignment & Gap Notes
+
+- **Validate Their Reasoning:**
+  If they identify a data minimization issue, ask them what principle this relates to and how it impacts compliance. If they note missing user consent records, encourage mapping this to GDPR lawful bases.
+
+- **Encourage Specificity:**
+  If their notes are vague, push them for precise examples: “Which dataset lacks a retention policy, and why is that a problem under GDPR’s storage limitation principle?”
+
+## Common Issues & Solutions
+
+- **Students Overwhelmed by Regulations:**
+  Suggest they focus on one principle at a time. For instance, first ensure all data is collected lawfully, then check if it’s minimized, etc.
+
+- **Vague Findings:**
+  Prompt students to specify exactly what’s missing or what’s unclear—e.g., “Consent form for newsletter sign-ups not documented” rather than “consent unclear.”
+
+## Additional Tips
+
+- **Professional Mindset:**
+  Remind students that this scenario simulates real client consulting. Accuracy, clarity, and referencing regulations properly are all important.
+
+- **Time Management:**
+  If they dwell too long on one detail, encourage them to move on and complete a broad overview first.
+
+By facilitating this role-play and guiding students through the initial privacy diagnostic steps, you help them apply theoretical knowledge to a realistic scenario. Their preliminary findings today will form the basis for deeper privacy compliance analysis in subsequent sessions.
+
+---
+
+# TA Scenario Document for the Privacy Diagnostic Exercise (IBC)
+
+**Confidential: For TA Use Only**
+
+This document provides all the internal background information about IBC’s recruitment-related data handling practices and privacy posture. You, as the TA, will use these details to simulate IBC staff responses during the students’ privacy diagnostic role-play. Students should discover the gaps and propose improvements.
+
+## Company Context
+
+**Company Name:** International Banking Corporation (IBC)
+
+**Industry:** Banking & Financial Services  
+**Headquarters:** EU-based, subject to GDPR.  
+**Global Presence:** Multiple subsidiaries across Europe and some international offices.
+
+**Scale & Growth:**
+
+- Around 2,500 employees worldwide.
+- Recruiting approx. 300 new employees globally per year (including about 80 in the EU subsidiary).
+- Engaged in digital transformation projects, including a centralized recruitment platform.
+
+**Privacy Governance:**
+
+- A “Correspondant Informatique et Libertés” (CIL) was appointed in 2012 for the French subsidiary. No formal Data Protection Officer (DPO) appointed post-GDPR. The CIL’s role and responsibilities under GDPR have not been reassessed since 2018.
+
+## The Recruitment Process
+
+When a department needs a new hire, the hiring manager drafts a job description and submits it to HR. HR publishes the job opening through various channels and manages candidate data collection and selection.
+
+### Main Recruitment Channels
+
+1. **IBC’s Recruitment Portal (Global):**
+
+   - Hosted by a Canadian contractor.
+   - Integrated into IBC’s corporate website “Join Us” section.
+   - Central repository for all job postings globally.
+   - The entire global HR team (including EU and non-EU offices) can access the full candidate pool without restrictions.
+
+   **Candidate Experience on the Portal:**
+
+   - To apply, candidates must first create an account by providing:
+     - Mandatory: Name, Surname, Email, Password
+     - An information notice is present, briefly explaining data usage and a generic link for exercising rights.
+     - After registration, a confirmation email is sent.
+   - To apply for a specific job:
+     - Candidate must submit resume, cover letter.
+     - Fill a second form with mandatory fields: name, surname, date of birth, nationality, diplomas, education history, religion, disability status (yes/no), plus one optional free-text comment field.
+     - This form is identical for all countries, no localization of fields.
+
+   **Data Usage in the Portal:**
+
+   - HR regularly searches the candidate database to identify potential matches and checks candidates against internal employee records (to avoid conflicts).
+   - No contact is done directly through the portal’s messaging; HR contacts candidates via email or phone.
+   - Account inactivity policy: After 18 months of no login, the system emails the candidate asking if they want to keep the account. Without response, all associated data is deleted.
+   - HR knows the portal is in Canada but has no clarity on data storage location, encryption, or security measures. No known contract or DPA referencing GDPR compliance is documented.
+
+2. **External Recruitment Agencies / Headhunters:**
+
+   - Different agencies per country. Contracts exist but predate GDPR and haven’t been updated.
+   - Agencies send candidate resumes, cover letters by email to HR for relevant positions.
+   - If hired, the agency receives a success fee.
+   - HR has no visibility on how these agencies inform candidates about data processing or how they handle consent and retention.
+
+3. **Job Fairs & University Forums (Primarily for Junior Roles):**
+   - HR collects paper resumes and cover letters directly from candidates.
+   - After the fair, HR scans these documents and adds them to the internal HR shared folders for the candidate pool.
+   - No defined retention policy for these scanned documents. They remain indefinitely in a shared HR database.
+
+## Candidate Selection & Further Processing
+
+Once HR identifies a candidate (from any channel), they create a **personal file** in internal HR shared folders:
+
+- Initially includes resume, cover letter, and personal data collected.
+- HR contacts candidate via email/phone for:
+  - A first interview (online or phone).
+  - An English proficiency test administered by an external language testing service.
+  - A mandatory personality test provided by another external contractor.
+
+**Note:**
+
+- HR is unaware of any formal contracts with these external testing services referencing GDPR compliance or data protection guarantees.
+
+**Adding More Data to the Candidate File:**
+
+- HR updates the file with interview notes and test results.
+- Personality test raw answers are not kept, only the summarized result score is stored.
+- If candidate is rejected at this stage, HR informs them by email but **does not delete** their file from the system (it remains in HR folders).
+
+**Involving the Hiring Manager:**
+
+- If the profile seems suitable, HR emails the candidate file (resume, cover letter, forms, test results, notes) to the hiring manager.
+- The manager downloads these files onto their local computer to review.
+- If the manager wants to proceed, they contact the candidate directly for a second, in-person interview.
+- If after the second interview the candidate is rejected, HR sends a rejection email. The candidate file remains in the HR system.
+- If accepted, HR proceeds with hiring steps (not covered in detail here).
+
+## Other Observations
+
+- No known personal data breaches so far.
+- No Data Protection Impact Assessment (DPIA) has been performed for the recruitment process or the platform.
+- The recruitment processing activity was documented in a record of processing activities back in 2015. None of the current HR staff have reviewed it recently. They are not sure what’s included there.
+- No detailed data retention schedule:
+  - Old candidate files may remain indefinitely.
+  - No defined procedures for granting data subject rights (access, rectification, erasure) or verifying identity before processing these requests.
+- Internal training on privacy is minimal. The HR team is aware of GDPR but not fully versed in its practical implications.
+- Cookie usage on the recruitment portal and main website is minimal: a generic “By using this site you agree to cookies” statement. No granular opt-in/opt-out mechanism.
+
+## Potential Privacy Gaps to Anticipate
+
+1. **Consent & Transparency:**
+
+   - Pre-checked fields or unclear consent forms on the portal.
+   - Collecting sensitive data (religion, disability) without clear justification.
+   - Incomplete or generic privacy notice lacking detailed retention periods and rights explanation.
+
+2. **Data Minimization & Purpose Limitation:**
+
+   - Gathering unnecessary personal info (religion) for recruitment.
+   - Storing resumes indefinitely in shared folders (no retention schedule).
+
+3. **Vendor Management & Compliance:**
+
+   - Recruitment portal hosted in Canada, unclear DPA or SCC (Standard Contractual Clauses) for international data transfers.
+   - External test providers and agencies not vetted for GDPR compliance.
+
+4. **Data Subject Rights Handling:**
+
+   - No formal process for candidates to request access, rectification, or erasure.
+   - No standardized method to respond to inactivity or stale candidate profiles besides the 18-month inactivity rule on the portal.
+
+5. **Security & Accountability:**
+   - Lack of encryption or strict access control on HR shared folders.
+   - Managers downloading candidate files locally on their computers.
+   - No DPIA done, no updated record of processing activities.
+   - Unclear if a DPO or equivalent role is properly appointed post-GDPR.
+
+## TA Role-Play Guidelines
+
+When students ask specifics, respond as if you’re IBC’s HR or Privacy Officer:
+
+- On data retention: “We keep candidates’ data indefinitely in shared folders. We rely on the portal’s 18-month inactivity rule for portal users, but we have no similar process for scanned resumes from fairs or agency candidates.”
+- On consent forms or notices: “Candidates see a brief notice on the portal. We assume they consent by applying. We don’t have a separate consent form for sensitive data.”
+- On vendor compliance: “We assume vendors follow local laws. We haven’t updated contracts or requested GDPR compliance docs from them.”
+- On DPO or record of processing: “We had a CIL since 2012, but haven’t formally appointed a DPO since GDPR. We do have some old processing records from 2015, but haven’t reviewed or updated them.”
+
+By staying consistent with these details, you allow students to identify the gaps and propose recommendations in line with GDPR’s principles and privacy best practices.
+
+---
+
+# Solution: Privacy Diagnostic for IBC Bank
+
+Below is an action plan, tailored to the IBC banking sector scenario. It addresses identified gaps and suggests steps to align IBC’s recruitment process with GDPR and general privacy best practices.
+
+| Theme                                                               | Actions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Governance / Procedures / Policies**                              | - Appoint a Data Protection Officer (DPO) or reassess the role of the current "Correspondant Informatique et Libertés" to ensure a formal GDPR-compliant position.<br />- Update and formalize IBC’s privacy governance at Group and subsidiary levels, clarifying responsibilities for data protection in recruitment.<br />- Draft or update a comprehensive Data Protection Policy that includes recruitment-related data processing, referencing GDPR principles (lawfulness, fairness, transparency, purpose limitation, data minimization, accuracy, storage limitation, integrity/confidentiality, and accountability).                                                                                                                                                                                                                                                                                                                                                     |
+| **Training & Awareness**                                            | - Conduct GDPR-focused training sessions for HR staff, including practical guidance on data minimization, secure handling of candidate data, and responding to data subject requests.<br />- Develop tailored guidelines for hiring managers, emphasizing privacy-by-design, data retention, avoiding unnecessary data collection (such as sensitive fields like religion), and careful note-taking during interviews.<br />- Raise awareness among IT and managers about confidentiality obligations and the need for secure data sharing (especially when emailing candidate files).                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Record of Processing Activities & DPIAs**                         | - Review and update the record of processing activities to reflect the current recruitment process, data flows, categories of personal data, and retention periods.<br />- Define criteria to determine if a Data Protection Impact Assessment (DPIA) is required for certain recruitment activities (e.g., large-scale or sensitive data processing, personality tests).<br />- Develop and document a DPIA methodology and schedule a DPIA for the online recruitment platform and personality testing service as these might pose higher risks to candidate privacy.                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **Information, Consent & Data Subject Rights**                      | - Localize and customize data collection forms per country to ensure only necessary data fields are requested. Remove or make optional sensitive data fields (e.g., religion, disability) unless strictly justified and compliant with local laws.<br />- Enhance the information notice on the recruitment portal to clearly explain data collection purposes, data retention periods, and the rights of candidates (access, rectification, erasure, portability, objection). Include explicit references to GDPR and instructions on how to exercise these rights.<br />- Obtain explicit, unambiguous consent for non-essential data uses (e.g., using candidate data for future openings they didn’t apply to). Pre-checked boxes should be removed in favor of unselected boxes requiring positive action from candidates.<br />- Implement a straightforward process to handle data subject requests (DSRs) centrally, define internal SLAs, and train HR to respond promptly. |
+| **IS Security (Access Rights, Data Retention, Technical Measures)** | - Implement role-based access controls in the recruitment portal so that HR staff only access the candidate data necessary for their role. Limit global access to all candidate profiles.<br />- Define a clear retention schedule for candidate data in internal HR databases (e.g., maximum 2 years from last contact). Automate reminders for deletion and implement processes to confirm extended retention only with candidate consent.<br />- Ensure encryption at rest for sensitive data (resumes, cover letters, test results), especially in the shared HR folders and old archives. Consider pseudonymization for sensitive attributes.<br />- Regularly test data backups and ensure they are encrypted. Review security protocols for the old server hosting historical candidate data and enforce encryption and stricter access controls.                                                                                                                             |
+| **Third-Party Management**                                          | - Review and update contracts with the Canadian recruitment portal provider to include GDPR-compliant Data Processing Agreements (DPAs), clarify data storage location, implement SCCs if needed, and request documentation on their GDPR compliance measures.<br />- Establish DPAs with external English test and personality test providers. Ensure these vendors adhere to GDPR principles, provide information on their data security measures, and commit to retention limitations.<br />- Update contracts with external recruitment agencies (headhunters) to include GDPR clauses, ensuring they provide proper information to candidates, collect consent where required, and respect data minimization and retention policies.                                                                                                                                                                                                                                          |
+| **Data Breach Management & Incident Response**                      | - Define a robust data breach response procedure, including immediate notification of the DPO, documenting the incident, assessing risk to data subjects, and notifying supervisory authorities (e.g., CNIL) within 72 hours if required.<br />- Communicate this procedure to all HR staff and managers, conduct a short training on how to recognize and escalate potential breaches.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+
+This action plan ensures IBC’s recruitment process becomes fully compliant with GDPR and other relevant data protection standards. By implementing these steps, IBC will strengthen its data handling practices, reinforce candidates’ trust, and establish a privacy-first culture.

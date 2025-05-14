@@ -1,0 +1,456 @@
+# Data Hiding
+
+To hide data on a Windows or Linux system, several techniques can be used. These techniques can be classified into three main categories: OS-based, partitions, and bad clusters. Here's a detailed explanation of each method and how they can be detected in forensic analysis.
+
+# Data Hiding
+
+To hide data on a Windows or Linux system, several techniques can be employed. These techniques can be broadly classified into three categories: OS-based, partitions, and bad clusters. Below is a detailed explanation of each method, how they work, and how they can be detected in forensic analysis.
+
+## OS-Based Techniques
+
+### Alternate Data Streams (ADS)
+
+![ADS](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D03-Incident_Response_and_Forensics_Analysis/01-lectures/ADS.png)
+
+**(Windows Only)**: ADS is an NTFS feature that allows storing additional data within a file, without affecting its visible content. This creates a hidden "stream" of data that forensic tools may miss during superficial scans. ADS is particularly useful for hiding small pieces of information inside files without altering their main content.
+
+- **Creating an ADS**:
+
+```bash
+echo "Secret Data" > file.txt:secret.txt
+```
+
+This command creates a hidden stream named `secret.txt` inside `file.txt`.
+
+- **Reading ADS**:
+
+```bash
+more < file.txt:secret.txt
+```
+
+This command allows you to read the hidden data stream.
+
+#### Detection:
+
+Forensic analysts can use tools like [streams.exe](https://learn.microsoft.com/en-us/sysinternals/downloads/streams) from [SysInternals](https://learn.microsoft.com/en-us/sysinternals/), which will list all streams associated with files in a given directory.
+
+```bash
+streams.exe -s C:\path\to\file
+```
+
+Alternatively, PowerShell commands can also be used:
+
+```bash
+Get-Item -Path C:\path\to\file -Stream *
+```
+
+These tools identify hidden streams by scanning the NTFS metadata, providing a list of streams, even the hidden ones.
+
+### Hidden File Attributes
+
+Hidden file attributes are used to make files invisible in standard directory listings. Both Windows and Linux offer ways to hide files using attributes.
+
+- **Windows**: Use the `attrib` command to add a hidden attribute to files.
+
+```bash
+attrib +h C:\path\to\file_or_folder
+```
+
+You can detect hidden files using the following command:
+
+```bash
+dir /a:h C:\path\to\folder
+```
+
+- **Linux**: Files starting with a dot (`.`) are considered hidden by default in Unix-like operating systems.
+
+```bash
+mv visible.txt .hidden.txt
+```
+
+You can list these hidden files using `ls -a` or `find`:
+
+```bash
+find / -name ".*" -type f
+```
+
+### Preserving Data Integrity (Linux)
+
+On Linux, advanced OS-based data protection techniques include using the "immutable" file attribute. Setting a file as immutable ensures that no changes can be made to it—not even by the root user. This is useful in forensic investigations to preserve data integrity.
+
+#### Setting Immutable Attribute
+
+To lock a file or directory and prevent it from being altered:
+
+```bash
+sudo chattr +i /path/to/file
+```
+
+Once set, the file cannot be modified, deleted, or renamed.
+
+#### Removing the Immutable Attribute
+
+To remove the immutable lock, use:
+
+```bash
+sudo chattr -i /path/to/file
+```
+
+#### Checking Immutable Status
+
+To verify if a file is marked as immutable, use:
+
+```bash
+lsattr /path/to/file
+```
+
+If the immutable flag (`i`) is present in the output, it means the file is protected.
+
+### Time Stomping (Linux and Windows)
+
+Time-stomping is the process of modifying the timestamps (creation, modification, access) of a file to make it appear as though it was created or modified at a different time, thereby confusing investigators. This technique is especially useful in anti-forensics to make it harder to track file activity.
+
+- **Windows**: Tools like `timestomp` can be used to modify file timestamps.
+- **Linux**: Use `touch` to modify file times.
+
+```bash
+touch -t 202301010000 /path/to/file
+```
+
+This command changes the file timestamp to January 1, 2023, at midnight.
+
+### Process Hollowing (Windows)
+
+Process hollowing involves replacing the code of a running process with malicious code, effectively "hiding" the malicious process inside a legitimate one. This technique is often used by malware to avoid detection.
+
+To detect process hollowing, forensic tools like memory dump analyzers (e.g., [Volatility](https://volatilityfoundation.org/)) can be used to compare running processes with their expected behavior and signatures.
+
+### Using Linux Filesystems Features
+
+Some advanced Linux filesystem features can also be exploited to hide data:
+
+- **Extended Attributes (xattr)**: Many modern Linux filesystems support extended attributes, which allow additional metadata to be associated with a file. Attackers can use this feature to hide data within these attributes.
+
+To check for extended attributes:
+
+```bash
+getfattr -d /path/to/file
+```
+
+If extended attributes are present, they will be listed in the output, providing potential clues for hidden data.
+
+- **Filesystem Journals**: Many Linux filesystems, such as ext4, use journaling to track changes to the filesystem. Malicious actors can potentially hide or obfuscate data in the journal, where it's not normally checked during regular scans. Tools like `debugfs` allow forensic investigators to view the filesystem's journal and uncover hidden data:
+
+```bash
+sudo debugfs /dev/sdX
+```
+
+Once inside `debugfs`, you can use commands like `logdump` to review journal entries and analyze any discrepancies.
+
+### Environment Variables
+
+On both Windows and Linux, environment variables can be manipulated to store or obfuscate data. For instance, attackers might set environment variables to point to malicious scripts or files, which won't be obvious during normal file system scans.
+
+- **Linux**: Check for suspicious environment variables using `printenv` or by inspecting `/etc/environment` and other profile files:
+
+```bash
+printenv
+```
+
+Look for any unusual or suspicious entries that might be hiding or pointing to unexpected files.
+
+## Disk
+
+### Obscuring Entire Partitions
+
+This technique involves creating a hidden partition on a hard drive, making the data invisible to standard forensic tools. Hidden partitions are not listed in the main partition table and require specialized tools for detection.
+
+Our goal here is to detect these methods to find potential traces that could help in incident response.
+
+- **Disk Space Analysis**: Use tools like `fdisk`, `gparted`, or `parted` to examine disk space and spot inconsistencies in the total disk size.
+
+```bash
+sudo fdisk -l
+```
+
+**Example**:
+Suppose you run `fdisk -l` on a 1TB disk and see the following output:
+
+```
+Disk /dev/sda: 1000 GB, 1000000000000 bytes
+Disk identifier: 0x12345678
+
+Device     Boot   Start        End    Blocks   Id  System
+/dev/sda1  *       2048     1026047   512000   83  Linux
+/dev/sda2       1026048   2048063   512000   83  Linux
+```
+
+Here, the total disk size is reported as 1TB, but you only see partitions totaling 1GB. If the actual disk space is significantly larger than the sum of visible partitions, it may indicate the presence of hidden or unallocated space that could contain hidden partitions.
+
+- **Searching for Unmounted Partitions**: Tools like `TestDisk` can help discover and recover hidden partitions.
+
+```bash
+sudo testdisk
+```
+
+**Example**:
+When running `TestDisk`, you might encounter a situation where it detects an additional partition that isn’t visible with `fdisk`. For instance:
+
+```
+TestDisk 7.2-WIP, Data Recovery Utility
+...
+Partition: 1
+Partition Start: 0x0000000000
+Partition End: 0x0000004000
+```
+
+If `TestDisk` finds a partition starting at a sector not listed in `fdisk`, it could be a hidden partition. For example, `TestDisk` might show a partition starting at sector 2048000, whereas `fdisk` only lists partitions starting at sector 2048.
+
+- **Analyzing Partition Signatures**: Examine partition signatures with hex editors to identify unlisted partitions.
+
+```bash
+sudo hexedit /dev/sdX
+```
+
+**Example**:
+When examining a disk with `hexedit`, you might find unusual patterns. For instance, if you see a signature `0x55AA` (the standard MBR signature) in unexpected places:
+
+```
+00001F20  55 AA 00 00 00 00 00 00  00 00 00 00 00 00 00 00  | U.A.............  |
+```
+
+The `0x55AA` signature could appear in an area not associated with the known partition table. If this signature appears at an unexpected offset, it might indicate a hidden partition or an attempt to obscure data.
+
+### Searching for Specific Patterns
+
+Searching for specific patterns in unallocated space involves examining raw data on a disk to find sequences of bytes that match known file signatures or data patterns. This approach is valuable when you suspect that important data has been deleted or hidden and is still present in unallocated sectors.
+
+#### Understanding What to Look For
+
+**1. File Signatures:** Many file types have unique signatures or headers at the beginning of their data. For example:
+
+- **JPEG Images**: JPEG files start with the signature `FFD8FF`, which is a standard header for JPEG images.
+- **PDF Files**: PDF files begin with `%PDF`, which appears as `25504446` in hexadecimal.
+- **Executable Files**: Executable files (such as those for Windows) often start with the signature `MZ` (4D 5A in hexadecimal).
+
+By searching for these signatures in unallocated space, you can identify fragments of these files that might still exist even after deletion.
+
+**2. Known Data Patterns:** Besides file signatures, you might search for specific patterns related to known data structures or application data. For instance:
+
+- **Database Records:** Databases often store records in predictable formats. If you suspect that database records might be present, you might look for specific patterns related to the database structure.
+- **Text Fragments:** If a document or a text file was deleted, fragments of the text might still be present in unallocated space. Searching for common text strings or phrases can sometimes yield results.
+
+#### Using Hex Editors
+
+**Hex Editors** allow you to view and manipulate the raw byte-level data on a disk or within files. They are essential for identifying and analyzing specific patterns that might indicate the presence of hidden or deleted data.
+
+**`xxd` Command:**
+
+`xxd` is a versatile tool that converts binary data into a hexadecimal (hex) format, which can then be analyzed for specific patterns or file signatures.
+
+Here’s how you can use `xxd` to view data from a specified offset on a disk:
+
+```bash
+sudo xxd -s <offset> /dev/sdX
+```
+
+**Explanation:**
+
+- `sudo`: Runs the command with superuser privileges, necessary for accessing raw disk data.
+- `xxd`: The command-line utility that creates a hex dump of the specified file or device.
+- `-s <offset>`: Specifies the starting offset in bytes from which to begin the hex dump. This allows you to skip over any known partitions or headers and focus on the unallocated space.
+- `/dev/sdX`: Represents the disk device you are analyzing (e.g., `/dev/sda`).
+
+**Example:**
+
+Suppose you want to analyze unallocated space starting at byte offset 500MB on a disk:
+
+```bash
+sudo xxd -s 1048576000 /dev/sda
+```
+
+This command will display the hexadecimal representation of the disk data starting at the 500MB mark. You might see output like:
+
+```
+00000000: ffd8 ffe0 0010 4a46 4946 0001 0101 0048  .......JFIF....H
+00000010: 0000 0010 00ff 1f00 0102 0304 0506 0708  ...............
+```
+
+In this example, the `ffd8 ffe0` sequence indicates the start of a JPEG file. If you find such signatures, it means that JPEG files or fragments of JPEG files exist in the unallocated space.
+
+### File Carving
+
+**File carving** is a forensic technique used to recover files from storage media even when the file system metadata is damaged, corrupted, or missing. This method involves analyzing the raw data of a hard drive or other storage media to reconstruct files based on their content.
+
+#### Understanding File Carving
+
+File carving works by identifying specific patterns or sequences in the raw data that indicate the presence of files. This technique is especially useful in scenarios where traditional methods of file recovery fail due to file system corruption or deletion.
+
+**Header and Footer Based Carving**
+
+This method relies on detecting file signatures, which are unique sequences of bytes located at the beginning (header) and end (footer) of a file. By locating these signatures, the file can be reconstructed from the raw data.
+
+As we said before here are some **examples of File Signatures:**
+
+- **JPEG Files**: Start with `FFD8` (header) and end with `FFD9` (footer).
+- **PDF Files**: Start with `%PDF` (header) and end with `%%EOF` (footer).
+- **ZIP Files**: Start with `504B 0304` (header) and end with `504B 0506` (footer).
+
+**Expected Outcome:**
+
+- By scanning the raw data for these signatures, you can identify fragments of files and reconstruct them. For instance, if you find the `FFD8` header in the raw data, you know that a JPEG file starts at this point and continues until the `FFD9` footer.
+
+**Raw Content Based Carving**
+
+This method analyzes the raw content of the disk without relying solely on headers or footers. It identifies patterns or data structures that are characteristic of specific file types.
+
+- **Text Files**: May be identified by recognizable text patterns or sequences within the raw data.
+- **Database Files**: May exhibit certain patterns or data structures related to specific database formats.
+
+#### Using Foremost for File Carving
+
+[Foremost](https://www.kali.org/tools/foremost/) is a popular tool for file carving. It scans the raw data of a disk or partition and recovers files based on known headers, footers, and file formats.
+
+```bash
+sudo foremost -i /dev/sdX -o /output/directory
+```
+
+**Explanation:**
+
+- `sudo`: Runs the command with superuser privileges, required for accessing raw disk data.
+- `foremost`: The file carving tool.
+- `-i /dev/sdX`: Specifies the input device or image file to analyze (e.g., `/dev/sda`).
+- `-o /output/directory`: Specifies the directory where the recovered files will be saved.
+
+When you run this command, Foremost will analyze the raw data of the specified device or image file, looking for known file signatures. It will reconstruct files and save them to the output directory.
+
+### Hiding Data in HPA
+
+The Host Protected Area (HPA) is a reserved section of a hard drive that is not visible to the operating system or most standard disk utilities. This area can be used by rootkits or malware to store data covertly, bypassing conventional detection methods. Identifying and analyzing the HPA is essential in forensic investigations to uncover hidden or malicious data.
+
+#### Checking Disk Parameters
+
+To detect hidden areas like the HPA, it's important to compare the disk parameters reported by the BIOS with those detected by the operating system. Discrepancies between these values can indicate the presence of an HPA or other hidden areas.
+
+**Using `hdparm` to Check Disk Parameters**
+
+The `hdparm` tool can be used to query and verify disk parameters, including the visible and actual size of the disk. Here's how to use it:
+
+```bash
+sudo hdparm -N /dev/sdX
+```
+
+- `sudo`: Runs the command with superuser privileges, which is necessary for accessing low-level disk information.
+- `hdparm`: The command-line utility for querying and setting disk parameters.
+- `-N`: This option displays the current maximum number of sectors visible to the operating system.
+- `/dev/sdX`: Replace `sdX` with the appropriate disk identifier (e.g., `/dev/sda`).
+
+**Expected Outcome:**
+
+- The command returns the number of sectors visible to the operating system. If this number is significantly smaller than the total number of sectors reported by the BIOS or the manufacturer’s specifications, an HPA might be present.
+- For example, if the BIOS reports a disk size of 500 GB but `hdparm -N` shows only 400 GB, the difference could be due to an HPA.
+
+```plaintext
+disk size: 976773168 sectors (500.1 GB)
+```
+
+**Analyzing Disk Configuration**
+
+To perform a deeper analysis and manipulation of protected areas, `hdparm` provides additional options. One such option is `--dco-identify`, which identifies the Device Configuration Overlay (DCO), a feature that can also be used to hide data.
+
+```bash
+sudo hdparm --dco-identify /dev/sdX
+```
+
+- `--dco-identify`: This option queries the disk for DCO information, which can indicate if there are any overlays or hidden areas configured on the disk.
+- `/dev/sdX`: Replace `sdX` with the appropriate disk identifier (e.g., `/dev/sda`).
+
+**Expected Outcome:**
+
+- The command provides information about the DCO settings. If DCO is active, it might show that parts of the disk are hidden or reserved.
+- For example, if the DCO identifies a reserved space not visible in the standard partition table, it could indicate the presence of hidden data.
+
+### Bad Clusters
+
+Bad clusters are areas of a hard drive that the operating system marks as unusable due to physical damage or logical errors. While these clusters are typically excluded from normal read/write operations, malicious actors can exploit them to hide data, as this data is often ignored during routine disk scans. Recognizing and analyzing bad clusters is crucial for uncovering hidden or malicious data.
+
+#### Detecting Bad Clusters
+
+To identify and analyze bad clusters, you can use various tools depending on your operating system. Here’s how you can detect bad clusters on both Windows and Linux:
+
+**On Windows:**
+
+For windows we are going to use the same tool as before `chkdsk`, A built-in Windows utility that checks the file system and disk for errors.
+
+```shell
+chkdsk C: /r /v
+```
+
+**Explanation:**
+
+- `C:`: Specifies the drive to check (replace `C:` with the appropriate drive letter if needed).
+- `/r`: Locates bad sectors and recovers readable information.
+- `/v`: Displays the full path and name of every file being checked.
+
+**Expected Outcome:**
+
+- The command performs a thorough check of the disk, identifying bad sectors and attempting to recover data from them.
+- The output provides detailed information about the disk status, including any bad sectors found.
+
+```plaintext
+CHKDSK is verifying files (stage 1 of 5)...
+  123456 file records processed.
+File verification completed.
+CHKDSK is verifying indexes (stage 2 of 5)...
+  654321 index entries processed.
+Index verification completed.
+CHKDSK is verifying security descriptors (stage 3 of 5)...
+  78910 security descriptors processed.
+CHKDSK is verifying file data (stage 4 of 5)...
+Windows has scanned the file system and found no problems.
+No further action is required.
+
+   20971520 KB total disk space.
+   10485760 KB in 12345 files.
+       512 KB in 789 indexes.
+         0 KB in bad sectors.
+      2048 KB in use by the system.
+   10485760 KB available on disk.
+```
+
+In the example output, the report indicates that there are no bad sectors (`0 KB in bad sectors`). If bad sectors were present, they would be listed here, and the tool would attempt to recover any readable data from those sectors.
+
+**On Linux:**
+
+And for Linux, [badblocks](https://linux.die.net/man/8/badblocks) is a command-line utility for checking bad sectors on a hard drive
+
+```bash
+sudo badblocks -v /dev/sda
+```
+
+**Explanation:**
+
+- `-v`: Enables verbose mode, providing detailed information about the process.
+- `/dev/sda`: Specifies the drive to check (replace `sda` with the appropriate drive identifier).
+
+**Expected Outcome:**
+
+- The command checks the specified drive for bad blocks in read-only mode.
+- It outputs information about the blocks being checked and reports any bad sectors it finds.
+
+```plaintext
+Checking for bad blocks in read-only mode
+From block 0 to 20971519
+Checking for bad blocks (1/5) ...
+Checking for bad blocks (2/5) ...
+Checking for bad blocks (3/5) ...
+Checking for bad blocks (4/5) ...
+Checking for bad blocks (5/5) ...
+```
+
+The output shows the progress of the scan, including which blocks are being checked. If bad blocks are detected, they will be listed in the output, allowing forensic investigators to locate and analyze these areas for hidden data.
+
+## Resources
+
+- [Introduction to Hiding & Finding data in linux](https://www.giac.org/paper/gsec/3133/introduction-hiding-finding-data-linux/105105)
+- [AntiForensic how to defend against it](https://www.itgovernance.eu/blog/en/anti-forensics-what-it-is-examples-and-how-to-defend-against-it)

@@ -1,0 +1,114 @@
+# Exercise: Crafting a report
+
+## Objective
+
+Last week, you conducted a pentest for a new neo Bank named **IBC SECURE BANK**, but you forgot to complete the report, which is due tonight. To save time, automate this task using Pwndoc to generate your report automatically. You can find a ZIP file attached (_in the resources on the right_) containing all the screenshots and a brief description for each vulnerability. The password is `R4ND0M1Z3R`.
+
+Here are the general details of the pentest:
+
+- **Date:** 18/06/2024 - 02/07/2024
+- **Company:** IBC SECURE BANK
+- **Company Contact:** John Doe
+
+## Instructions
+
+First, set up Pwndoc by visiting the [official GitHub repository](https://github.com/pwndoc/pwndoc) and following the installation instructions. This usually involves cloning the repository, installing dependencies, and starting the application.
+
+Once Pwndoc is running smoothly, download or create a suitable report template, such as the default one available [here](https://github.com/pwndoc/pwndoc/blob/main/backend/report-templates/Default%20Template.docx) or the one we give you in the resources on the right, and import it into Pwndoc.
+
+Use provided screenshots and briefs to document vulnerabilities, detailing their impact and exploitability.
+
+Finally, create a new report in Pwndoc using the template, fill in the details, and export the comprehensive report to share with stakeholders.
+
+This process will help you produce a professional and thorough cybersecurity assessment report.
+
+<Note type="tip">
+
+We added a YAML files, `vulnerabilities.yml` with 72 common vulnerabilities and exposures (CVEs) that you can use to generate the report. You can find it in the resources on the right too.
+
+</Note>
+
+<Note type="tip">
+
+For your own purpose, you can also download [Flameshot](https://flameshot.org/). It is a versatile screenshot tool that can be installed for personal use on various operating systems.
+It offers several advantages, such as intuitive and customizable screenshot capturing capabilities. Users can easily annotate screenshots with arrows, text, and shapes, enhancing communication and documentation.
+
+Flameshot also supports quick editing and sharing options, making it ideal for creating instructional materials, bug reports, and presentations.
+
+Its lightweight nature and user-friendly interface make Flameshot a convenient choice for anyone needing efficient and effective screenshot management.
+
+You should **take full screen screenshots of the vulnerabilities** and save them in a folder. You can then use these screenshots to create a report in Pwndoc by reframing the content and adding additional information if needed.
+
+</Note>
+
+## Examples of writing
+
+Here are some writing examples to help you craft your report. You can use these as a reference to create your own content.
+
+### In English
+
+Here are some examples of how to write about a vulnerability:
+
+```
+The XXX application is vulnerable to a Local File Inclusion (LFI) flaw. Specifically, you can specify a relative file path in the YYY argument of the ZZZ request (using the "../.." notation to navigate out of the web root at the file system level). The ZZZ request includes a mechanism that displays the content of the file provided as a parameter.
+
+An attacker operating from the internet could exploit this functionality to view the content of any text file on the server, as long as the file is readable by the web server's process.
+```
+
+```
+We recommend protecting the XXX application against Local File Inclusion attacks. To achieve this, you should:
+
+Prioritise avoiding direct exposure of file names in HTTP client-server interactions. Instead, use session-managed pointers. The server should handle the mapping between pointers and file names exclusively.
+
+If using direct file names in HTTP communication is unavoidable, enforce strict server-side validation. Ensure the file names specified in URLs are valid and authorised for the user and their session.
+```
+
+```
+SQL Injection on the XXX Application
+
+The XXX application is vulnerable to SQL injection in the XXX form. This vulnerability occurs when the website uses user-submitted data to perform actions like reading, writing, updating, or deleting records in the database without validating the input.
+
+An attacker could submit queries containing keywords relevant to the database query language. By doing so, they could manipulate the behaviour of the database queries executed by the targeted web application, gaining access to the structure and content of the database tables. In some cases, they might even impact the database's availability or performance by executing commands such as `BENCHMARK`.
+```
+
+```
+Protecting the Application Against SQL Injection Attacks
+
+We recommend updating the XXX application to protect it against SQL injection attacks. To achieve this, modify the application's code to consistently use prepared statements with bound parameters whenever user-controlled inputs are included in SQL queries.
+
+If prepared statements are not feasible (and this should be an exception), use a whitelist-based filtering approach for user-controlled data before including it in SQL queries. With this method, allow only explicitly defined characters or strings. If any unauthorised characters are detected, the query should fail.
+```
+
+### In French
+
+Here are some examples of how to write about a vulnerability:
+
+```
+L'application XXX est vulnérable à une faille de type Local File Inclusion (LFI). En effet, il est possible de spécifier dans l'argument YYY de la requête ZZZ un chemin relatif de fichier (en utilisant la notation "../.." qui permet de sortir de la racine du site web au niveau du système de fichiers). La requête ZZZ met en œuvre un mécanisme qui affiche le contenu du fichier dont le nom est passé en paramètre.
+
+Un attaquant opérant depuis Internet pourrait ainsi utiliser cette fonctionnalité pour afficher le contenu de n'importe quel fichier texte présent sur le serveur et accessible en lecture au processus exécutant le serveur web.
+```
+
+```
+Nous recommandons de mettre en place une protection de l'application XXX contre les attaques de type Local File Inclusion. Pour cela, il convient :
+
+En priorité, de ne pas exposer dans le dialogue avec le client HTTP des noms de fichiers directement utilisables, mais plutôt d'utiliser des pointeurs gérés au niveau de la session. Le lien entre les pointeurs et les noms de fichiers doit être traité côté serveur uniquement.
+
+À défaut, d'utiliser des noms de fichiers directement utilisables dans le dialogue entre le client HTTP et le serveur tout en exerçant, côté serveur, un contrôle strict afin de vérifier que les noms de fichiers spécifiés dans les URLs sont valides et légitimes pour l'utilisateur et sa session.
+```
+
+```
+Injection SQL sur l'application XXX
+
+L'application XXX est vulnérable à une injection SQL dans le formulaire XXX. Ce type de faille survient lorsque le site web utilise les données saisies par l'utilisateur pour effectuer des actions de lecture, écriture, modification ou suppression dans la base de données, sans effectuer de contrôle sur le contenu des données soumises par l'utilisateur.
+
+Un attaquant pourrait alors soumettre des requêtes contenant des mots-clés ayant un sens au niveau du langage de requête de la base de données. Il pourrait ainsi modifier le comportement des requêtes effectuées dans la base de données par l'application web ciblée et accéder notamment à la structure et aux contenus des tables de la base. Il pourrait également, dans certains cas, impacter la disponibilité ou la performance de la base de données en lançant des commandes de type BENCHMARK.
+```
+
+```
+Protéger l'application contre les attaques de type injection SQL
+
+Nous recommandons de corriger l'application XXX afin qu'elle soit protégée contre les attaques de type injection SQL. Pour ce faire, nous recommandons de modifier le code de l'application XXX afin d'utiliser systématiquement des requêtes préparées ("prepared statements") bindées lorsque des paramètres sous le contrôle de l'utilisateur sont utilisés dans la construction des requêtes SQL.
+
+À défaut (et cela doit rester une exception), nous recommandons de filtrer en mode "liste blanche" les données sous le contrôle de l'utilisateur avant leur insertion dans la requête SQL. Dans cette approche, seuls les caractères ou chaînes de caractères explicitement définis sont autorisés. La présence de caractères non autorisés doit entraîner l'échec de la requête.
+```

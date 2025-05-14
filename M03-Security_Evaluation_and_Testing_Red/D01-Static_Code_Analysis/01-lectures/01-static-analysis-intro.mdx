@@ -1,0 +1,115 @@
+# Static Code Analysis: Introduction
+
+## What you will learn in this course 🧐🧐
+
+- Learn basics about CI/CD pipelines
+- Understand the importance of static code analysis
+- How do consultants use static code analysis
+
+## What are we talking about?
+
+The source of all evils in cybersecurity is code. It's true, without code, there would be no security vulnerabilities or data to recover. But the world would be much less fun.
+
+Our journey begins with static code analysis, which lets us uncover potential problems very early.
+
+Static code analysis or **Static Application Security Testing (SAST)** as we prefer to refers to it, contrasts with dynamic code analysis (Dynamic Application Security Testing, DAST) because **it doesn't execute the code**. Instead, it examines the code as developers wrote it (or as it was generated afterward). Dynamic analysis, on the other hand, analyses the code during execution.
+
+The two approaches complement each other. While dynamic analysis offers a perspective closer to real-world code usage, static analysis provides early feedback to developers for code improvement. Thus, one doesn't negate the other, and both should be implemented to achieve the widest possible coverage.
+
+## Why Static Code Analysis?
+
+When a cybersecurity consultant is called in for a static code analysis mission, the first step is to **meet the client**.
+
+The goal is to really **understand their needs**, concerns, and what they hope to get out of the analysis. Then, to make sure everyone feels comfortable, we sign an **NDA (Non-Disclosure Agreement)**. It reassures the client that their code will remain confidential.
+
+Once trust is established, it’s time to get the code. Because code is the main ingredient. Once the environment is ready, the analysis begins, aiming to sniff out security flaws, much like a detective tracking down clues. And that’s how a static code analysis mission unfolds!
+
+SAST first goal for developers is to **detect bugs and vulnerabilities early in the development process**.
+
+For a consultant, static code analysis is often used after a penetration test to **validate the findings**. It helps to **prioritise the most critical vulnerabilities** and **identify the root cause** of the issues.
+
+Static analysis is also a way to **trace strategic information within the code**. Take sensitive banking data, for example. SAST allows us to track how this information flows through the code and ensure it isn’t exposed to unnecessary risks.
+
+## How it integrates into the development process?
+
+SAST are often integrated inside a pipeline, usually a CI/CD pipeline. This is a set of automations that run regularly to create an infinite feedback loop between DevOps/DevSecOps teams and developers to continuously improve the product.
+
+We'll explain it in more detail in the next section.
+
+### Definitions
+
+Let's start with some definitions to understand the context better.
+
+CI/CD stands for **Continuous Integration and Continuous Deployment**. Continuous Integration (CI) is the practice of frequently integrating code changes into a shared repository. Developers use automated tests to catch issues early. Continuous Deployment (CD) takes this further by automatically deploying the integrated changes to production. This approach helps teams deliver software faster and with fewer errors.
+
+DevOps combines **development (Dev) and operations (Ops) practices** to improve collaboration and efficiency in delivering software. DevOps aims to shorten the software development lifecycle by using automation, continuous delivery, and collaboration. By integrating development and operations teams, organisations can release updates more quickly and reliably.
+
+DevSecOps **extends DevOps by incorporating security practices into the CI/CD pipeline**. It emphasises the importance of integrating security measures from the start, rather than as an afterthought. This approach ensures that security is a shared responsibility throughout the development process, leading to more secure and robust software.
+
+### A bit of history
+
+Before CI/CD was adopted, **development processes were often manual and time-consuming**, which significantly slowed down the release of new features and increased the risk of errors.
+
+Initially, development teams worked in silos, with each developer coding separately for weeks or even months before merging their changes into the shared project. This approach often led to what is commonly referred to as "integration hell."
+
+When developers attempted to merge their code, they encountered difficult-to-resolve conflicts, unexpected bugs, and incompatibilities that made the integration process complex and stressful. Testing was often manual or done in large batches right before a release, making it difficult to quickly identify errors. Deployment, meanwhile, was a risky process prone to human error, often planned with great anxiety and sometimes requiring overtime to fix last-minute issues.
+
+CI/CD emerged as a solution to **automate** and **improve** these critical steps in the software development lifecycle. Continuous Integration (CI) automates the process of merging code changes into a shared repository and immediately testing them. This allows developers to identify and fix issues as soon as they arise, rather than discovering them weeks later when fixes are more difficult to implement. It also encourages developers to commit their changes more frequently, improving collaboration and visibility into the state of the code.
+
+Continuous Delivery (CD), on the other hand, automates the deployment of validated code into production. This enables companies to release new features, fixes, and updates more quickly and regularly, reducing the time between ideation and delivery to users. Users benefit from getting new features faster, and companies can respond more quickly to feedback and market demands.
+
+### Integration of Static Code Analysis
+
+**DevSecOps** or **DevOps** teams usually implement the tools during **CI/CD**. However, a global policy for developers (linting, coding rules, typing) also helps avoid certain pitfalls at the very first stage of development, on an individual level.
+
+You might wonder how static code analysis fits into the CI/CD pipeline. Let's explain how you can integrate it into your development process.
+
+First, you need to understand how the development team operates. This is crucial to integrate seamlessly into their practices. Large companies might use several methods (waterfall, agile, or [la rache](https://www.la-rache.com/presentation.html)).
+
+You need to understand their build processes, the different languages they use, and why and how they use them. You also need to understand how they handle releases and manage defect processes.
+
+CI/CD pipelines are essentially a set of automations (scripts) that run regularly (either on a cron schedule or triggered by an event like merging a PR into a branch).
+
+The goal of these automations is to create an infinite feedback loop between DevOps/DevSecOps teams and developers to continuously improve the product. You implement one or more tools to check what works and what doesn't. It's not a big deal if some tools overlap. What matters is keeping an eye on what's important.
+
+Developers need to see these results too. So, visualisation tools are crucial for effective static code analysis.
+
+Remember, the earlier you use static code analysis tools, the better. Ideally, integrate them into the developers' IDEs (for example, using a linter helps reduce a number of bugs).
+
+Implementing all this can take time. It's an iterative process that you can't achieve all at once because you also need to manage change and adopt new behaviours, which can be time-consuming!
+
+SAST is often accompanied by **Static Code Analysis (SCA)**, which is the equivalent for open-source code analysis. Best practices for SCA include running it early in the pipeline. Prioritise patching OSS and maintain a list of approved open-source components. Allow developers to request additions via a form to keep some flexibility.
+
+## Pros and cons
+
+### Pros
+
+In a CI/CD pipeline, static code analysis encourages developers to write more consistent code by following best practice or security rules. It improves security by prompting developers to consider it early on (better user input management, error handling, etc.).
+
+Most static code analysis solutions also offer suggestions for improving code maintainability.
+
+All of this leads to delivering high-quality, secure, and maintainable code more quickly and regularly.
+
+### Cons
+
+However, static code analysis isn't a cure-all tool. There are still challenges in getting these tools into developers' hands early enough.
+
+The trend is towards **shift-left testing**, meaning giving feedback quickly to those who create the code. But implementing these tools can be more challenging than expected.
+
+<Note type="note">
+
+Shift-left testing means finding and fixing bugs early in the development process, rather than waiting until the end, to make sure the software is better and more secure from the start.
+
+</Note>
+
+For example, current tools can be slow to run on a large codebase, making them less convenient for developers' daily routines. Yet, striving for shift-left testing remains an ideal goal.
+
+One major flaw of all static code analysis solutions is **the number of false positives**. This can become a real issue for very large codebases. Companies often aim to keep false positives below 10%, but maintaining this is not always easy.
+
+The main drawback of false positives is that they waste time in a process meant to improve quality, as false positives are detected errors that aren't actually errors.
+
+<Note type="tip" title="The heck is false positive?">
+
+A false positive is when a tool says there's a problem, but there isn't one. For example, if a smoke alarm sounds when there's no fire, that's a false positive.
+
+</Note>

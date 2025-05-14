@@ -1,0 +1,78 @@
+# Incident Response Preparedness
+
+## Introduction
+
+Incident response refers to the strategic process companies, particularly IT and development teams, execute to swiftly address unplanned events or service interruptions. It aims to restore operational functionality and mitigate potential damages caused by cyber threats or breaches.
+
+### Incident Response Life Cycles
+
+The incident response life cycle is a comprehensive, step-by-step process that organizations follow to detect, respond to, and recover from service interruptions or security threats. Having an incident response plan in place is crucial for data protection, preventing breaches, and safeguarding the organization from potential infiltration. Preparedness is key in today's environment where data breach incidents are increasingly common. Effective incident response measures facilitate rapid containment and recovery, minimizing damage during high-pressure situations. A swift response is essential to prevent further harm, and thus, formulating a detailed incident response plan is vital.
+
+The industry standards for incident response management are set by two prominent institutes, NIST (National Institute of Standards and Technology) and SANS (SysAdmin, Audit, Network, and Security Institute).
+
+The [NIST](https://www.eccouncil.org/cybersecurity-exchange/incident-handling/what-is-incident-response-life-cycle/) incident response process involves several phases:
+
+- **Preparation:** Develop and implement methods to protect critical infrastructure.
+- **Detection and Analysis:** Regularly monitor systems, information assets, data, and operations to manage security risks effectively.
+- **Containment, Eradication, and Recovery:** Quickly restore affected systems while minimizing downtime.
+- **Post-Incident Activity:** Take necessary steps to prevent similar incidents in the future.
+
+Similarly, the [SANS](https://www.sans.org/media/score/504-incident-response-cycle.pdf) Incident Response Process includes:
+
+- **Preparation:** Review and codify the organization's security policy, conduct risk assessments, identify sensitive assets, establish critical security incidents, and form a Computer Security Incident Response Team (CSIRT).
+- **Identification:** Monitor IT systems to detect deviations from normal activities, assess potential security incidents, gather additional information, determine the incident's nature and severity, and log all details.
+- **Containment:** Implement short-term containment by isolating the threatened network segment, followed by long-term containment to allow continued use of systems while rebuilding clean versions.
+- **Eradication:** Remove malware, address the root cause, and implement measures to prevent future attacks.
+- **Recovery:** Restore affected production systems, ensuring they are secure before bringing them back online, and perform thorough testing and monitoring.
+- **Lessons Learned:** Conduct a retrospective analysis within two weeks of incident resolution, document the incident thoroughly, and evaluate the response process to identify areas for improvement.
+
+The entire process emphasizes preparation, rapid detection, effective containment, thorough eradication, secure recovery, and continuous learning to strengthen the organization's incident response capabilities.
+
+### Kill Chain
+
+In cybersecurity, it is well-known that attackers follow a specific methodology to carry out their malicious activities. However, it is equally important to recognize that defenders must also follow a structured methodology in their incident response efforts. This dual approach helps organizations effectively combat cyber threats and mitigate potential damage. One of the most renowned models for understanding the attacker's methodology is the Cyber Kill Chain, developed by Lockheed Martin. This framework not only sheds light on the stages of a cyberattack but also guides defenders on how to structure their response.
+
+The Cyber Kill Chain outlines the steps an attacker takes to achieve their objective, from initial reconnaissance to exfiltration of data. By understanding these stages, defenders can better anticipate and disrupt the attacker's activities. The process starts with gathering information about the target to find vulnerabilities. The attacker then creates and delivers malicious payloads to exploit these vulnerabilities. Once inside the system, the attacker installs malware to maintain access, establishes a command and control channel to manage their activities, and finally, carries out their goals, such as stealing data or damaging systems.
+
+For defenders, understanding the Cyber Kill Chain provides several key benefits. It offers a comprehensive view of both the technical and human aspects of a cyberattack, facilitating better analysis and response. By organizing threat data systematically, the model enhances collaboration and information sharing among cybersecurity professionals. It also supports both proactive threat intelligence before an attack and reactive incident response after an attack, helping analysts gather and analyze valuable data effectively.
+
+By aligning the Cyber Kill Chain with incident response strategies, organizations can create a proactive and comprehensive defense plan. Understanding the stages of the Kill Chain allows defenders to anticipate attacker moves and disrupt their activities at various stages. For example, during the reconnaissance phase, defenders can use threat intelligence to detect and block suspicious scanning activities. In the delivery phase, robust email filtering and web security measures can prevent malicious payloads from reaching their targets.
+
+### Diamond Model
+
+The Diamond Model of Intrusion Analysis is a sophisticated cybersecurity framework designed to help organizations analyze and respond to cyber intrusions effectively. Introduced in a 2013 U.S. Department of Defense technical report by Sergio Caltagirone, Andrew Pendergast, and Christopher Betz, the model aims to identify attackers, understand their tactics and procedures, and improve the overall response to cyber incidents.
+
+![Diamond_Model](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D01-Fundamentals_of_Cyber_Crisis_Management/01-lectures/Diamond_Model.png)
+
+The Diamond Model is structured around four key components, analogous to the four points of a diamond: adversaries, infrastructure, capabilities, and targets. Each component represents a crucial aspect of a cyberattack:
+
+- **Adversary:** The attacker or group responsible for the cyber incident.
+- **Infrastructure:** The technical resources or assets (e.g., servers, domains, IP addresses) that the adversary uses during the attack.
+- **Capability:** The methods, tools, or techniques (e.g., malware, exploits) employed by the adversary.
+- **Victim:** The individual or organization targeted by the adversary.
+
+It emphasizes attribution, aiming to identify those responsible for cyber incidents. It is highly flexible, applicable to various types of attacks, from advanced persistent threats (APTs) to ransomware.
+
+In the context of incident response, the Diamond Model offers several key benefits. It provides a **holistic understanding** by considering both the technical and human aspects of a cyberattack, giving a comprehensive view of the incident. The model **excels in structured analysis, organizing and structuring data** related to cyber threats, which facilitates easier collaboration and information sharing among cybersecurity experts. Additionally, it **supports both proactive threat intelligence** before an attack and reactive incident response after an attack, helping analysts gather and analyze valuable data effectively.
+
+## Taskforce
+
+In the context of incident response in cybersecurity, a **taskforce** is a specialized team of experts brought together to handle and resolve a specific security incident. This team is quickly assembled in response to a threat or attack, focusing on containing, analyzing, eradicating, and recovering from the incident while minimizing its impact on the organization.
+
+The taskforce plays a crucial role from the initial detection and identification of the incident. They analyze alerts and signs to confirm the presence of a security issue. Once confirmed, they implement measures to contain the threat and prevent it from spreading within the network, which can involve isolating affected systems or setting specific firewall rules.
+
+The team **conducts a thorough analysis** to understand the extent and nature of the incident. This involves identifying attack vectors, malware used, and exploited vulnerabilities. **They then work to eliminate the threat** from the environment, which can include removing malware, closing unauthorized access points, and applying security patches.
+
+After eradicating the threat, **the taskforce focuses on restoring affected systems** and services, ensuring they are cleaned, secured, and functioning correctly before bringing them back online. They also **handle communication** with internal and external stakeholders, **notifying users**, **coordinating with public relations teams**, and, if necessary, **reporting to regulatory authorities**.
+
+Following the resolution of the incident, the taskforce **conducts a post-incident analysis** to learn and improve security processes. This involves **updating security policies, training employees, and enhancing security tools and technologies**.
+
+The importance of a taskforce lies in its **ability to react quickly and effectively, reducing response time and limiting potential damage**. By bringing together experts from various fields, the team ensures a comprehensive and informed approach to incident management. They coordinate efficiently across different teams and departments, providing a coherent and organized response. Moreover, **they ensure that all actions are documented and compliant with regulations and internal policies**. In essence, a taskforce is vital for managing security incidents effectively, protecting the organization from the impacts of cyberattacks.
+
+## Crisis Exercice
+
+## Resources
+
+- [What is Incident Response](https://www.paloaltonetworks.com/cyberpedia/what-is-incident-response)
+- [Cyber Kill Chain](https://www.crowdstrike.com/cybersecurity-101/cyber-kill-chain/)
+- [Diamond Model Explanation](https://teamt5.org/en/posts/what-is-diamond-model-of-intrusion-analysis/)

@@ -1,0 +1,445 @@
+# FFUF demo
+
+## What you will learn in this course 🧐🧐
+
+- Learn how to use the FFUF tool on a web application
+
+Let's dive into one of the most widely used tools for web application fuzzing: FFUF. Pronounced "f-euf".
+
+This tool is extremely popular in bug bounty hunting because it is very user-friendly (in most cases) and helps discover paths and exploitable bugs.
+
+To practice, we will use [ffuf.me](http://ffuf.me/), a site that provides a playground for testing ffuf. If needed, you can also start it locally with the [`jedha-cli`](https://app.jedha.co/track/learn-to-use-the-jedha-cli) using the `ffuf` lab.
+
+## Wordlists
+
+Eager to start? Hold on, young padawan. First, we need an essential element for our mission: **wordlists**.
+
+We have several options. We can [create our own lists](https://www.youtube.com/watch?v=W4_QCSIujQ4). Or we can rely on lists maintained by hundreds of contributors like [SecLists](https://github.com/danielmiessler/SecLists), a treasure trove for this purpose. We can also start with the wordlists [graciously provided](http://ffuf.me/wordlists) by [Daniel Miessler](https://twitter.com/DanielMiessler) (place them in your working directory), which are handy because they are smaller versions of SecLists:
+
+```bash
+mkdir wordlists
+cd wordlists
+wget http://ffuf.me/wordlist/common.txt
+wget http://ffuf.me/wordlist/parameters.txt
+wget http://ffuf.me/wordlist/subdomains.txt
+```
+
+<Note type="tip">
+
+If you really want to use SecLists, you should find what you need [here](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/) or [particularly this one](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/common.txt).
+
+</Note>
+
+## First Reconnaissance
+
+Great! Now, let's launch our first path reconnaissance on the URL `http://ffuf.me/cd/basic`. Here’s the command:
+
+```bash
+$ ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/basic/FUZZ
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://ffuf.me/cd/basic/FUZZ
+ :: Wordlist         : FUZZ: /Users/fuff/wordlists/common.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+class                   [Status: 200, Size: 19, Words: 4, Lines: 1, Duration: 90ms]
+development.log         [Status: 200, Size: 19, Words: 4, Lines: 1, Duration: 175ms]
+:: Progress: [4686/4686] :: Job [1/1] :: 1075 req/sec :: Duration: [0:00:08] :: Errors: 0 ::
+```
+
+What’s happening here? We see that the `-w` argument allows us to specify our wordlist `common.txt`. Then, `-u` specifies the URL where we want to perform our fuzzing. Notice something? Yes, the `FUZZ` at the end of the path tells `ffuf` to replace this placeholder with the words from our wordlist.
+
+Now let’s take a closer look at the `ffuf` report. We can see that `ffuf` has discovered two files, `class` and `development.log`. You can view their contents by running `curl http://ffuf.me/cd/basic/class` (or `development.log`).
+
+## Recursion
+
+Great! But you'll notice that `ffuf` only searched one level deep. To explore deeper, we need to enable recursion.
+
+<Note type="note">
+
+Recursion is like looking in a mirror that reflects another mirror, creating an endless series of reflections. When using `ffuf` for fuzzing web paths, recursion means that `ffuf` automatically explores deeper into each directory it finds.
+
+For example, if `ffuf` tests `example.com/test` and finds it exists, it will then test `example.com/test/more` and so on. This process continues until it exhausts all paths, ensuring a thorough exploration of all possible directories and subdirectories.
+
+</Note>
+
+So, let's launch a recursive search with `-recursion` on the URL (note, it's a different one!): `http://ffuf.me/cd/recursion/`. We’ll let you figure out the command line yourself.
+
+<Note type="hint">
+
+```bash
+ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/recursion/FUZZ -recursion
+```
+
+</Note>
+
+The result is as follows:
+
+```bash
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://ffuf.me/cd/recursion/FUZZ
+ :: Wordlist         : FUZZ: /Users/fuff/wordlists/common.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+admin                   [Status: 301, Size: 0, Words: 1, Lines: 1, Duration: 64ms]
+[INFO] Adding a new job to the queue: http://ffuf.me/cd/recursion/admin/FUZZ
+
+[INFO] Starting queued job on target: http://ffuf.me/cd/recursion/admin/FUZZ
+
+users                   [Status: 301, Size: 0, Words: 1, Lines: 1, Duration: 38ms]
+[INFO] Adding a new job to the queue: http://ffuf.me/cd/recursion/admin/users/FUZZ
+
+[INFO] Starting queued job on target: http://ffuf.me/cd/recursion/admin/users/FUZZ
+
+96                      [Status: 200, Size: 19, Words: 4, Lines: 1, Duration: 22ms]
+:: Progress: [4686/4686] :: Job [3/3] :: 1219 req/sec :: Duration: [0:00:04] :: Errors: 0 ::
+```
+
+Great! We have found paths to an admin domain. If you read the report carefully, you can see that `ffuf` discovered `http://ffuf.me/cd/recursion/admin`, then `http://ffuf.me/cd/recursion/admin/users`, and finally the file `96`. Try a `curl`, and you’ll see!
+
+This feature is very handy when you don’t know where to look!
+
+## File Types
+
+Now, let's imagine you know the type of file you want to find. Typically, `.log` files are gold mines of information. `ffuf` allows you to do this with the `-e` option. Here’s how it looks:
+
+```bash
+$ ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/ext/logs/FUZZ -e .log
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://ffuf.me/cd/ext/logs/FUZZ
+ :: Wordlist         : FUZZ: /Users/fuff/wordlists/common.txt
+ :: Extensions       : .log
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+users.log               [Status: 200, Size: 19, Words: 4, Lines: 1, Duration: 44ms]
+:: Progress: [9372/9372] :: Job [1/1] :: 467 req/sec :: Duration: [0:00:16] :: Errors: 0 ::
+```
+
+This will only return files with the `.log` extension.
+
+## Exclusion
+
+Okay, we're getting a pretty good handle on the tool. Now, let’s tackle a slightly more challenging example. Launch a simple search on `http://ffuf.me/cd/no404/FUZZ`:
+
+```bash
+ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/no404/FUZZ
+```
+
+Wow! What’s happening? We have the entire list returning status code 200.
+
+```
+.forward                [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 36ms]
+.listings               [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 30ms]
+.git/index              [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 30ms]
+.profile                [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.subversion             [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 28ms]
+.git/config             [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.svnignore              [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.perf                   [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.git/logs/              [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.git-rewrite            [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 31ms]
+.gitconfig              [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 40ms]
+.mysql_history          [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 37ms]
+.history                [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 40ms]
+.git/HEAD               [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 41ms]
+.git_release            [Status: 200, Size: 669, Words: 126, Lines: 23, Duration: 46ms]
+...
+```
+
+It seems that, unlike the previous examples, the web server always returns a 200 status instead of a 404 when it doesn't find a page. So, how do we identify the actual pages with a 200 status?
+
+<Note type="note">
+
+Some servers are configured to return a 200 status code even if a page is not found, instead of the expected 400 or 404. This approach can mislead attackers by not revealing which pages exist or not, adding a layer of security through obscurity. It also allows custom error pages to be served with a friendly user experience, providing useful information or navigation options without showing a standard "Page Not Found" error. However, this practice can complicate troubleshooting and SEO, as search engines may not correctly index the site's content.
+
+</Note>
+
+You probably noticed that all the pages are the same size. We can use this information and the `-fs` option (for file size) to exclude the 200 responses that are 669 KB in size. Let's do it:
+
+```bash
+$ ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/no404/FUZZ -fs 669
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://ffuf.me/cd/no404/FUZZ
+ :: Wordlist         : FUZZ: /Users/fuff/wordlists/common.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 669
+________________________________________________
+
+secret                  [Status: 200, Size: 25, Words: 4, Lines: 1, Duration: 53ms]
+:: Progress: [4686/4686] :: Job [1/1] :: 1136 req/sec :: Duration: [0:00:05] :: Errors: 0 ::
+```
+
+That’s much better! We have found a page that returns a 200 status but has a different size from 669 KB (this one is 25 KB). A quick `curl` confirms it:
+
+```bash
+$ curl http://ffuf.me/cd/no404/secret
+Controller does not exist
+```
+
+## Parameters
+
+Let's move on to parameters now.
+
+URL parameters are pieces of information added to the end of a web address to pass data to the server. They start with a question mark (`?`) and are followed by key-value pairs separated by an equals sign (`=`). For example, in `example.com?page=2&sort=asc`, `page` and `sort` are parameters, with `2` and `asc` as their values. These parameters can control content display, filter results, track user sessions, and more. They make web interactions dynamic and personalised.
+
+`ffuf` allows us to find parameters by using the `FUZZ` placeholder. Let's test this with our special wordlist `parameters.txt` and the URL `http://ffuf.me/cd/param/data`. If we want to test a parameter, we can do:
+
+```bash
+$ ffuf -w ./wordlists/parameters.txt -u http://ffuf.me/cd/param/data?FUZZ=1
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://ffuf.me/cd/param/data?FUZZ=1
+ :: Wordlist         : FUZZ: /Users/fuff/wordlists/parameters.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+debug                   [Status: 200, Size: 24, Words: 3, Lines: 1, Duration: 52ms]
+:: Progress: [2588/2588] :: Job [1/1] :: 740 req/sec :: Duration: [0:00:03] :: Errors: 0 ::
+```
+
+We have found the `debug` parameter! This is especially useful when you know there are unknown parameters you haven't identified yet.
+
+Not bad, but there's more we can do. We can harness the power of the command line (and even Python) to find values. Let's practice on the URL `http://ffuf.me/cd/pipes/user?id=FUZZ` and try to find a value for `id`.
+
+For this, we can use our shell functions:
+
+```bash
+seq 1 1000 | ffuf -w - -u http://ffuf.me/cd/pipes/user?id=FUZZ
+```
+
+Or even Python if you prefer (❤️):
+
+```bash
+python -c 'for i in range(1001): print(i)' | ffuf -w - -u http://ffuf.me/cd/pipes/user?id=FUZZ
+```
+
+We discover that the value `657` is valid. We can then try to find IDOR vulnerabilities by using different forms of hashes. For example, for MD5:
+
+```bash
+python -c 'import hashlib; [print(hashlib.md5(str(i).encode()).hexdigest()) for i in range(1001)]' | ffuf -w - -u http://ffuf.me/cd/pipes/user3\?id\=FUZZ
+```
+
+Or for Base64:
+
+```bash
+python -c 'import base64; [print(base64.b64encode(bytes(str(i), "utf-8")).decode("utf-8")) for i in range(1001)]' | ffuf -w - -u http://ffuf.me/cd/pipes/user2\?id\=FUZZ
+```
+
+Interesting, isn't it? `ffuf` allows us to send values via pipes, ensuring each value is separated by a newline.
+
+## Rate limit (or not)
+
+New challenge! Let's fuzz the URL `http://ffuf.me/cd/rate/FUZZ`:
+
+```bash
+$ ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/rate/FUZZ
+...
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+:: Progress: [4686/4686] :: Job [1/1] :: 1503 req/sec :: Duration: [0:00:03] :: Errors: 0 ::
+```
+
+What do you notice? Nothing. No errors appear. By default, `ffuf` matchers are set to include status codes from 200 to 299, 301, 302, 307, 401, 403, 405, and 500. We can adjust this as needed using the `-mc` option. Let's test with the option `-mc 200,429`:
+
+```bash
+...
+.well-known/oauth-authorization-server [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 32ms]
+.well-known/openorg     [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 34ms]
+.well-known/nodeinfo    [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 34ms]
+.well-known/openid-configuration [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 34ms]
+.well-known/reload-config [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 28ms]
+.well-known/pki-validation [Status: 429, Size: 178, Words: 8, Lines: 8, Duration: 34ms]
+...
+```
+
+Wow! Until now, `ffuf` ignored 429 responses (since they aren't included in the default matchers). Do you know what status code 429 means?
+
+<Note type="hint">
+
+The [status code 429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) indicates "Too Many Requests". This means the server is rejecting requests because we are sending them faster than it can handle.
+
+</Note>
+
+The thing with fuzzing techniques is that testing applications often triggers blocks. Yes, receiving thousands of requests per second from the same IP raises suspicions about whether the human behind the requests is actually reading the content (if that's the real reason). So, `ffuf` also lets you adjust the speed.
+
+The first interesting parameter is `-t`: it allows you to set the number of threads, which is 40 by default. You can see it on the command line:
+
+```bash
+:: Threads          : 40
+```
+
+By reducing the number of threads, we decrease the number of simultaneous requests.
+
+<Note type="note">
+
+Think of threads like checkout lanes in a supermarket. Each thread can handle one request at a time, just like each lane can handle one customer. If you have more lanes (threads), more customers (requests) can be processed at once.
+
+So, if you reduce the number of threads, it's like closing some checkout lanes. With fewer lanes open, fewer customers can check out simultaneously, which means fewer requests can be handled at the same time. This reduces the load on the server but also slows down the processing of requests.
+
+</Note>
+
+`ffuf` also allows us to add a delay between requests with the `-p` option followed by a value in milliseconds. For example: `-p 0.1` makes `ffuf` wait 0.1 milliseconds between each request.
+
+With this, we should be able to bypass the server's rate limit. Watch the number of requests per second when running this command; you'll see it has drastically dropped (and the number of errors too!):
+
+```bash
+$ ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/rate/FUZZ -mc 200,429 -t 5 -p 0.1
+```
+
+After a few minutes, you should have:
+
+```bash
+oracle                  [Status: 200, Size: 19, Words: 4, Lines: 1, Duration: 22ms]
+```
+
+Good job! Keep in mind that `-t` can also increase the number of threads and speed if needed.
+
+## Subdomains
+
+Now let's imagine we want to explore subdomains instead of paths. Some servers use solutions like virtual hosting ([vhost](https://www.thehacker.recipes/web/recon/virtual-host-fuzzing)) to host multiple sites on the same IP.
+
+Let's test this with `ffuf` and the URL `http://ffuf.me`. We have two main mechanisms to test vhosts:
+
+- **HTTP**: the client uses the Host request header. This header tells the server which domain the client wants to access. Optionally, it can specify a TCP port number.
+- **HTTPS**: the client uses the Server Name Indication (SNI) extension with TLS. This happens at the start of the handshake process, where the client indicates the hostname it wants to connect to.
+
+We are dealing with HTTP. By changing the Host header in requests, `ffuf` tests for different subdomains on the same IP address.
+
+Let's go:
+
+```bash
+ffuf -w ./wordlists/subdomains.txt -H "Host: FUZZ.ffuf.me" -u http://ffuf.me -fs 1495
+```
+
+<Note type="note">
+
+We excluded pages weighing 1495 KB because otherwise, the output was overwhelmed.
+
+</Note>
+
+We found a subdomain: `redhat`.
+
+This technique is effective because it doesn't rely on DNS records, allowing the discovery of subdomains that might not be publicly listed but are configured on the web server. It’s particularly useful for finding hidden or non-public subdomains that traditional DNS enumeration might miss.
+
+While using `FUZZ.ffuf.me` in the URL is one way to test for subdomains, it’s often better to use virtual hosts and change the Host header. Here’s why:
+
+1. **DNS resolution**: using `FUZZ.ffuf.me`, your system tries to resolve each subdomain via DNS, which may fail if subdomains aren’t publicly listed.
+2. **Virtual hosting**: many servers use virtual hosting to serve multiple subdomains from a single IP, based on the Host header, not just the URL.
+3. **Server configuration**: some servers respond differently based on the Host header rather than the URL itself. Manipulating the Host header tests subdomains that might not be accessible through direct URL requests.
+
+So, to uncover hidden subdomains that might slip through the cracks of traditional DNS enumeration, give `ffuf` and Host header manipulation a go!
+
+## Other Ninja Techniques
+
+Here are some features we haven't explored yet, but they will be very useful when you use `ffuf`. This is a fairly personal compilation, and I encourage you to complete it or make your own by exploring the available options (`ffuf -h`).
+
+### Auto-calibration
+
+Remember the endless lists that sometimes come back and having to use `-fs` to exclude certain pages? Well, `ffuf` can do this automatically by enabling calibration with the `-ac` option.
+
+`ffuf` will then send a number of "preflight" requests to check for redundancy in the responses before starting the actual brute forcing. This saves us from doing it manually and works almost every time.
+
+### Filters and Other Matches
+
+We've seen that we can select (match) status codes with `-mc` that `ffuf` returns.
+
+Well, that's not the only thing we can select. It's also possible to filter by the number of lines (`-ml`), the number of words (`-mw`), the size (`-ms`), by regex (`-mr`), or by response time (`-mt`).
+
+Similarly, we've seen how to exclude by size (`-fs`). You can do the same for all the categories we just mentioned for match (`-m`) but with the filter (`-f`).
+
+### Burp
+
+You can send `ffuf` requests through Burp Suite. It's as simple as adding the proxy: `-replay-proxy http://127.0.0.1:8080`. You will then see all your requests passing through Burp Suite!
+
+### Report Time, Commander!
+
+`ffuf` can create a nice HTML export for you with the options `-o filename` and `-of html`! Very handy:
+
+```bash
+ffuf -w ./wordlists/common.txt -u http://ffuf.me/cd/basic/FUZZ -o report.html -of html
+```
+
+### Fuzzing Other Methods
+
+So far, we've only looked at techniques based on the GET method. But it's entirely possible to use `ffuf` to fuzz POST methods as well. To do this, just use the `-X POST` option and specify the payload with `-d "param1=FUZZ&param2=value2"`. You can also use `-H` to add headers.
+
+## Resources 📚📚
+
+- [Everything you need to know about FFUF](https://codingo.io/tools/ffuf/bounty/2020/09/17/everything-you-need-to-know-about-ffuf.html)

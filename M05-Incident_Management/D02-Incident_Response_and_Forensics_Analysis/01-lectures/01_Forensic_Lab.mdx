@@ -1,0 +1,119 @@
+# Forensic Lab
+
+## Introduction to SIFT workstation
+
+![SIFT](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/SIFT.png)
+
+**SIFT Workstation** (SANS Investigative Forensic Toolkit) is an advanced digital forensic toolkit developed by the SANS Institute. It provides a comprehensive set of open-source tools for digital forensic analysis, facilitating the investigation of digital evidence from a range of sources such as computers, mobile devices, and network systems.
+
+SIFT Workstation is designed to be user-friendly, making it accessible for both educational purposes and professional use. It is widely used in digital forensics training, incident response, and professional forensic investigations. For more details, you can visit the [SANS website](https://digital-forensics.sans.org/community/download) or explore the [SIFT Workstation GitHub Repository](https://github.com/sans-dfir/sift).
+
+### How to Install it
+
+#### Option 1: SIFT Workstation VM Appliance
+
+The first and easiest option is to directly download the VirtualBox and VMWare compatible virtual machine available [here](https://www.sans.org/tools/sift-workstation/).
+
+Click the 'Login to Download' button and input (or create) your SANS Portal account credentials to download the virtual machine. Once you have booted the virtual machine, use the credentials below to gain access.
+
+- Login = **sansforensics**
+- Password = **forensics**
+
+#### Option 2A: SIFT Easy Installation on Native Ubuntu System
+
+1. Download [Ubuntu 22.04](http://www.ubuntu.com/download/desktop) ISO file and install Ubuntu 22.04 on any system
+
+2. Install the Latest Cast Binary from its [release page](https://github.com/ekristen/cast/releases/latest)
+
+```
+wget https://github.com/ekristen/cast/archive/refs/tags/v0.14.35.tar.gz
+tar -xzvf v0.14.35.tar.gz
+```
+
+<Note type="warning">
+The wget command above may need to be modified regularly. We recommend that you download the latest version directly from the release page above.
+</Note>
+
+3. Install the latest version of SIFT
+
+```
+sudo cast install teamdfir/sift
+```
+
+And that's all! You can now log in using the same credentials as in method one.
+
+#### Option 2B: SIFT Easy Installation on Microsoft Windows using Windows Subsystem for Linux
+
+- Install Windows Subsystem for Linux (WSL) according to Microsoft’s [latest guidance](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
+- Choose Ubuntu 22.04 during the WSL installation process.
+
+- Launch the Ubuntu Bash Shell and elevate to root `sudo su` to avoid permissions issues during the installation process.
+
+- Install the Latest Cast Binary from its [release page](https://github.com/ekristen/cast/releases/latest)
+
+```
+wget https://github.com/ekristen/cast/archive/refs/tags/v0.14.35.tar.gz
+tar -xzvf v0.14.35.tar.gz
+```
+
+- Install the latest version of SIFT in WSL
+
+```
+sudo cast install --mode=server teamdfir/sift-saltstack
+```
+
+Here you go, you now have a SIFT Workstation in Windows!
+
+### Tools Includes
+
+In the realm of Digital Forensics and Incident Response (DFIR), several powerful tools within the SIFT (SANS Investigative Forensic Toolkit) suite stand out for their utility and effectiveness. These tools are essential for in-depth analysis and investigation of digital incidents. The complete list can be found directly on the [official website](https://www.sans.org/tools/sift-workstation/), but here is the TOP 5 most important ones:
+
+[**Plaso**](https://github.com/log2timeline/plaso) is an excellent tool for creating timelines, and its primary use comes during the initial stages of incident response, particularly when you need to reconstruct the sequence of events leading up to or during an attack. To use Plaso:
+
+1. **Install and Prepare**: Download Plaso from its [GitHub repository](https://github.com/log2timeline/plaso) and ensure you have the necessary dependencies installed.
+2. **Data Collection**: Collect system logs, browser histories, and other sources of evidence. Plaso supports multiple log formats such as Windows Event Logs, web history databases (e.g., Chrome, Firefox), and email metadata.
+3. **Timeline Generation**: Use Plaso's command-line interface to parse the data (`log2timeline.py`) and generate a timeline in Plaso Storage Format (PST). Once processed, the output can be converted to CSV for easy visualization and cross-correlation with other forensic evidence.
+4. **Timeline Analysis**: Load the generated timeline into analysis tools like Timesketch for easier visualization of events, helping you to pinpoint critical moments such as login times, file access, and system changes.
+
+Plaso is most effective when you need to correlate large amounts of log data across various systems to uncover the sequence of an attack.
+
+[**The Sleuth Kit (TSK)**](https://www.sleuthkit.org/sleuthkit/) is used primarily for disk analysis and recovery of deleted files. It is useful in cases where the attacker has attempted to delete or modify evidence to hide their tracks.
+
+1. **Acquisition**: First, acquire a forensic image of the system using a tool like `dd` or other imaging software that maintains data integrity by capturing a bit-for-bit copy of the disk.
+2. **File System Analysis**: Use TSK's command-line tools (e.g., `fls`, `tsk_recover`, `icat`) to examine the disk image. `fls` helps list files and directories, including deleted items, while `icat` can extract files for further analysis.
+3. **Keyword Searches and File Recovery**: Run keyword searches to detect suspicious files or patterns and use `tsk_recover` to restore deleted files. This is vital in scenarios where attackers have wiped logs or removed malicious code.
+4. **GUI Use with Autopsy**: For easier investigation, Autopsy provides a graphical interface for TSK, which helps visualize file structures, deleted files, and hidden data. It also provides reporting features that aid in documenting findings.
+
+TSK is best suited for forensic disk analysis, file recovery, and conducting a deep dive into file system changes or deletions made by attackers.
+
+[**Volatility**](https://github.com/volatilityfoundation/volatility) is a go-to tool for memory forensics, particularly when dealing with advanced threats that operate within volatile memory. Its role is to analyze memory dumps and uncover hidden processes, network connections, and credentials.
+
+1. **Memory Acquisition**: Before using Volatility, you must acquire a memory dump using tools like `DumpIt` or `FTK Imager`. Ensure the system is not powered down, as this can lead to the loss of crucial data in RAM.
+2. **Analysis of Memory Dump**: Use Volatility's suite of commands to explore the dump. For example, use `pslist` to list processes, `netscan` to uncover open network connections, and `dlllist` to find loaded dynamic libraries.
+3. **Detecting Malicious Activity**: Volatility’s `malfind` plugin can help identify malicious code hidden in memory, such as injected DLLs or rootkits. Use `cmdscan` to recover command-line history, revealing commands executed by attackers.
+4. **Dumping Malware**: You can extract suspected malware from memory for further analysis, aiding in determining the scope of the compromise and assisting with remediation.
+
+Volatility is especially critical for uncovering stealthy malware that avoids writing to disk and resides solely in memory.
+
+[**RegRipper**](https://github.com/keydet89/RegRipper3.0) is essential for Windows registry analysis, automating the extraction of critical information such as user activity, installed software, and system configuration.
+
+1. **Data Collection**: Start by exporting the Windows registry hives (e.g., `SYSTEM`, `SAM`, `NTUSER.DAT`) from the compromised machine.
+2. **Automated Analysis**: Load the registry hives into RegRipper and run the tool to extract key data such as USB device history, user login sessions, and program executions. RegRipper generates easily readable reports that break down the information found in the registry keys.
+3. **Timeline Reconstruction**: Cross-reference registry data with other forensic data sources (e.g., logs, memory) to establish a timeline of system changes, user activity, and any potential compromises.
+
+RegRipper shines when used to identify persistent threats, backdoors, or remnants of malware that modify the registry for persistence.
+
+[**ClamAV**](https://www.clamav.net/) is a widely-used open-source antivirus tool that is effective in quickly scanning systems for malware and identifying malicious artifacts.
+
+1. **Initial Scan**: Use ClamAV to perform a quick system scan either in real-time or manually by specifying directories or files of interest. This is particularly useful for identifying malware that is known or has a signature in ClamAV’s extensive database.
+2. **Updating Definitions**: Keep ClamAV updated with the latest virus definitions to detect zero-day threats and newly emerged malware strains.
+3. **Heuristic Analysis**: Leverage ClamAV’s heuristic engine to detect unknown malware based on behavioral patterns, which can help in detecting advanced persistent threats (APTs) that evade traditional signature-based detection.
+4. **Post-Incident Remediation**: Once malware is identified, ClamAV can quarantine or remove compromised files, providing immediate containment and remediation of the threat.
+
+ClamAV is ideal for quickly identifying malware on a system, especially in cases where time is critical, such as during live incidents.
+
+## Resources
+
+- [SIFT Cheat Sheet](https://www.sans.org/posters/sift-cheat-sheet/)
+- [How to use SIFT Tools](https://linuxhint.com/sans_investigative_forensics_toolkit/)

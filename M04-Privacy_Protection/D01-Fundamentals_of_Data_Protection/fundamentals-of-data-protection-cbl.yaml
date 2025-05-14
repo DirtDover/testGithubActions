@@ -1,0 +1,32 @@
+slug: fundamentals-of-data-protection-cbl
+title: Fundamentals of Data Protection
+duration: 1 day
+kind: course
+notes:
+  content: 01-Data_protection_notes_solution.mdx
+  resources: null
+children:
+  - content: 01_Basic_Data_Protection_Concepts.mdx
+    duration: 70
+    resources: null
+    slug: basic-data-protection-concepts-cbl
+    title: Basic Data Protection Concepts
+    type: lecture
+  - content: 02_Legal_and_Regulatory_Frameworks.mdx
+    duration: 70
+    resources: null
+    slug: legal-and-regulatory-frameworks-cbl
+    title: Legal and Regulatory Frameworks
+    type: lecture
+  - content: 03_Rights_of_Data_Subjects_under_the_GDPR.mdx
+    duration: 70
+    resources: null
+    slug: rights-of-data-subjects-under-the-gdpr-cbl
+    title: Rights of Data Subjects under the GDPR
+    type: lecture
+  - content: 01-Data_protection_project.mdx
+    duration: 210
+    resources: null
+    slug: data-protection-project-cbl
+    title: Data Protection Project
+    type: project

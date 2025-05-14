@@ -1,0 +1,163 @@
+access: cyber-lead
+children:
+- prepare-your-training-cybl
+- method-review-and-tool-setup-module-cbl
+- risk-management-and-network-security-purple-cbl
+- security-evaluation-and-testing-red-cbl
+- privacy-protection-cbl
+- incident-management-cbl
+- whats-next-module-cbl
+description: 'Welcome to the Cybersecurity Lead path!
+
+
+  You will learn how to manage risks, secure networks, manage incidents, and protect
+  privacy. This path is designed for people who want to become cybersecurity experts
+  like cybersecurity consultant.
+
+
+  We have designed this path in order to make you develop both hard skills and soft
+  skills in cybersecurity.
+
+
+  Ready to push your career to the next level? Let''s get started!
+
+  '
+duration: 4 weeks
+goals:
+- Understand the importance of security evaluation and testing
+- Learn how to manage risks and secure networks
+- Learn how to manage incidents
+- Learn how to protect privacy
+prerequisites:
+- Good understanding of IT (networks, system, web, etc.)
+- Practice in penetration testing
+- Good understanding of security concepts
+- Be fluent in Python programming
+kind: path
+level: Hard
+pathLevel: lead
+schedule: both
+slug: cyber-lead
+tags:
+- security
+- risk management
+- network security
+- incident management
+- privacy protection
+title: Cybersecurity Lead
+topic: cyber security
+planning:
+  bootcampType: normal
+  durationBootcamp:
+    weeks: 4
+    days: 20
+    hours: 150.0
+    numberOfModule: 7
+    totalHalfDays: 40
+    totalEvening: 0
+    totalMasterclass: 5
+  schedule:
+    full-time:
+      program:
+      - slug: prepare-your-training-cybl
+        title: "Prepare your training \u2B50"
+        halfDays: 0
+        rhythm: noWorkingDay
+        timeSlots: []
+      - slug: method-review-and-tool-setup-module-cbl
+        title: Method Review and Tool Setup Module
+        halfDays: 2
+        rhythm: dayFullTime
+        timeSlots:
+        - start: 09:30
+          end: '12:30'
+        - start: '13:30'
+          end: '18:30'
+      - slug: risk-management-and-network-security-purple-cbl
+        title: Risk Management and Network Security
+        halfDays: 6
+        rhythm: dayFullTime
+        timeSlots:
+        - start: 09:30
+          end: '12:30'
+        - start: '13:30'
+          end: '18:30'
+      - slug: security-evaluation-and-testing-red-cbl
+        title: Security Evaluation and Testing
+        halfDays: 18
+        rhythm: dayFullTime
+        timeSlots:
+        - start: 09:30
+          end: '12:30'
+        - start: '13:30'
+          end: '18:30'
+      - slug: privacy-protection-cbl
+        title: Privacy Protection
+        halfDays: 6
+        rhythm: dayFullTime
+        timeSlots:
+        - start: 09:30
+          end: '12:30'
+        - start: '13:30'
+          end: '18:30'
+      - slug: incident-management-cbl
+        title: Incident Management
+        halfDays: 8
+        rhythm: dayFullTime
+        timeSlots:
+        - start: 09:30
+          end: '12:30'
+        - start: '13:30'
+          end: '18:30'
+      - slug: whats-next-module-cbl
+        title: "What's Next? \U0001F680"
+        halfDays: 0
+        rhythm: noWorkingDay
+        timeSlots: []
+    part-time:
+      program:
+      - slug: prepare-your-training-cybl
+        title: "Prepare your training \u2B50"
+        halfDays: 0
+        rhythm: noWorkingDay
+        timeSlots: []
+      - slug: method-review-and-tool-setup-module-cbl
+        title: Method Review and Tool Setup Module
+        halfDays: 2
+        rhythm: dayMasterclass
+        timeSlots:
+        - start: '10:00'
+          end: '18:00'
+      - slug: risk-management-and-network-security-purple-cbl
+        title: Risk Management and Network Security
+        halfDays: 6
+        rhythm: dayMasterclass
+        timeSlots:
+        - start: '10:00'
+          end: '18:00'
+      - slug: security-evaluation-and-testing-red-cbl
+        title: Security Evaluation and Testing
+        halfDays: 18
+        rhythm: dayMasterclass
+        timeSlots:
+        - start: '10:00'
+          end: '18:00'
+      - slug: privacy-protection-cbl
+        title: Privacy Protection
+        halfDays: 6
+        rhythm: dayMasterclass
+        timeSlots:
+        - start: '10:00'
+          end: '18:00'
+      - slug: incident-management-cbl
+        title: Incident Management
+        halfDays: 8
+        rhythm: dayMasterclass
+        timeSlots:
+        - start: '10:00'
+          end: '18:00'
+      - slug: whats-next-module-cbl
+        title: "What's Next? \U0001F680"
+        halfDays: 0
+        rhythm: noWorkingDay
+        timeSlots: []

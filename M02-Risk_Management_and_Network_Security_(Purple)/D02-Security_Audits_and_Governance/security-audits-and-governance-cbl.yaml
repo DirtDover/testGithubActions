@@ -1,0 +1,58 @@
+slug: security-audits-and-governance-cbl
+title: Security Audits and Governance
+duration: 1 day
+kind: course
+notes:
+  content: 01-EBIOS-RM-solution.mdx
+  resources:
+    - target: Workshop-Briefs.zip
+      title: Workshop-Briefs.zip
+children:
+  - content: 01-Risk_Management_Methodologies_and_Standards.mdx
+    duration: 45
+    resources:
+      - title: NIST-800-30-Risk-Assessment-Tool.zip
+        target: NIST-800-30-Risk-Assessment-Tool.zip
+    slug: risk-management-methodologies-and-standards-cbl
+    title: Risk Management Methodologies and Standards
+    type: lecture
+  - content: 02-Risk_Management_Process.mdx
+    duration: 45
+    resources: null
+    slug: risk-management-process-cbl
+    title: Risk Management Process
+    type: lecture
+  - content: 03-EBIOS-RM_example_en.mdx
+    duration: 45
+    resources:
+      - title: EBIOS-RM-Mobitech-FR.pdf
+        target: EBIOS-RM-Mobitech-FR.pdf
+    slug: ebios-rm-example-cbl
+    title: "EBIOS RM Example: MobiTech"
+    type: lecture
+  - content: 01-EBIOS-RM.mdx
+    duration: 285
+    resources:
+      - target: EBIOS RM_Atelier1.xlsx
+        title: EBIOS RM_Atelier1.xlsx
+      - target: EBIOS RM_Atelier2.xlsx
+        title: EBIOS RM_Atelier2.xlsx
+      - target: EBIOS RM_Atelier3.xlsx
+        title: EBIOS RM_Atelier3.xlsx
+      - target: EBIOS RM_Atelier4.xlsx
+        title: EBIOS RM_Atelier4.xlsx
+      - target: EBIOS RM_Atelier5.xlsx
+        title: EBIOS RM_Atelier5.xlsx
+      - title: EBIOS RM_Atelier1_example.xlsx
+        target: EBIOS RM_Atelier1_example.xlsx
+      - title: EBIOS RM_Atelier2_example.xlsx
+        target: EBIOS RM_Atelier2_example.xlsx
+      - title: EBIOS RM_Atelier3_example.xlsx
+        target: EBIOS RM_Atelier3_example.xlsx
+      - title: EBIOS RM_Atelier4_example.xlsx
+        target: EBIOS RM_Atelier4_example.xlsx
+      - title: EBIOS RM_Atelier5_example.xlsx
+        target: EBIOS RM_Atelier5_example.xlsx
+    slug: ebios-rm-project-cbl
+    title: EBIOS RM Project
+    type: project

@@ -1,0 +1,172 @@
+# Hunting Across the Enterprise
+
+Forensic work mainly focuses on Windows systems because most workstations use Windows. However, it's also important to consider machines running other operating systems, like Linux, which are commonly used for various servers.
+
+## Powershellock Holmes 🔍
+
+When we speak about Windows Forensic, **PowerShell** emerges as a formidable tool, offering a wide array of cmdlets and scripts to aid investigators in retrieving and analyzing critical data from compromised systems.
+
+### Command-line
+
+**PowerShell** is a powerful tool that can significantly aid forensic investigations, offering numerous cmdlets to gather and analyze critical data from compromised systems. During a breach, it is crucial to retrieve detailed information to construct a timeline of the intrusion and identify how attackers gained access and what parts of the system they interacted with. PowerShell is deeply integrated into Windows operating systems and can manage applications such as Exchange, SharePoint, and Windows Server almost entirely through command-line operations.
+
+For instance, **PowerShell**’s network-related cmdlets like `Get-NetTCPConnection` and `Get-NetRoute` allow investigators to view active TCP connections and IP routing information, helping to identify suspicious network activity. The `Get-Process` cmdlet provides detailed information about running processes, which can be pivotal in identifying malicious applications or unauthorized processes.
+
+Moreover, it can access and analyze Windows Event Logs using cmdlets like `Get-EventLog` and `Get-WinEvent`, which retrieve logs from various system events, including security, application, and system logs. This is essential for understanding the actions taken by attackers on the system. The `Get-ADUser` and `Get-ADGroup` cmdlets help investigators examine user accounts and group memberships, revealing potential privilege escalations or unauthorized account creations.
+
+**PowerShell** also enables checking startup processes with `Get-CIMInstance` to identify unusual or malicious services configured to run at system startup. Additionally, `Get-ChildItem` can be used to find recently modified files, potentially indicating tampered or newly created malicious files.
+
+### Scripts Enable
+
+**PowerShell** is not only a robust command-line tool for forensic investigations but also offers a plethora of scripts designed specifically for Digital Forensics and Incident Response (DFIR). These scripts can streamline the process of gathering and analyzing evidence, making them indispensable for responding to cyber attacks on Windows devices.
+
+One such script is the comprehensive [DFIR Script](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/DFIR-Script.ps1). This script automates the collection of a wide array of artifacts from the compromised system. It gathers information on local IP configurations, open network connections, startup processes, active users, installed software, running services, scheduled tasks, and much more. When run as an administrator, it can also collect detailed Windows Security Events, shadow copies, and PowerShell history from all users, providing a thorough snapshot of the system's state.
+
+The **DFIR Script** not only collects this vital information but also structures the output into a neatly organized directory, which is then zipped for easy remote collection. This makes it highly practical for use in various scenarios, including integration with Microsoft Defender for Endpoint’s Live Response capabilities. By enabling Live Response and allowing unsigned script execution, analysts can remotely execute these scripts on compromised devices, collect the artifacts, and download them for detailed analysis. But there are also many other interesting scripts. Here are a few of them:
+
+- [**CollectWindowsEvents**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/CollectWindowsEvents.ps1): This script simply collects all Windows event logs and exports them as CSV files.
+- [**CollectPnPDevices**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/CollectPnPDevices.ps1): It collects information on all Plug and Play devices, such as USB drives and network adapters, which can be crucial for identifying unauthorized device connections.
+- [**DumpLocalAdmins**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/DumpLocalAdmins.ps1): This script lists all local administrator accounts on a device, helping to identify potential privilege escalations.
+- [**LastLogons**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/LastLogons.ps1): It lists the last successful logins, aiding in tracking user activity around the time of the incident.
+- [**ListInstalledSecurityProducts**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/ListInstalledSecurityProducts.ps1) and [**ListDefenderExclusions**](https://github.com/Bert-JanP/Incident-Response-Powershell/blob/main/Scripts/ListDefenderExclusions.ps1): These scripts list installed security products and their statuses, as well as any exclusions configured in Windows Defender, respectively. These can highlight potential weaknesses or overlooked security gaps.
+
+Additionally, PowerShell scripts can export the collected data in CSV format, making it compatible with SIEM tools like Sentinel, Splunk, and Elastic. This allows for advanced filtering, aggregation, and visualization, enabling forensic analysts to derive actionable insights efficiently.
+
+## Kansa, KAPE, and Velociraptor for Collecting & Analyzing Data
+
+In the field of digital forensics, tools like **KANSA**, **KAPE**, and **Velociraptor** are essential for efficiently collecting and analyzing data. These advanced tools extend the capabilities of PowerShell and offer specialized features tailored for comprehensive investigations, helping analysts respond to security incidents, uncover hidden threats, and understand system activity. Here’s how they can be used in practical scenarios and why they are invaluable for forensic professionals.
+
+### KANSA
+
+[**KANSA**](https://github.com/davehull/Kansa) is a modular, PowerShell-based framework designed to collect and analyze data from numerous endpoints within a network. Its scalable architecture allows for wide-reaching investigations, making it an ideal tool for large enterprises with numerous systems that need to be simultaneously examined. KANSA’s primary strength lies in its ability to run various modules tailored for different data collection tasks, from gathering basic system information to performing deeper malware analysis.
+
+KANSA helps investigators by simplifying the complex task of gathering information from different systems and correlating data. By centrally managing the data collected from endpoints, forensic analysts can efficiently uncover patterns that might point to unauthorized access, malware, or other malicious activities.
+
+#### How KANSA Works in Forensic Investigations:
+
+Imagine a scenario where multiple systems within an organization show signs of compromise, such as strange logins or suspicious network traffic. Investigators can use KANSA to collect relevant data like event logs, network information, and running processes from each endpoint. This centralized data allows for cross-system correlation, enabling analysts to identify patterns of compromise, such as simultaneous failed logins across different machines or abnormal connections to external IPs.
+
+1. **Clone the KANSA repository** and navigate to its directory:
+
+```powershell
+git clone https://github.com/davehull/Kansa.git
+cd Kansa
+```
+
+2. **Enable PowerShell Remoting** on the target machines to allow remote data collection:
+
+```powershell
+Enable-PSRemoting -Force
+```
+
+3. **Run KANSA to collect data** across endpoints:
+
+```powershell
+.\kansa.ps1 -Target TARGET_MACHINE -ModulePath .\Modules -PushBin -Verbose
+```
+
+This command pushes PowerShell modules to the target machines and collects forensic data, which will be centrally stored and analyzed.
+
+4. **Analyze network activity** to identify potential threats:
+
+```powershell
+Import-Csv .\Output\TARGET_MACHINE\NetstatOutput.csv | Where-Object {$_.State -eq "ESTABLISHED"} | Format-Table -AutoSize
+```
+
+This helps detect suspicious connections, such as unauthorized external access.
+
+Using KANSA simplifies the complexity of collecting data from many machines and helps analysts visualize potential compromises across a network, making it a critical tool in large-scale forensic investigations.
+
+### KAPE
+
+![KAPE](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/kape.png)
+
+In incidents where time is critical, **KAPE** (Kroll Artifact Parser and Extractor) provides rapid collection and analysis of essential forensic data from Windows systems. KAPE is designed to collect specific forensic artifacts quickly, such as registry keys, browser history, or event logs. Its lightweight nature makes it a go-to tool for investigators who need results fast, without bogging down systems or networks with extensive data transfers.
+
+By focusing on predefined **targets**, KAPE allows analysts to focus on the most relevant data, saving valuable time during an investigation. Moreover, its parsing capabilities turn raw data into easily interpretable results, which can be immediately analyzed, helping analysts uncover key indicators of compromise.
+
+#### Why KAPE is Essential for Fast-Paced Investigations:
+
+Consider a scenario where an organization is facing a malware outbreak, and analysts need to determine which systems are affected. KAPE can quickly collect essential data, such as running processes, suspicious files, or registry changes, across multiple systems. By analyzing these artifacts, investigators can quickly identify systems that are infected and begin the remediation process.
+
+1. **Launch KAPE’s GUI** for a user-friendly interface:
+
+```bash
+kape.exe --gui
+```
+
+2. **Select the artifacts** to collect:
+
+- Choose targets like `FileSystem`, `EventLogs`, or `Registry` to collect essential forensic data from the system.
+
+3. **Configure source and destination paths**:
+
+- Source: `\\.\C:` (for live collection)
+- Destination: `D:\KAPE_Output`
+
+4. **Execute KAPE** and collect data efficiently:  
+   With its rapid collection capabilities, KAPE enables investigators to retrieve critical evidence in minutes, making it invaluable in scenarios where time is crucial.
+
+5. **Analyze results using forensic tools**, such as **Timeline Explorer**:
+
+```bash
+TimelineExplorer.exe D:\KAPE_Output\20240909_KAPE_Results.csv
+```
+
+This provides insights into system activity, helping analysts build a timeline of malicious actions and pinpoint the origin of the attack.
+
+KAPE’s efficiency and speed make it a must-have tool for rapid incident response, allowing investigators to quickly collect and analyze data before evidence is lost or destroyed.
+
+### Velociraptor
+
+![Velociraptor](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/Velociraptor.png)
+
+While **KANSA** and **KAPE** provide powerful collection capabilities, **Velociraptor** stands out for its flexibility and depth in investigations. Designed to scale across large environments, Velociraptor allows forensic investigators to dig deeper into endpoint data using the **Velociraptor Query Language (VQL)**. This unique feature enables investigators to craft customized queries that target specific artifacts or behaviors, which reduces the need for extensive data transfers and enables focused, real-time analysis directly on the endpoint.
+
+Velociraptor’s ability to run queries on endpoints in real-time makes it particularly effective in active investigations. Analysts can use Velociraptor to monitor ongoing endpoint activity, such as suspicious file transfers or anomalous network behavior, and take action immediately if needed.
+
+#### Leveraging Velociraptor for Scalable, Real-Time Investigations:
+
+Consider an organization where a sophisticated malware strain is suspected of spreading across multiple endpoints. Velociraptor allows forensic investigators to run customized queries across thousands of endpoints, focusing on specific indicators of compromise like memory artifacts or unauthorized network connections. This real-time query capability enables faster, more accurate detection and response to the threat.
+
+1. **Deploy Velociraptor’s server**:
+
+```bash
+./velociraptor-v0.6.4-linux-amd64 config generate > server.config.yaml
+./velociraptor-v0.6.4-linux-amd64 --config server.config.yaml frontend -v
+```
+
+2. **Install Velociraptor client** on target endpoints for remote queries:
+
+```powershell
+.\velociraptor-v0.6.4-windows-amd64.exe config client -c client.config.yaml
+.\velociraptor-v0.6.4-windows-amd64.exe service install -c client.config.yaml
+```
+
+3. **Create a targeted hunt** using VQL queries:  
+   For example, to detect suspicious PowerShell commands and unauthorized connections, you can use the following VQL query:
+
+```vql
+LET suspicious_processes = SELECT Pid, Name, CommandLine
+FROM pslist()
+WHERE CommandLine =~ "powershell -enc"
+
+LET suspicious_connections = SELECT Pid, ProcessName, LocalAddress, RemoteAddress
+FROM netstat()
+WHERE RemoteAddress =~ "^(192\.168|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.)"
+
+SELECT * FROM chain(
+ a={ SELECT * FROM suspicious_processes },
+ b={ SELECT * FROM suspicious_connections }
+)
+```
+
+4. **Analyze results directly on the endpoints** in real time using Velociraptor’s built-in monitoring tools. This helps investigators uncover malicious behavior without waiting for large-scale data collection, significantly speeding up the investigation process.
+
+Velociraptor’s advanced query and monitoring capabilities make it an essential tool for responding to complex, large-scale threats, enabling forensic professionals to hunt for malware, monitor endpoint activity, and extract key artifacts in real-time.
+
+## Resources
+
+- [PowerShell in Forensic Investigations](https://www.dionach.com/powershell-in-forensic-investigations/)
+- [Video Introduction to KANSA](https://www.youtube.com/watch?v=OIT9oaFmXZU)
+- [How to use KAPE for Digital Forensics](https://security.packt.com/how-to-use-kape-for-digital-forensics-on-windows/)

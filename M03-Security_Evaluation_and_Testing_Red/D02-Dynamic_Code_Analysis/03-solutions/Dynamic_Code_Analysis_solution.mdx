@@ -1,0 +1,489 @@
+# TA Brief: Fuzzing the JSON-based Banking API at IBC
+
+Welcome to the fuzzing session of the Security Evaluation and Testing module! This brief equips you, the Teaching Assistant (TA), with a clear roadmap on how to guide students through fuzz-testing the custom JSON-based banking API using **American Fuzzy Lop (AFL)**. The primary goal is to help students identify vulnerabilities in the custom JSON parser—such as buffer overflows or invalid memory handling—and to encourage them to propose concrete remediation strategies.
+
+## Overview and Objectives
+
+**Module:** Security Evaluation and Testing  
+**Focus:** Using AFL to Discover Parsing Vulnerabilities and Memory Issues in the Banking API
+
+### Learning Objectives
+
+- **AFL Setup and Execution:**  
+  Help students install, configure, and run AFL against the API’s JSON parser.
+  Show them how to create input seeds and a fuzzing harness (test driver code) for AFL.
+
+- **Vulnerability Discovery:**  
+  Guide students to understand AFL’s process—instrumentation, mutation, and test case generation—and how to interpret crashes and hangs to pinpoint vulnerabilities.
+
+- **Impact and Recommendations:**  
+  Encourage students to grasp why these issues matter in a financial context, linking each discovered flaw to potential real-world consequences.  
+  Prompt them to propose practical fixes, like robust input validation, strict memory bounds checking, or adopting a safer parsing library.
+
+## Daily Schedule
+
+- **09:30 - 12:30: Teaching**
+
+  - Introduce fuzzing fundamentals and explain how AFL works (instrumentation, test case mutation).
+  - Review `json.c` and `api.c` to highlight potential weak points.
+  - Demonstrate compiling the parser with AFL (e.g., `afl-gcc`) and discuss the need for a dedicated fuzzing harness program.
+
+- **12:30 - 13:30: Lunch Break**
+
+- **13:30 - 13:40: Recap and Context**
+
+  - Remind students of the banking API scenario and the importance of input robustness.
+  - Emphasize that AFL excels at uncovering hidden parser flaws that manual testing might miss.
+
+- **13:40 - 15:00: AFL Setup and Initial Fuzzing**
+
+  - Assist students with AFL installation if needed.
+  - Show them how to:
+    1. Compile the parser and harness code with AFL instrumentation.
+    2. Create a minimal, valid JSON seed input.
+    3. Run AFL:
+       ```bash
+       afl-fuzz -i <input_dir> -o <output_dir> -- ./parser_harness @@
+       ```
+  - Explain AFL’s output: coverage, queue, crashes, hangs.
+
+- **15:00 - 15:50: Refining the Fuzzing Process**
+
+  - Encourage adding more seed files and variations (different JSON structures).
+  - Suggest using AFL dictionaries or mutation strategies to find more complex bugs.
+  - Prompt students to analyze AFL’s discovered test cases, noting crashes or unexpected behavior.
+
+- **15:50 - 16:00: Break**
+
+- **16:00 - 17:30: Analyzing Results and Reporting**
+
+  - Guide students through AFL’s output directories (e.g., `crashes/` and `hangs/`).
+  - Instruct them to isolate and reproduce crashes outside AFL for detailed debugging with `gdb` or `valgrind`.
+  - Encourage them to document:
+    - Reproduction steps for each bug.
+    - The root cause in the parser code.
+    - Recommended mitigation strategies (e.g., input size checks, more robust parsing routines).
+
+- **17:30 - 17:45: Q&A and Feedback**
+
+  - Address questions about AFL features, memory debugging, or patching code.
+  - Suggest consulting AFL’s documentation for advanced usage tips.
+
+- **17:45 - 18:00: Daily Recap and Closing**
+  - Summarize the day’s achievements and remind them that fuzzing is an ongoing process.
+  - Reinforce the link between identified issues and real-world security risks.
+  - Encourage reviewing the next steps and tomorrow’s objectives.
+
+## TA Responsibilities
+
+### During AFL Setup and Initial Runs
+
+- **Tool Guidance:**  
+  Assist with AFL installation and environment preparation.
+  Demonstrate how to instrument the code and explain what instrumentation does (increasing coverage visibility for AFL).
+
+- **Seed and Harness Preparation:**  
+  Help students understand why they need a dedicated harness to feed input directly to `json_parse`.  
+  Encourage starting with a simple JSON file as a baseline seed.
+
+- **Monitoring AFL’s Output:**  
+  Interpret AFL’s status screen and outputs.  
+  If AFL uncovers a crash, guide students in examining the associated test case.
+
+### During Analysis and Documentation
+
+- **Explaining Vulnerabilities:**
+  Clarify why a particular crash (e.g., buffer overflow) is severe in a banking application.  
+  Discuss memory safety concepts in simple terms.
+
+- **Suggesting Improvements:**
+  Urge students to propose actionable fixes:
+  - Validating input lengths before allocation.
+  - Checking return values and error codes.
+  - Considering a well-tested JSON library if custom code proves too fragile.
+
+### General Support
+
+- **Troubleshooting:**
+  If students struggle with AFL commands or permissions, step in with quick fixes.
+  Suggest using `afl-tmin` to minimize crash cases or dictionaries to improve mutation effectiveness.
+
+- **Peer Interaction:**
+  Encourage students to share interesting crash inputs, discuss their approach, and compare findings.
+
+- **Reinforcing Concepts:**
+  Continuously remind them that the ultimate goal is to improve the parser’s resilience, ensuring the API can handle malicious inputs without crashing.
+
+## Common Issues and Solutions
+
+- **No Immediate Crashes:**
+  Suggest giving AFL more time or adding more varied seeds. AFL often finds deeper bugs over prolonged runs.
+
+- **Understanding Crash Files:**
+  Show how to replay crashing test cases outside AFL:
+  ```bash
+  ./parser_harness crashes/id:000000,sig:11,src:000000,op:havoc,rep:2
+  ```
+
+Encourage use of gdb or valgrind to pinpoint the faulting code line.
+
+Vague Recommendations: Insist on specificity. For instance:
+“Perform bounds checks before copying input data into internal buffers.”
+“Limit nested JSON structures to prevent stack exhaustion.”
+
+## Additional Tips
+
+Highlight AFL’s Strengths: Emphasize that AFL excels at systematic test case generation, uncovering corner cases humans might overlook.
+Time Management: If they get stuck on a single crash, suggest moving to another test case or attempting a different strategy.
+Positive Reinforcement: Acknowledge good findings and thorough analysis. Remind them that real-world testers often rely heavily on tools like AFL.
+Hint to Reinforce for Students:
+Before fuzzing the entire API, they may need a dedicated piece of code (a harness) to feed inputs directly into the parser. As mentioned in the student brief, writing a small C program that reads a JSON file, calls json_parse, and prints the results is crucial. This simplifies the fuzzing process and makes it easier for AFL to target the parser’s core logic directly. Once vulnerabilities are identified and fixed at this level, students can return to testing the full API stack.
+
+By following this TA brief, you’ll guide students in using AFL effectively, helping them uncover critical parser vulnerabilities and teaching them how to propose meaningful improvements to secure IBC’s crucial financial services.
+
+---
+
+# Audit de l'API REST
+
+### 1. Contexte de l'API à Auditer
+
+- **Type d'API :** API REST.
+- **Cas d'utilisation :**
+  - API utilisée dans un contexte B2B, par exemple pour des transactions financières dans une banque.
+  - Cette API pourrait être proposée aux clients pour effectuer des transactions à haut volume.
+
+### 2. Fonctionnalités Exposées par l'API
+
+- **Transfert d'argent :** L'API permet d'effectuer des transferts d'argent.
+- **Validation d'input :**
+  - Il n'y a pas de validation adéquate des entrées, ce qui permet potentiellement de malformer les données JSON envoyées.
+  - Un analyseur JSON (JSON parser) est utilisé pour vérifier le contenu des données JSON.
+
+### 3. Objectifs de l'Audit
+
+- **Détection de vulnérabilités :**
+  - Identifier des vulnérabilités dans la gestion du JSON par le parser personnalisé.
+  - Rechercher des problèmes tels que des buffer overflows, des failles de validation JSON, etc.
+- **Tester le JSON Parser :**
+  - Créer un script pour tester le parser JSON de manière interactive, sans passer par la couche API complète.
+  - Écrire un fichier `main.c` pour interagir directement avec le parser JSON, facilitant ainsi les tests indépendants du layer API.
+
+### 4. Environnement Technique
+
+- **Base de données :** MySQL est utilisé pour gérer les transactions.
+- **Parser JSON personnalisé :**
+  - Conçu pour gérer de gros volumes de transactions.
+  - Utilise des librairies légères pour minimiser l'impact sur les performances de l'API.
+
+### 5. Structure du Projet
+
+- **Contenu du Dossier :**
+  - `main.c` : Fichier principal pour tester le parser JSON.
+  - `Makefile` et `Makefile4Mac` : Fichiers de configuration pour la compilation.
+  - `src/` : Dossier contenant les fichiers source de l'API :
+    - `api.c` : Gestion des requêtes API.
+    - `db.c` : Interaction avec la base de données MySQL.
+    - `json.c` : Implémentation du parser JSON personnalisé.
+    - `transaction.c` : Gestion des transactions financières.
+
+### 6. Tâches à Réaliser
+
+- **Écriture d'un script de test :**
+  - Créer un petit script pour tester le parser JSON interactivement.
+  - Ce script doit être indépendant du reste de l'API pour se concentrer uniquement sur le parser.
+- **Test du parser JSON :**
+  - Tester la robustesse du parser contre des entrées malformées.
+  - Essayer de provoquer des débordements de mémoire (buffer overflow) et d'autres types de vulnérabilités.
+- **Rapport d'audit :**
+  - Produire un rapport détaillé des vulnérabilités trouvées.
+  - Inclure des recommandations pour améliorer la sécurité et la robustesse de l'API et du parser JSON.
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+Avant de commencer, il faut schématiser le fonctionnement de l’API depuis les codes sources fourni
+
+Lien vers le code source qui nous a été fourni:
+
+[](https://drive.google.com/drive/folders/1cLN-UjKcB_IKmDh4zGfQp0hVqv5nNG5u)
+
+Pour un recapitulatif, il faut creer un jsonparser, ci_dessous son contenu:
+
+le fichier a été deja crée par Florian
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 1.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+# Tapper la commande make dans le dossier afin de compiler le code
+make
+# si on fait un ls, on voit qu'il y'a deux fichiers qui ont été rajoutés
+
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 2.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+Le json_ASAN c'est une maniere  d'appliquer les protections memoire
+# Lancer le json
+./json
+
+# On obtient un message d'erreur, car il nous manque un fichier à parser
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 3.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+# On va creer une seed
+nano seed
+# dans le fichier, on va creer un faux json
+{"key":"test"} ==> c'est comme ça que l'on fait un json
+# on parser le fichier seed avec json
+./json seed
+
+# il a bien reussi à parser le json
+string: test
+# Maintenant il faut que l'on fuzz ce parser
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 4.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+# Comment proceder?
+# une petite rechercher sur google : how to fuzz c programme with afl?
+./afl-fuzz -i testcase_dir -o findings_dir /path/to/program @@
+```
+
+[Fuzzing with afl-fuzz — AFL 2.53b documentation](https://afl-1.readthedocs.io/en/latest/fuzzing.html)
+
+```jsx
+# Créer les dossiers pour les inputs et outputs du fuzzer
+mkdir input output
+
+# Déplacer le fichier seed dans le dossier input
+mv seed_file input/  # Remplacer 'seed_file' par le nom du fichier seed approprié
+
+# Modifier le Makefile pour compiler avec afl-gcc
+nano Makefile
+
+# Remplacer la ligne CC par :
+CC=afl-gcc
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 5.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+# Il faut relancer la commande make
+# si on veut supprimer les fichier qui ont été compilés ==> make clean
+
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 6.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 7.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+```jsx
+# Installation de afl.git
+git clone https://github.com/google/AFL.git
+cd AFL
+sudo make install
+il installe tous les outils d'AFL
+# lancer l'operation:
+
+afl-fuzz -i input -o output ./json @@
+
+```
+
+[Explication de la commande](https://www.notion.so/Explication-de-la-commande-15deff8cd57481fab0bade1ea53f238a?pvs=21)
+
+Ci-dessous le lancement du parser avec le nombre de crash:
+
+En regle generale, il faut le laisser tourner pour au moins, un cycle.
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 8.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+Pour analyser les fichiers qui ont fait crasher l’application, il faut se rendre dans le repertoire
+
+output/default/crashes
+
+analyser les fichiers, jusqu’à trouver celui a fait reellement crasher l’application
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 9.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+Là, on commence à avoir des patterns
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 10.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+Pour mieux analyser tous les fichiers
+
+soit, les ouvrir avec un IDE, pour eviter de faire un cat sur chaque fichier
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 11.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+il va falloir détacher des vulnerabilités de ces crashes
+
+```jsx
+# les commandes ci-dessous nous peremetent d'afficher tout ce qu'il y'a dans les fichiers
+find . -type f -exec cat {} \;
+cat output/default/crashes/*
+find ./output/default/crashes -type f -exec sh -c 'cat "{}"; echo -e "\n"' \; (# elle affiche ligne par ligne les input qui ont fait crasher)
+# on va tester un des paterne trouvé
+nano input/test
+{"key":"t"}
+# on va  lancer json avec le fichier test
+./json input/test
+
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 12.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 13.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+on a seg fault
+
+```jsx
+
+on va retester
+{"key":"te"}
+# et là ça marche
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 14.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+- **Observation du Comportement du Parser JSON**:
+  - Lorsqu'un seul caractère est utilisé dans une chaîne de caractères (`one byte string`), cela provoque un segfault (segmentation fault).
+  - Le parser JSON ne gère pas correctement les chaînes de caractères composées d'un seul caractère, ce qui entraîne un plantage du système.
+- **Explication du Choix du Caractère "t"**:
+  - Le caractère "t" a été utilisé car il s'agit d'une mutation du mot "test".
+  - Le processus de test a commencé avec le mot "test" et a été réduit progressivement jusqu'à arriver à la chaîne contenant uniquement le caractère "t".
+- **Vulnérabilité Identifiée**:
+  - Le parser JSON est vulnérable et certaines conditions spécifiques, comme une chaîne de caractères de taille unique, provoquent un crash du parser.
+  - Cette vulnérabilité doit être documentée dans le rapport Pwndoc pour signaler que le parser JSON peut planter avec certaines entrées.
+- **Pattern Identifié**:
+  - Le pattern identifié est qu'une chaîne de caractères composée d'un seul caractère, quelle qu'elle soit, provoque une erreur.
+  - Exemple : `{"y":"t"}`. Le caractère "t" provient du fichier de seed où la chaîne initiale était "test". Si le seed avait été différent, le résultat aurait également changé en conséquence
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 15.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+1. **Crash de l'application avec un seul caractère :**
+   - Exemples : `“t”`, `“ ”`, `“e”`.
+2. **Crash avec des chaînes de caractères vides :**
+   - Exemples : `“”` (chaînes vides).
+3. **Crash avec des structures de données vides :**
+   - Exemple : `[]` (liste vide).
+
+### Observations
+
+- L'application semble planter lorsqu'elle traite des valeurs vides ou des structures de données contenant une seule unité.
+- Les crashs se produisent avec :
+  - **Chaînes de caractères d'un seul octet** (single-byte strings) : un seul caractère suffit pour déclencher le crash.
+  - **Chaînes de caractères vides** : aucune valeur entre les guillemets provoque également un plantage.
+  - **Structures de données vides** : une liste vide (`[]`) provoque également un plantage.
+
+```jsx
+# On va tester un emptyArray
+[]
+# emptyCurlyBracket
+{}
+# oneByteString
+"s"
+# emptyString
+""
+# objectsample1
+{"test":0}
+# objectsample2
+{"test":"test"}
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 16.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+emptyArray
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 17.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+ça crash
+
+```jsx
+On test avec ASAN pour voir ce qui se passe
+
+./json_ASAN input/emptyArray
+
+```
+
+- **Localisation du problème :**
+  - Le problème se situe dans le fichier `main.c`.
+- **Nature du problème :**
+  - Un **heap-buffer-overflow** a été identifié dans le code.
+- **Détail du problème :**
+  - Un **buffer-overflow** a été détecté, suggérant que les limites de la mémoire allouée sont dépassées.
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 18.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+emptyCurlyBracket:
+
+il n’ a pas l’air de poser probleme, car il n’affiche rien
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 19.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+mais avec ASAN, on a un autre resultat!!!!
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 20.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+emptyString
+
+ça crash
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 21.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 22.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+oneByteString
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 23.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 24.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+objectsample1
+
+ça crash pas
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 25.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 26.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+objectsample2
+
+ça crash pas
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 27.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 28.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+en se referant au site:
+
+‣
+
+on comprend que l’api crash quand le json a dans son code le payload ci-dessous :
+
+```jsx
+ Payload    - Any valid JSON object : {"":0}
+```
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M03-Security_Evaluation_and_Testing_Red/D02-Dynamic_Code_Analysis/03-solutions/image 29.png' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+## Rapport d'Audit
+
+### Constat : Vulnérabilités de Parsing JSON
+
+Le parser JSON de l’API FASTtransaction, implémenté dans le fichier `json.c`, présente plusieurs vulnérabilités de parsing. Ces vulnérabilités se manifestent par des crashs du parser lorsqu’il est exposé à certains inputs spécifiques.
+
+Lorsqu'un attaquant envoie une structure JSON vide `[]` ou une clé JSON partielle `{”t”}`, le parser ne gère pas correctement ces cas, entraînant un plantage de l’API. De plus, le parser échoue également à traiter correctement les chaînes de caractères simples telles que `"t"` ou `""` (chaîne vide). Dans le dernier cas, si la chaîne est vide, le pointeur est décrémenté de manière incorrecte, déclenchant un crash du système.
+
+Un attaquant opérant depuis le réseau interne ou externe pourrait exploiter ces erreurs de parsing en envoyant des requêtes malveillantes à l’API FASTtransaction. En perturbant le bon fonctionnement de l’API par ces requêtes spécialement conçues, l’attaquant pourrait provoquer des dénis de service (DoS) ou potentiellement exploiter des failles de sécurité non découvertes.
+
+### Recommandation : Revoir la logique de fonctionnement du parser
+
+Nous recommandons de revoir la logique de fonctionnement du parser JSON afin de corriger les vulnérabilités identifiées. Les cas particuliers, tels que les structures vides ou incomplètes, doivent être correctement traités pour éviter les crashs.
+
+Il est essentiel d’implémenter une gestion rigoureuse des erreurs de parsing, notamment pour les inputs non conformes, afin d'éviter les dépassements de mémoire et les pointeurs invalides. Les tests unitaires doivent être renforcés pour inclure tous les cas d'usage, y compris les chaînes vides et les objets incomplets. Un audit complet du code `json.c` est également recommandé pour identifier et corriger d’autres potentielles failles de parsing qui n’auraient pas encore été découvertes.
+
+Enfin, une validation stricte des inputs JSON avant leur traitement par le parser devrait être mise en place pour garantir l'intégrité des données et la robustesse de l'application.
+

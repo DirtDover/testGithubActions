@@ -1,0 +1,55 @@
+# Best Practices for Writing a Report
+
+## What you will learn in this course 🧐🧐
+
+- Advices for writing a clear and precise report
+
+When writing a report, clarity and precision are paramount. The goal is to ensure the reader understands exactly what has been seen, read, tested, or verified, without any ambiguity or confusion.
+
+Start by stating only what you have directly observed or tested, rather than relying on second-hand information. This practice increases the accuracy and reliability of your documentation. For example, instead of saying "It was reported that the server was vulnerable", specify "Our tests revealed that the server is vulnerable to SQL injection". To help the reader grasp the essential points quickly, structure your report in a logical and easy-to-follow format. Use headings and subheadings to organize the content, and include bullet points or numbered lists only when necessary for clarity. Always aim to provide concise and direct information.
+
+## Advices
+
+### Use the collective "we"
+
+For instance, "We identified the vulnerability" is more inclusive and collaborative than "The vulnerability was identified". When using abbreviations and acronyms, ensure they are fully spelled out upon their first mention. This practice helps avoid confusion, especially for readers who may not be familiar with the terminology. For example, "Structured Query Language (SQL)" should be used before abbreviating to "SQL". Adopt a writing style that is both elegant and precise. Clarity should always take precedence over stylistic flourishes. If necessary, repeat terms instead of using synonyms or indirect references that might confuse the reader. For example, instead of "the aforementioned security flaw," simply repeat "the security flaw".
+
+### Avoid introductory circumlocutions
+
+Phrases like "It is important to note that" can often be omitted. Directness and brevity should be your guiding principles. For instance, rather than writing "It is worth mentioning that the system is vulnerable," write "The system is vulnerable".
+
+### Minimize the use of weak verbs
+
+Do not use verbs like "to be", "to have", "to do", and "to put". They can often be replaced with more specific and stronger verbs. For example, instead of saying "There is a need to improve security", say "We need to improve security". This approach not only clarifies the action but also strengthens the statement.
+
+### Avoid passive voice
+
+Active voice makes your writing more direct and vigorous. For example, replace "The vulnerability was discovered by our team" with "Our team discovered the vulnerability." Active voice provides clarity about who performed the action.
+
+### Consistency in tense
+
+Choose a tense and stick with it throughout the report. For instance, if you begin in the past tense, continue in the past tense to avoid confusing the reader. For example, "We conducted the test and found the vulnerabilities" is consistent, whereas "We conducted the test and find the vulnerabilities" is not.
+
+Lastly, If you are writing in French or any language other than English, avoid using unnecessary anglicisms. Opt for clear and straightforward English that all readers can understand without needing to decipher jargon or foreign terms. For instance, instead of using "leveraging," simply use "using."
+
+## Example of a Clear and Precise Report Excerpt:
+
+**Vulnerability Assessment Summary**
+
+From June 18, 2024, to July 2, 2024, our team conducted a vulnerability assessment on Jedha Paris's main web application. During our assessment, we discovered a critical SQL injection vulnerability. The input fields on the login page were susceptible to SQL injection attacks due to insufficient input validation.
+
+We utilized the SQL injection string `' OR 1=1--` to exploit the vulnerability. This allowed us to bypass authentication and gain unauthorized access to user accounts.
+
+- **URL Tested:** www.jedha.com/login
+- **Vulnerability Type:** SQL Injection
+- **Exploitable Input:** Username and Password fields
+
+### Recommendations:
+
+To mitigate this vulnerability, we recommend implementing prepared statements and parameterized queries to validate user inputs. Additionally, regular security audits should be conducted to ensure ongoing protection against such attacks. These measures will significantly reduce the risk of SQL injection attacks and improve the overall security of the application.
+
+## Resources
+
+- [Comprehensive guide to write a Cyber Security Audit Report](https://securityboulevard.com/2023/11/a-comprehensive-guide-to-writing-a-cyber-security-audit-report/)
+- [Audit Report Sample](https://www.safecoms.com/wp-content/uploads/2014/12/auditreport_sample.pdf)
+- [All You Need to Know About Security Audit Report](https://www.getastra.com/blog/security-audit/security-audit-report/)

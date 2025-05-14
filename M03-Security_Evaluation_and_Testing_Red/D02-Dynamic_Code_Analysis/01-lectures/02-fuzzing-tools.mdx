@@ -1,0 +1,78 @@
+# The fuzzing tools
+
+## What you will learn in this course 🧐🧐
+
+- Understand the different types of fuzzing techniques
+- Learn how fuzzing tools work
+- Discover some of the most popular fuzzing tools
+
+## The Different Types of Fuzzing
+
+We talked about fuzzing as if it's a single technique. In reality, fuzzing is not just one method but a **collection of techniques**. Let's look at the different approaches to fuzzing.
+
+Like in a good spaghetti western (and pentest too 😉), we have three companions sharing the spotlight: **white-box**, **grey-box**, and **black-box** fuzzing.
+
+Black box fuzzing, the most basic form, doesn't require any internal knowledge of the program. Instead, it randomly mutates inputs according to predefined rules to see what makes the program crash. Think of it like throwing random darts at a board and seeing which ones stick! This simplicity makes black box fuzzing popular and effective, though it can miss deeper issues due to its "blind" nature.
+
+White box fuzzing, on the other hand, dives deep into the program's internal logic. It uses **dynamic symbolic execution**, a method that analyzes all possible execution paths of the program. By starting with a specific input, it gathers constraints at each conditional statement, then systematically generates new inputs to explore different paths. This thorough approach helps uncover more bugs but is complex and resource-intensive. One famous example is [SAGE](https://patricegodefroid.github.io/public_psfiles/cacm2012.pdf), a white box fuzzer used by Microsoft to find bugs in large-scale Windows applications, which has delivered impressive results.
+
+Gray box fuzzing strikes a balance between black and white box methods. It uses partial knowledge of the program, such as **code coverage** or **data flow**, to guide test case generation. This middle-ground approach helps find bugs more efficiently than black box fuzzing while avoiding the complexity of white box fuzzing. Gray box fuzzers like [BuzzFuzz](https://github.com/QIANZECHANG/BuzzFuzz) instrument the target program to trace tainted input data, then mutate these sensitive parts to create new test cases. This targeted strategy can reveal vulnerabilities more effectively, making gray box fuzzing a versatile tool.
+
+## How fuzzing tools work
+
+We won't go into the details of how each fuzzing tool works (because they are too many!), but we can give you a general idea of how they operate.
+
+**Mutation engines** are a critical component of fuzzing tools used in cybersecurity to identify vulnerabilities in software.
+
+These engines work by taking existing valid inputs, known as seed inputs, and introducing small changes or mutations to create new test cases. The goal is to generate inputs that can expose unexpected behaviors or vulnerabilities in the software being tested.
+
+Let's take a closer look at how mutation engines work:
+
+- **Seed Inputs**
+
+Mutation-based fuzzers start with a set of seed inputs, which are **valid inputs that the target program can process**. These seeds are crucial because they provide a baseline from which mutations can be generated.
+
+- **Mutation Process**
+
+The mutation engine modifies these seed inputs by **applying various transformations**. Common mutation techniques include bit flipping, byte swapping, or inserting random data. These changes are designed to create inputs that are similar to the original seeds but may trigger different execution paths in the program.
+
+- **Maintaining Validity**
+
+While mutations introduce randomness, the goal is to maintain enough of the original input's structure to keep the mutated input valid or nearly valid. This **increases the likelihood that the input will be processed** by the program and not immediately rejected as invalid.
+
+- **Coverage Maximization**
+
+Some mutation engines are designed to maximize code coverage. They track which parts of the code have been exercised by the inputs and prioritize mutations that explore new code paths. This approach is often referred to as **coverage-guided fuzzing** and is used by tools like AFL (American Fuzzy Lop).
+
+Mutation engines are often combined with other techniques, such as **symbolic execution** or **concolic testing**, to improve their effectiveness. But this is a topic for another day!
+
+## Some of the most popular fuzzing tools
+
+Here’s a table of what we think are the most used today.
+
+| Name                                                                                                    | Type                   | Comment                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [AFL++](https://github.com/AFLplusplus/AFLplusplus)                                                     | Grey Box Fuzzer        | - Compiles and tests source code autonomously <br />- Can use QEMU for emulation if source code isn't available                                                                           |
+| [ffuf](https://github.com/ffuf/ffuf)                                                                    | Web Fuzzer             | - Very fast, written in Go <br />- Versatile: fuzzes directories, parameters, subdomains, etc. <br />- Simple and flexible syntax                                                         |
+| [wfuzz](https://wfuzz.readthedocs.io/en/latest/)                                                        | Web Fuzzer             | - Written in Python <br />- Can fuzz different parts of an HTTP request <br />- Supports many encodings and payloads                                                                      |
+| [Fuzzino](https://github.com/fraunhoferfokus/Fuzzino)                                                   | Library                | - Generates input data to test applications <br />- Protocol-oriented                                                                                                                     |
+| [LibFuzzer](https://llvm.org/docs/LibFuzzer.html)                                                       | Library                | - Part of the LLVM compiler infrastructure                                                                                                                                                |
+| [ClusterFuzz](https://google.github.io/clusterfuzz/)                                                    | Testing Environment    | - Originally developed by Google to test Chrome <br />- Highly automated                                                                                                                  |
+| [BooFuzz](https://github.com/jtpereyda/boofuzz)                                                         | Framework              | - Successor to Sulley <br />- Written in Python <br />- Suited for fuzzing network protocols                                                                                              |
+| [Peach](https://mozillasecurity.github.io/peach/)                                                       | Automated Solution     | - For fuzzing hardware and software <br />- Highly automated                                                                                                                              |
+| [Burp Suite (Intruder)](https://portswigger.net/burp/documentation/desktop/tools/intruder/uses/fuzzing) | Web Application Fuzzer | - Part of Burp Suite for web security testing <br />- Intuitive graphical interface <br />- Numerous customisation options                                                                |
+| [HonggFuzz](https://honggfuzz.dev/)                                                                     | Evolutionary Fuzzer    | - Uses coverage-guided fuzzing techniques <br />- Supports hardware instrumentation (Intel PT) <br />- Can be used in persistent mode                                                     |
+| [Jackalope](https://github.com/googleprojectzero/Jackalope)                                             | Hybrid Fuzzer          | - Combines genetic and symbolic fuzzing <br />- Aims to improve code coverage                                                                                                             |
+| [Afuzz](https://github.com/RapidDNS/Afuzz)                                                              | Web Path Fuzzer        | - Automatically detects the development language of the website <br />- Uses blacklists to filter invalid pages <br />- Performs statistical analysis on results <br />- Supports HTTP/2  |
+| [headerpwn](https://github.com/devanshbatham/headerpwn)                                                 | HTTP Header Fuzzer     | - Analyses server responses to different HTTP headers <br />- Allows testing custom headers <br />- Can be used with a proxy like Burp Suite <br />- Written in Go for better performance |
+
+Of course, this list isn’t exhaustive and changes over time as projects come and go. How to choose?
+
+First, it greatly depends on whether you are analysing a binary, a web application, or something else. It makes a big difference! Next, consider the language, as some tools are specific to certain languages.
+
+You’ll also want to know if there are any optimisations possible (multi-threading, parallelism, and such tricks that save you computing time) because a fuzzing campaign can last a long time, very long (in a galaxy far, far away…).
+
+## Resources
+
+- [Recent Papers Related To Fuzzing](https://wcventure.github.io/FuzzingPaper/)
+- [The Fuzzing Book](https://www.fuzzingbook.org/)

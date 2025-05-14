@@ -1,0 +1,29 @@
+slug: data-protection-impact-assessment-dpia-cbl
+title: Data Protection Impact Assessment (DPIA)
+duration: 1 day
+kind: course
+children:
+  - content: 01_RGPD_compliance_methodology.mdx
+    duration: 110
+    resources: null
+    slug: rgpd-compliance-methodology-cbl
+    title: RGPD Compliance Methodology
+    type: lecture
+  - content: 02_Personal_Data_Management.mdx
+    duration: 110
+    resources: null
+    slug: personal-data-management-cbl
+    title: Personal Data Management
+    type: lecture
+  - content: 03_The_role_of_the_Data_Protection_Officer_DPO.mdx
+    duration: 110
+    resources: null
+    slug: the-role-of-the-data-protection-officer-dpo-cbl
+    title: The role of the Data Protection Officer (DPO)
+    type: lecture
+  - content: 04_Personal_Data_Security.mdx
+    duration: 110
+    resources: null
+    slug: personal-data-security-cbl
+    title: Personal Data Security
+    type: lecture

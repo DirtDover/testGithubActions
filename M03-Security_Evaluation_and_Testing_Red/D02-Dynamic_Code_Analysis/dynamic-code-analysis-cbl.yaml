@@ -1,0 +1,48 @@
+slug: dynamic-code-analysis-cbl
+title: Dynamic Code Analysis
+duration: 1 day
+kind: course
+notes:
+  content: Dynamic_Code_Analysis_solution.mdx
+  resources:
+    - target: application_fuzz_solution.zip
+      title: application_fuzz_solution.zip
+children:
+  - content: 01-fuzzing-intro.mdx
+    duration: 50
+    resources: null
+    slug: fuzzing-intro-cbl
+    title: Fuzzing Introduction
+    type: lecture
+  - content: 02-fuzzing-tools.mdx
+    duration: 50
+    resources: null
+    slug: fuzzing-tools-cbl
+    title: Fuzzing Tools
+    type: lecture
+  - content: 03-afl-demo.mdx
+    duration: 50
+    resources: null
+    slug: afl-demo-cbl
+    title: AFL++ Demo
+    type: lecture
+  - content: 04-ffuf-demo.mdx
+    duration: 60
+    resources:
+      - target: common.txt
+        title: common.txt
+      - target: parameters.txt
+        title: parameters.txt
+      - target: subdomains.txt
+        title: subdomains.txt
+    slug: ffuf-demo-cbl
+    title: ffuf Demo
+    type: lecture
+  - content: 01-c-application-fuzz.mdx
+    duration: 210
+    resources:
+      - target: application_fuzz.zip
+        title: application_fuzz.zip
+    slug: fuzzing-a-json-based-banking-api-cbl
+    title: Fuzzing a JSON-based Banking API
+    type: project

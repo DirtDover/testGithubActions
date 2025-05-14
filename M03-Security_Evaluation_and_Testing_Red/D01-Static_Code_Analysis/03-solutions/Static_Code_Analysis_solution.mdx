@@ -1,0 +1,246 @@
+# TA Brief: Code Review Mission Afternoon Session
+
+Welcome to the afternoon session focused on the Code Review Mission for IBC. This document outlines your responsibilities as a Teaching Assistant (TA) and provides guidance on how to help students thoroughly analyze the provided code, identify vulnerabilities, and propose remediation strategies.
+
+## Overview and Objectives
+
+Module: Security Evaluation and Testing (Static Analysis Focus)  
+Focus: Code Review and Vulnerability Identification
+
+### Learning Objectives
+
+- Code Review Skills:  
+  Guide students as they inspect a C-based banking application’s source code for security flaws and design weaknesses.
+- Vulnerability Identification & Impact Analysis:  
+  Help students recognize various categories of vulnerabilities (buffer overflows, SQL injection, weak encryption, lack of input validation, logging of sensitive data, etc.), understand their implications, and classify their severity.
+- Propose Secure Remediation:  
+  Support students in devising practical and industry-aligned solutions that address the identified issues while improving the overall security posture of the application.
+
+## Daily Schedule
+
+- 13:30 - 13:40: Introduction to Code Review Mission
+
+  - Briefly recap the mission: Students will examine a fictional banking application (IBC) and identify vulnerabilities.
+  - Emphasize the importance of following best practices, compliance requirements, and secure coding standards.
+
+- 13:40 - 15:30: Exercise: Reviewing the Code
+  - Students review the application’s code files. They should list vulnerabilities, note file names, line references, and consider the potential impact on confidentiality, integrity, and availability.
+- 15:30 - 15:40: Break
+
+- 15:40 - 17:15: Exercise: Documenting Vulnerabilities and Proposing Fixes
+  - Students refine their vulnerability lists into a structured report.
+  - They articulate what’s wrong, why it matters, and how to fix it using secure coding principles.
+- 17:15 - 17:45: Q&A, Review & Feedback Session
+
+  - Discuss the most common vulnerabilities found and their real-world implications.
+  - Provide hints on remediation strategies and reference industry standards (e.g., OWASP Top 10).
+
+- 17:45 - 18:00: Daily Recap and Closing
+  - Summarize the day's activities.
+  - Provide an overview of tomorrow's schedule and objectives.
+  - Remind student to look at the next day's courses.
+
+## TA Responsibilities
+
+### During the Code Review Exercise
+
+1. Prompt Critical Thinking:  
+   Encourage students to question assumptions:
+
+   - Is this input sanitized?
+   - Could this pointer operation cause a buffer overflow?
+   - Are credentials handled securely?
+
+2. Provide Contextual Clues:  
+   Without giving direct answers, guide them towards considering compliance requirements (like IBC’s internal policies), secure handling of PII, and proper encryption.
+
+3. Encourage Thoroughness:  
+   Students might focus on obvious issues (e.g., hard-coded passwords). Remind them to consider less obvious vulnerabilities (e.g., logging sensitive data off-site without encryption, weak cryptographic methods).
+
+4. Offer Industry References:  
+   Point them to OWASP guidelines, ISO 27001 clauses, or known best practices in secure coding. This helps them understand the rationale behind certain recommendations.
+
+### During the Documentation and Remediation Phase
+
+- Clarify Technical Concepts:  
+  If students struggle to understand why a certain vulnerability is dangerous (e.g., a race condition in balance updates), explain using simple analogies.
+
+- Guide Solution Brainstorming:  
+  Help students propose realistic fixes: switching to prepared statements for SQL queries, implementing proper input validation functions, using environment variables for credentials, employing proven encryption libraries, or introducing access control checks for large transactions.
+
+- Encourage Structured Reporting:  
+  Students should present their findings in a clear, concise manner, linking each vulnerability to an impact and a recommended solution. Provide examples of well-structured vulnerability descriptions.
+
+### General Support
+
+- Monitor Progress:  
+  Keep an eye on students who appear stuck or lack direction. Gently prompt them with questions that lead them toward discovery, rather than just giving away answers.
+
+- Promote Collaboration:  
+  Encourage students to discuss their findings with peers. Group brainstorming can reveal hidden vulnerabilities and more robust solutions.
+
+- Answer Questions Promptly and Clearly:  
+  Provide explanations that are concrete and use analogies where possible. Avoid overly technical jargon if students appear confused.
+
+## Common Issues and Solutions
+
+- Students Not Knowing Where to Start:  
+  Suggest they begin with one file at a time, looking for suspicious functions (e.g., `strcpy`, `sprintf` without bounds) or input-handling logic. Encourage scanning for `TODO` or commented code that might indicate a known weakness.
+
+- Difficulty Understanding a Vulnerability’s Impact:  
+  Ask them to think of a real attacker’s goals: Could someone read sensitive data? Modify transaction amounts? Crash the system?
+
+- Proposed Solutions Too Vague:  
+  Challenge students to be specific. Instead of “Use better input validation,” ask them to propose a concrete function or library call. Instead of “Encrypt data,” have them name a recognized encryption standard or approach.
+
+- Time Management:  
+  If students spend too long on one issue, remind them there may be multiple vulnerabilities to find. Encourage them to move on and return later if they have time.
+
+## Additional Tips
+
+- Highlight Real-World Relevance:  
+  Remind students that the skills they’re building—code review, vulnerability analysis, secure coding—are crucial in professional cybersecurity roles.
+
+- Be Patient and Encouraging:  
+  Students have varying skill levels. Reinforce that finding any vulnerability is progress and that over time, they’ll become faster and more accurate.
+
+- Foster Independence:  
+  While assisting, ensure students still learn how to reason about vulnerabilities on their own. Give hints rather than direct answers, so they gain confidence in their analytical abilities.
+
+---
+
+# Solution: Static Analysis
+
+Below is a detailed summary of all the vulnerabilities that were present in the code. Each entry notes the type of vulnerability, where it was found.
+
+## Overview
+
+In the code, several classes of vulnerabilities and issues were identified:
+
+1. **Hard-Coded Credentials & Excessive Privileges**
+2. **SQL Injection via Unvalidated Input**
+3. **Buffer Overflows & Insecure Memory Handling**
+4. **Weak or No Input Validation**
+5. **Format String Vulnerabilities**
+6. **Use-After-Free and Memory Mismanagement**
+7. **Weak "Encryption" and Mismanagement of Sensitive Data**
+8. **Business Logic Flaws (No Approval for Large Transactions)**
+9. **Concurrency / Race Conditions in Transaction Updates**
+10. **Logging Sensitive Data in Plaintext**
+11. **Non-Compliance with Internal Policies (IBC_SEC_POLICY)**
+
+## Detailed Vulnerabilities by File
+
+### `auth.c` and `auth.h`
+
+- **Original Vulnerability:**
+  - Hard-coded or weakly handled credentials.
+  - Logging usernames without sanitization.
+- **Type:** Hard-coded credentials, Logging Sensitive Data
+- **Fixes in Final Code:**
+  - Credentials now read from environment variables (no hard-coded secrets).
+  - No sensitive details (usernames/passwords) are logged.
+  - Assumption of least-privilege DB user.
+
+### `db.c` and `db.h`
+
+- **Original Vulnerability:**
+  - Hard-coded database credentials.
+- **Type:** Hard-coded Credentials
+- **Fixes in Final Code:**
+  - Database connection logic moved to `auth.c` with environment-based credentials.
+
+### `transaction.c` and `transaction.h`
+
+- **Original Vulnerabilities:**
+  - SQL injection due to string concatenation in queries.
+  - Buffer overflows from using `strcpy()` and insufficient length checks.
+  - Format string vulnerability when printing user input directly.
+  - Weak input validation (not checking account number formats in all places).
+  - Use-after-free scenarios (freeing memory too early, then accessing it).
+  - No enforcement of business logic (large transactions had no approval step).
+- **Type:** SQL Injection, Buffer Overflows, Format String Bugs, Logic Flaws, Use-After-Free
+- **Fixes in Final Code:**
+  - All database operations use prepared statements.
+  - Strict input validation on account numbers and other inputs.
+  - No raw `strcpy()`—instead `strncpy()` or direct binding.
+  - Removed all format string vulnerabilities by using format specifiers safely.
+  - Approval required for large transactions as per `MIN_APPROVAL_AMOUNT`.
+  - Memory allocations and frees occur in correct order, no use-after-free.
+
+### `export.c` and `export.h`
+
+- **Original Vulnerabilities:**
+  - SQL injection from concatenating user input into queries.
+  - Potential heap buffer overflow in copying database fields to a small buffer.
+  - Weak or no validation on output data.
+- **Type:** SQL Injection, Heap Buffer Overflow
+- **Fixes in Final Code:**
+  - Use of prepared statements for queries.
+  - Proper buffer length checks and safe copying.
+  - Validation of inputs and output fields before writing to CSV.
+
+### `concurrent.c` and `concurrent.h`
+
+- **Original Vulnerability:**
+  - Concurrency/race conditions due to reading and updating balances without proper locking or transactions.
+- **Type:** Race Condition, Concurrency Issue
+- **Fixes in Final Code:**
+  - Operations performed inside a transaction with prepared statements.
+  - Ensuring atomicity and isolation to prevent race conditions.
+
+### `crypto.c` and `crypto.h`
+
+- **Original Vulnerability:**
+  - Naive "encryption" by shifting ASCII values by 1, not meeting any security standard.
+- **Type:** Weak Encryption
+- **Fixes in Final Code:**
+  - Referenced a secure, standardized encryption approach (simulated).
+  - Ensured that sensitive data is properly encrypted/decrypted using appropriate methods (mocked for demonstration).
+
+### `policy.h`
+
+- **Original Issue:**
+  - Policy constants defined but not enforced (e.g., no checks for large transactions).
+- **Type:** Non-Compliance with Internal Policies
+- **Fixes in Final Code:**
+  - Large transfers now require manager approval (prompting for a code).
+  - Logging, data handling, and other procedures align with `IBC_SEC_POLICY`.
+
+### `utils.c` and `utils.h`
+
+- **Original Vulnerability:**
+  - Potential format string issues if misused, weak input checks.
+- **Type:** Potential Formatting Bugs
+- **Fixes in Final Code:**
+  - Ensured controlled usage of `printf()`, no user-controlled format specifiers.
+  - Added helper functions to safely convert numbers to strings.
+
+### Logging & Data Exposure Changes
+
+- **Original Vulnerability:**
+  - Logging sensitive data (usernames, potential PII) in plaintext locally.
+- **Type:** Sensitive Data Exposure
+- **Fixes in Final Code:**
+  - Introduced `logger.h` and `logger.c` to simulate secure, remote logging.
+  - No sensitive details (like usernames or PII) are logged.
+  - Assume TLS or a secure channel for logs.
+
+### Credentials & Environment Variables
+
+- **Original Vulnerability:**
+  - Hard-coded DB credentials in `db.c`.
+- **Fixes in Final Code:**
+  - Credentials fetched from environment variables (`DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_NAME`).
+  - Encourages deployment-time configuration and least-privilege database users.
+
+## Summary of Key Improvements
+
+1. **SQL Injection Prevented:** All queries use prepared statements.
+2. **No Hard-Coded Secrets:** Credentials are environment-based.
+3. **Buffer Overflows Mitigated:** Properly sized buffers and checks.
+4. **No Format String Exploits:** Controlled usage of `printf()` and va_args.
+5. **Secure "Encryption":** Placeholder for a proper cryptographic routine instead of trivial shifts.
+6. **Business Logic Enforced:** Large transactions require managerial approval.
+7. **Concurrency Handled:** Transactions ensure atomicity and prevent race conditions.
+8. **Logging Sanitization:** Only non-sensitive, sanitized info logged to remote aggregator.

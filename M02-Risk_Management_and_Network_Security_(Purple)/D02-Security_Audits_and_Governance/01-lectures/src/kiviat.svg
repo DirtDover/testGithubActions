@@ -1,0 +1,27 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(200,200)">
+    <!-- Axes -->
+    <line x1="0" y1="0" x2="0" y2="-180" stroke="gray" />
+    <line x1="0" y1="0" x2="127" y2="-127" stroke="gray" />
+    <line x1="0" y1="0" x2="180" y2="0" stroke="gray" />
+    <line x1="0" y1="0" x2="127" y2="127" stroke="gray" />
+    <line x1="0" y1="0" x2="0" y2="180" stroke="gray" />
+    <line x1="0" y1="0" x2="-127" y2="127" stroke="gray" />
+    <line x1="0" y1="0" x2="-180" y2="0" stroke="gray" />
+    <line x1="0" y1="0" x2="-127" y2="-127" stroke="gray" />
+    
+    <!-- Polygone des valeurs -->
+    <polygon points="0,-144 101,-101 144,0 101,101 0,144 -101,101 -144,0 -101,-101" 
+             fill="rgba(0,120,255,0.5)" stroke="blue" stroke-width="2" />
+             
+    <!-- Étiquettes -->
+    <text x="0" y="-190" text-anchor="middle">F3</text>
+    <text x="135" y="-135" text-anchor="start">F2</text>
+    <text x="190" y="0" text-anchor="start">P3</text>
+    <text x="135" y="135" text-anchor="start">C1</text>
+    <text x="0" y="190" text-anchor="middle">C2</text>
+    <text x="-135" y="135" text-anchor="end">C3</text>
+    <text x="-190" y="0" text-anchor="end">P1</text>
+    <text x="-135" y="-135" text-anchor="end">P2</text>
+  </g>
+</svg>

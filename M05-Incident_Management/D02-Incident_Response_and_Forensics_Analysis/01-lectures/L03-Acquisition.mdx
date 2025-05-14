@@ -1,0 +1,162 @@
+# Acquisition
+
+## Memory Dump Analysis
+
+Memory forensics involves analyzing the RAM (Random Access Memory) of a computer to find out what activities have taken place. Data in memory can include running processes, active network connections, open files, unsaved data, and even plain text passwords.
+
+### Preparation
+
+To recover and analyze a memory dump, you'll need some tools and access. Firstly, install essential software tools include [**DumpIt**](https://go.magnetforensics.com/e/52162/dumpit/lj9tdq/1505558652/h/aM6qjhrYavz4w89a_RqTcIjeQMJufjc2x6Pz8CJwx6o) for Windows, [**LiME**](https://github.com/504ensicsLabs/LiME) for Linux, and [**Volatility**](https://github.com/volatilityfoundation/volatility) for both memory analysis. And You'll also need a USB drive or an external hard drive to store the memory image. For windows just executable files and everything should work correctly. For linux, its a bit more complex :
+
+LiME:
+
+```
+git clone https://github.com/504ensicsLabs/LiME.git
+sudo apt install linux-headers-6.6.9-amd64
+cd LiME/src
+make
+```
+
+Volatily:
+
+```
+git clone https://github.com/volatilityfoundation/volatility.git
+cd volatily
+python2 setup.py install
+```
+
+### Capturing Memory
+
+For Windows, simply run `DumpIt.exe` as an administrator and enter `y`. This will capture the memory image and save it as a `.raw` file.
+
+```
+  DumpIt 3.6.20230117 (X64) (Jan 17 2023)
+  Copyright (C) 2007 - 2021, Matt Suiche (msuiche)
+  Copyright (C) 2016 - 2021, Comae Technologies DMCC <https://www.comae.com>
+  Copyright (c) 2022, Magnet Forensics, Inc. <https://www.magnetforensics.com/>
+  All rights reserved.
+
+  Thanks for using DumpIt! Always use Microsoft crash dumps!
+
+    Destination path:           \??\C:\Users\JEDHA\Desktop\Comae-Toolkit-v20230117\x64\R2-D2-20240726-101914.dmp
+
+    Computer name:              R2-D2
+
+
+    --> Proceed with the acquisition ? [y/n]
+```
+
+For Linux, use **LiME** to extract the memory dump. And then load the module with the command `insmod lime-<kernel-version>.ko "path=<output-path>/memory.lime format=lime"`. The memory image will be saved at the specified location. Here is an exemple:
+
+```
+insmod ./lime-4.18.0-240.el8.x86_64.ko "path=../RHEL8.3_64bit.mem format=lime"
+```
+
+### Analyzing the Memory Image
+
+Now that you have recovered an image of the memory, you will need to analyse it using various tools. To set up your analysis environment, install **Volatility** on a dedicated machine.
+
+With Volatility, first identify the memory profile using `volatility -f memory.raw imageinfo`.
+
+![Volatility_sample](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/Volatility_sample.png)
+
+This will give you information about the operating system profile of the memory image. But you can also interact more deeper with different options such as `pslist` for listing active processes, `netscan` for listing network connections, `handles` to get open handles, `dlllist tp <PID>` for extracting loaded DLLs from a process and `hivelist` for analyzing the windows registry and much more.
+
+## Disk Image
+
+Disk image analysis is crucial for recovering and examining data from suspect computers. The process includes creating a disk image, verifying its integrity, and analyzing the data on both Windows and Linux.
+
+### Preparing
+
+This time we will need for Windows, **FTK Imager** to create a disk image. Download FTK Imager from its [official website](https://go.exterro.com/l/43312/2023-05-03/fc4b78). And for sure, you can use a [temp mail](https://temp-mail.org/fr/) and a fake identity to get access download the file.
+
+For Linux, install tools like **dd** or **dcfldd** for creating a disk image. Use these commands to install the tools:
+
+```bash
+sudo apt-get update
+sudo apt-get install dcfldd
+```
+
+You will also need tool such as **Autopsy** to analyze it. And additionally **The Sleuth Kit**, **foremost**, **icat** or **photorec**
+
+```bash
+sudo apt-get update
+sudo apt-get install autopsy sleuthkit foremost photorec icat
+```
+
+For Windows, you can download Autopsy [here](https://www.autopsy.com/download/).
+
+Also, prepare an external hard drive or USB stick for storage.
+
+### Creating the Disk Image
+
+All the tools are ready, its now time to create the disk image. For windows, Launch FTK Imager. Go to "File > Create Disk Image", select the source type (e.g., physical drive), choose the drive to image, specify the image format (E01, RAW, etc.), the save location, and metadata (case name, examiner, etc.), then start the imaging process.
+
+For Linux, you should use **dd** or **dcfldd** to create the image. For dd, the command is:
+
+```bash
+sudo dd if=/dev/sdX of=/path/to/image.dd bs=4M
+```
+
+- `if` stands for "input file." It specifies the source from which `dd` will read the data. In this case, `/dev/sdX` represents the source disk or partition to be imaged.
+
+- `of` stands for "output file." It specifies the destination where `dd` will write the data. In this example, `/path/to/image.dd` is the file where the disk image will be saved.
+
+- `bs` stands for "block size." It specifies the size of the blocks of data that `dd` reads and writes at a time. In this example, `bs=4M` sets the block size to 4 megabytes. Using a larger block size like 4M can make the copying process faster compared to the default block size because it reduces the number of read and write operations.
+
+<Note type="tip">
+
+You can find out which disk you are using by typing:
+
+```
+$ lsblk
+NAME    MAJ:MIN    RM    SIZE    RO    TYPE    MOUNTPOINTS
+sda              8:0            0  80.1G       0     disk
+	sda1    8:1            0  80.1G       0     part    /
+```
+
+</Note>
+
+And for **dcfldd**, similarly use:
+
+```bash
+sudo dcfldd if=/dev/sdX of=/path/to/image.dd hash=md5 hashlog=/path/to/hashlog.txt bs=4M
+```
+
+### Analyzing the Disk Image
+
+We are now going to use **Autopsy** to get more information with the cloned image. With the graphical Windows Software, simply start by launching it, creating a new case, adding the disk image to the case, and analyzing the artifacts (deleted files, browsing history, etc.)
+
+On Linux, launch Autopsy with the command:
+
+```bash
+sudo autopsy
+```
+
+Open the web interface at `http://localhost:9999/autopsy`, create a new case, and add the disk image.
+
+![Autopsy_web](Autopsy_web.png)
+
+You can also use **The Sleuth Kit** to examine the image structure with commands like **fls**, **istat** or **ffind**:
+
+```bash
+fls -r -m / /path/to/image.dd
+```
+
+Analyzing files with **icat** and strings:
+
+```bash
+icat /path/to/image.dd 1024 > recovered_file.txt
+```
+
+Or recovering, by using **foremost** or **photorec**:
+
+```bash
+foremost -i /path/to/image.dd -o /path/to/output_folder
+photorec /path/to/image.dd
+```
+
+## Resources
+
+- [Hack&Tricks Memory Dmp](https://book.hacktricks.xyz/v/fr/generic-methodologies-and-resources/basic-forensic-methodology/memory-dump-analysis)
+- [Set Up Disk Imaging](https://ctf101.org/forensics/what-is-disk-imaging/)

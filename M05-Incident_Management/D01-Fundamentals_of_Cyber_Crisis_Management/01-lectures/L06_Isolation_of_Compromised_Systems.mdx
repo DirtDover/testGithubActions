@@ -1,0 +1,67 @@
+# Isolation of Compromised Systems
+
+## Isolation Techniques
+
+### Strategies for Isolating Compromised Systems
+
+Isolation techniques are critical for preventing the spread of malicious activities from compromised systems to the rest of the network. Effective strategies for isolating compromised systems include taking the system offline or implementing network segmentation. Taking a system offline involves disconnecting it from the network entirely, which immediately halts any ongoing malicious activity. Network segmentation, on the other hand, involves dividing the network into smaller, isolated segments. This strategy restricts the movement of attackers within the network, limiting the damage they can inflict.
+
+In practical terms, isolating a compromised system begins with identifying the affected systems through continuous monitoring and detection. Once identified, network administrators can either physically disconnect the system from the network or use software-defined networking (SDN) tools to virtually segment the network, ensuring that the compromised system is contained. Effective communication with the IT team and relevant stakeholders is essential to coordinate these actions swiftly and efficiently.
+
+It is crucial to note that when isolating a compromised system, one should **avoid shutting down the machine entirely**. Keeping the system running allows forensic experts to analyze the system in its compromised state, preserving valuable evidence and providing insights into the attack's nature and extent. Forensic analysis can help identify the methods used by the attackers, the scope of the breach, and any data that may have been compromised. Therefore, maintaining the system's power and network connection, while isolating it from the rest of the network, is essential for a thorough forensic investigation.
+
+<Note type="tip" title="Software-Defined Networking (SDN)">
+**Software-Defined Networking (SDN)** is an approach to networking that uses software-based controllers or application programming interfaces (APIs) to manage and direct network traffic. Unlike traditional networks that rely on dedicated hardware devices like routers and switches, SDN separates the control plane (decision-making) from the data plane (traffic forwarding).
+
+This decoupling allows for centralized control and dynamic management of the network. Network administrators can create and adjust virtual networks in real-time, overlaying the physical infrastructure. SDN enhances network flexibility, efficiency, and scalability by enabling programmable, automated network configurations.
+
+In essence, SDN transforms traditional networking by centralizing control and enabling more adaptable and efficient network management.
+</Note>
+
+### Practical Implementation of Isolation Techniques
+
+Implementing isolation techniques requires careful planning and execution to minimize disruption to business operations. For offline isolation, administrators can use **network access control (NAC)** tools to remotely disconnect the compromised system. This method is quick and effective but can impact users and services dependent on the isolated system. Therefore, it is crucial to have a backup plan to maintain business continuity.
+
+Network segmentation involves configuring firewalls and switches to create isolated network segments. This can be achieved by setting up **virtual LANs (VLANs) or using SDN** solutions to dynamically manage and isolate network traffic. Regular testing and validation of these configurations ensure that the segmentation effectively contains potential threats without hindering legitimate network traffic.
+
+## Tools and Strategies for Effective Isolation
+
+### Presentation of Available Tools
+
+Various tools are available to aid in the isolation of compromised systems. Some of the most widely used tools include:
+
+- **Firewalls**: Tools like **Palo Alto Networks**, **Cisco ASA**, and **Fortinet** can be configured to block malicious traffic and isolate segments of the network.
+- **Network Access Control (NAC)**: Solutions like **Cisco ISE** and **Aruba ClearPass** allow administrators to control which devices can connect to the network, making it easier to isolate compromised systems.
+- **Software-Defined Networking (SDN)**: Tools such as **VMware NSX** and **Cisco ACI** provide dynamic and automated network segmentation capabilities.
+- **Endpoint Detection and Response (EDR)**: Solutions like **CrowdStrike**, **Carbon Black**, and **Microsoft Defender** for Endpoint can isolate infected endpoints from the network automatically upon detecting malicious activity.
+
+### Case Studies of Successful Isolation
+
+#### [WannaCry Ransomware Attack (2017)](https://www.cloudflare.com/fr-fr/learning/security/ransomware/wannacry-ransomware/)
+
+The WannaCry ransomware attack in 2017 targeted hundreds of thousands of systems globally by exploiting a vulnerability in the SMB protocol. Organizations responded by employing **Network Access Control (NAC)** solutions to isolate infected systems. NAC policies were used to restrict network access for compromised machines, effectively quarantining them to prevent further spread of the ransomware.
+
+#### [SolarWinds Attack (2020)](https://www.fortinet.com/resources/cyberglossary/solarwinds-cyber-attack)
+
+The SolarWinds attack of 2020 involved a sophisticated supply chain compromise, where an advanced persistent threat (APT) group infected SolarWinds Orion software updates, impacting many organizations. In response, affected companies used **Software-Defined Networking (SDN)** techniques to isolate and segment compromised network areas. Tools like **VMware NSX** were used to dynamically create virtual network segments to contain the breach and limit its spread.
+
+#### [NotPetya Ransomware Attack (2017)](https://www.wired.com/story/notpetya-cyberattack-ukraine-russia-code-crashed-the-world/)
+
+The NotPetya attack in 2017, which masqueraded as ransomware but functioned as wiper malware, caused widespread disruption by exploiting compromised software updates and SMB vulnerabilities. Companies employed **Network Access Control (NAC)** tools to quickly isolate infected systems. By cutting off network access for the affected machines, organizations managed to contain the malware and prevent it from spreading further.
+
+#### [Maze Ransomware Attack (2019)](https://www.kaspersky.com/resource-center/definitions/what-is-maze-ransomware)
+
+In 2019, the Maze ransomware attack targeted organizations with a dual-extortion tactic, encrypting and stealing data before demanding a ransom. Affected organizations used **Endpoint Detection and Response (EDR)** and **Network Access Control (NAC)** tools to isolate the compromised endpoints. Solutions like **CrowdStrike** enabled the automatic isolation of infected systems from the network, helping to contain the spread of the ransomware.
+
+## Access Restriction and Monitoring
+
+Restricting access and monitoring network activity are essential components of effective incident response and system isolation. By limiting access to sensitive data and critical systems, organizations can reduce the risk of unauthorized access and potential breaches. Implementing role-based access control (RBAC) ensures that only authorized personnel can access specific systems and data, reducing the attack surface.
+
+Continuous monitoring of network activity using **security information and event management (SIEM)** tools like Splunk, IBM QRadar, and ArcSight allows organizations to detect suspicious behavior in real time. These tools aggregate and analyze log data from various sources, providing a comprehensive view of network activity and facilitating the early detection of potential threats.
+
+Combining access restriction with continuous monitoring creates a robust defense mechanism. By proactively managing who can access what and keeping a close watch on network activity, organizations can quickly identify and isolate compromised systems, preventing the spread of malicious activities and safeguarding their networks.
+
+## Resources
+
+- [What is Threat Isolation & Containment](https://www.itsasap.com/blog/threat-isolation-containment)
+- [Isolation, Containment & Segmentation](https://library.mosse-institute.com/articles/2023/09/isolation-containment-and-segmentation-after-an-incident.html)

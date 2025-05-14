@@ -1,0 +1,98 @@
+# Essential Criteria for Business Continuity
+
+## What you will learn in this course 🧐🧐
+
+- Understand the importance of business continuity
+- Learn about the different business continuity plans
+
+## Service Availability and Data Integrity
+
+### Maximum Downtime
+
+Imagine you run a highly popular online restaurant. Your ordering system crashes during dinner service. Customers are furious, orders pile up, and your chef threatens to quit.
+
+<img src="https://cyber-lead-assets.s3.amazonaws.com/M02-Risk_Management_and_Network_Security_(Purple)/D03-Preparation_for_Cybersecurity_Consulting/01-lectures/downtime.png" style={{width: '100%', maxWidth: '500px', margin: '0 auto',}} />
+
+This is where concepts like **Recovery Time Objective (RTO)**, **Maximum Tolerable Downtime (MTD)** and come into play. Don’t panic, we’ll break these technical terms down into bite-sized pieces, like a multi-course meal.
+
+<Note type="note">
+
+The term "downtime" refers to business process interruptions, while "outage" focuses on system unavailability. Terms like downtime, interruption, and disruption can be used interchangeably, as can allowable, acceptable, and tolerable.
+
+Maximum Tolerable Downtime (MTD) is also known as Maximum Tolerable Period of Disruption (MTPD), Maximum Allowable Outage (MAO), and Maximum Tolerable Outage (MTO).
+
+</Note>
+
+**Let's start with RTO, or Recovery Time Objective.** It’s like having a timer on your oven. When your system crashes, RTO represents the **maximum acceptable time to get everything running again**. Imagine your oven breaks while baking a lemon meringue pie. If your RTO is 4 hours, that means you have this amount of time to fix the oven and resume cooking before customers start leaving. The shorter the RTO, the quicker you need to react. Companies must plan and train for these scenarios to ensure everything runs smoothly.
+
+Next, the **MTD, Maximum Tolerable Downtime**, is a bit more dramatic. Imagine it as the maximum time your restaurant can endure a downtime before severe consequences occur. If your ordering system is down too long, customers will leave, your chef will resign, and your reputation will suffer. MTD includes the detection time, initial response time, and full recovery time. It's like a chain of events from the moment you realise your oven is broken to when the lemon pie is back on the table. In other words, MTD is the point of no return – if you exceed this time, the damage might be irreversible.
+
+The **Allowable Interruption Window (AIW)** is the maximum time a company can pause its regular operations without risking severe financial losses that could threaten its survival. In your restaurant, the AIW could be the few hours it can close due to a power outage. Beyond that, spoiled food and lost customers could cause financial damage threatening its existence.
+
+The AIW is set by business management and defines the **acceptable time frame** between a disaster and the recovery of critical services or applications. It’s typically based on how long downtime can last before causing significant financial damage. The disaster recovery site's technical setup, including the choice of a mirrored, hot, warm, or cold site, will depend on this constraint.
+
+Another interesting concept: the **Service Delivery Objective (SDO)** is the minimum level of service you need to maintain during a crisis until things return to normal. For a restaurant, the SDO might mean serving basic dishes with a reduced team during a power outage.
+
+Notice that the **RTO is usually shorter than MTD** because it focuses on quickly restoring services to avoid significant impact. If your ordering system’s RTO is 4 hours, but your MAD is 24 hours, it means that even though you have 24 hours before things get really bad, you should aim to be operational in 4 hours to avoid major inconvenience.
+
+**Why is this important** for one organisation, whether it’s a restaurant or a multinational company?
+
+First, it helps assess your business’s **resilience**. By understanding these timeframes, you can better prepare for interruptions and implement strategies to minimise impacts.
+
+Second, it aids in **business continuity planning**. Knowing your RTO and MTD allows you to create tailored disaster recovery plans (DRP) and business continuity plans (BCP).
+
+Lastly, it minimises **financial, operational, and reputational losses**. A well-managed interruption means you can resume operations faster, keep customers happy, and avoid losing market share.
+
+To calculate these timeframes, a thorough Business Impact Analysis (BIA) is necessary. This involves examining the financial, operational, and reputational impacts of various interruptions. For example, how much does an hour of your ordering system being down cost? How many customers do you lose if your site is down for a day? These questions help you determine realistic RTO and MAD and put plans in place to address them.
+
+In summary, RTO, MTD and AIW are crucial concepts for ensuring business continuity and resilience in the face of interruptions. They help define clear objectives, plan effectively, and minimise negative impacts on the business.
+
+So, next time your ordering system crashes or your oven breaks during service, you’ll know exactly how much time you have to react before things get really critical.
+
+But what about the data you might lose during these interruptions? This is where the concept of Maximum Acceptable Data Loss comes into play, with ideas like the RPO (Recovery Point Objective) and MADL (Maximum Acceptable Data Loss). Let's explore how these measures help you determine how much data your organisation can afford to lose without disastrous consequences.
+
+### Maximum Acceptable Data Loss
+
+<img src="https://cyber-lead-assets.s3.amazonaws.com/M02-Risk_Management_and_Network_Security_(Purple)/D03-Preparation_for_Cybersecurity_Consulting/01-lectures/dataRecovery.png" style={{width: '100%', maxWidth: '500px', margin: '0 auto',}} />
+
+You're still managing that ultra-popular restaurant. Now, imagine a disaster where your ordering system crashes. Orders are lost, and you no longer know which dishes need to be prepared or for which customers. This is where the **Recovery Point Objective (RPO)** and **Maximum Acceptable Data Loss (MADL)** come in to save the day.
+
+Let's start with the **Recovery Point Objective (RPO)**. Think of the RPO as the frequency at which you back up your recipes and customer orders.
+
+If your RPO is four hours, it means you need to back up all your orders and data at least every four hours. In case of a crash, you will only lose the last four hours of data. A well-defined RPO helps you determine how much data you can afford to lose without catastrophic impact on your business.
+
+Ideally, both RTO and RPO should be close to zero, like in a perfect world where nothing ever fails. But realistically, that almost never happens. In practice, you need to plan for the maximum RTO and RPO values and check if your organisation can survive an interruption of that length. If not, your mission is to bring those values within an acceptable range. Fortunately, techniques like Continuous Data Protection (CDP) and Continuous Remote Replication (CRR) can help achieve these goals.
+
+Now, let's move on to **Maximum Acceptable Data Loss (MADL)**. MADL quantifies the amount of data you can lose during an incident without causing irreversible damage to your business. In other words, it's your tolerance for data loss. MADL is closely related to RPO as it relies on the same logic of limiting losses.
+
+Imagine your MADL is six hours. This means, in the worst-case scenario, you can tolerate losing the last six hours of order data without completely ruining your business. If your RPO is four hours, you're well covered since your backups are more frequent than your maximum data loss tolerance period.
+
+## Assessing Continuity Needs
+
+Continuity needs assessment is a crucial step to ensure that a business keeps running smoothly when issues arise.
+
+In the context of cybersecurity (though it’s not limited to this field), a consultant must **understand and analyse the different processes that make up the company’s operations** to identify the most critical ones.
+
+This is typically done through interviews with the heads of each department, whether that’s sales, marketing, production, or admin management.
+
+The primary goal is to map out the business processes, meaning to list and organise all the essential activities of the company.
+
+Let’s take the example of a school like Jedha. Critical processes include sales, which rely on marketing to generate leads, student billing, course production, and even less visible tasks like facility maintenance. Each process might seem independent, but they are often interconnected. For instance, the sales team can't do their job if they don’t get new leads from marketing.
+
+Once this process map is complete, the next step is to **analyse the interdependencies**. This is where continuity needs assessment really comes into play.
+
+The cybersecurity consultant must **identify which processes are critical and how they are connected**. Some processes are vital to the overall functioning of the company, while others, though less crucial, can still have cascading effects.
+
+For example, a stable internet connection might be needed for both online course production and for marketing teams running ad campaigns.
+
+At this stage, **the consultant also evaluates the risks and specific needs of each process**. They determine key parameters such as the maximum acceptable downtime (RTO) or how much data the company can afford to lose without disrupting operations.
+
+This information helps to **prioritise processes and develop suitable continuity plans**. The idea is to ensure that even in the event of a cyberattack or technical failure, the most critical processes keep running or are restored quickly.
+
+Finally, this analysis often reveals **unexpected interdependencies**. A process that seems trivial at first glance can impact the entire company. The ultimate goal is to make the business more resilient against threats by ensuring the continuity of its essential activities.
+
+## Resources
+
+- [LinkedIn Article on BIA](https://fr.linkedin.com/pulse/le-plan-de-continuit%C3%A9-dactivit%C3%A9-pca-des-entreprises-publiques-yacin-)
+- [Reddit Discussion about RTO, MTO and others things](https://www.reddit.com/r/cism/comments/k23ebo/is_this_the_correct_understanding_of_rto_mto_and/)
+- [Wentzwu Blog: Common BIA terminologies](https://wentzwu.com/2020/04/05/common-bia-terminologies/)

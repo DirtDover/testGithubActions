@@ -1,0 +1,10 @@
+slug: incident-management-cbl
+title: Incident Management
+duration: 4 days
+halfDays: 8
+kind: track
+children:
+  - fundamentals-of-cyber-crisis-management-cbl
+  - incident-response-and-forensics-analysis-part-1-cbl
+  - incident-response-and-forensics-analysis-part-2-cbl
+  - reverse-engineering-cbl

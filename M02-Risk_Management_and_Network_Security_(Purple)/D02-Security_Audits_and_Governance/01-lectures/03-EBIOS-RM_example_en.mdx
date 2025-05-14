@@ -1,0 +1,281 @@
+# EBIOS-RM Example
+
+## What you will learn in this course 🧐🧐
+
+- Understand how EBIOS-RM works with a practical example
+
+To illustrate the EBIOS RM workshops with a tech company, **let's take the example of a mobile app development startup** called _MobiTech_.
+
+Here are the different deliverables that MobiTech could produce as part of each workshop.
+
+## Workshop 1 - Scoping and Security Foundation
+
+### 1. Identification of Business Values
+
+Mission: Develop and operate mobile applications
+
+| Business Value Name      | Nature of the Business Value | Description                                                                                                                                                                                                | Owner |
+| ------------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Application Development  | Process                      | Activity of designing and developing mobile applications including: <br />• Need analysis<br />• Architecture design<br />• Code development<br />• Testing and validation<br />• Deployment to the stores | CTO   |
+| User Management Platform | Process                      | System for managing user accounts, authentication, and authorisation for all applications                                                                                                                  | CIO   |
+| User Data                | Information                  | Collection of personal and usage data collected through mobile applications                                                                                                                                | DPO   |
+| Cloud Infrastructure     | Process                      | Collection of cloud resources (servers, storage, network) hosting the applications and data                                                                                                                | CIO   |
+
+| Name of Associated Supporting Assets | Description                                                                   | Owner (internal/external) |
+| ------------------------------------ | ----------------------------------------------------------------------------- | ------------------------- |
+| Development Environment              | Set of tools and platforms used for development (IDE, version managers, etc.) | Internal (CIO)            |
+| Application Servers                  | Servers hosting the applications in production                                | External (Cloud Provider) |
+| User Database                        | Database management system storing user information                           | External (Cloud Provider) |
+| Authentication Platform              | Service managing user authentication and authorisations                       | Internal (CIO)            |
+| Storage Servers                      | Infrastructure for storing user data and application logs                     | External (Cloud Provider) |
+
+This table presents the main business values and supporting assets of MobiTech, focusing on the essential elements related to the development and operation of mobile applications, as well as the management of users and their data.
+
+### 2. Feared Events and Analyses
+
+| Business Value           | Feared Event                                           | Impacts                                                                                               | Severity |
+| ------------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | -------- |
+| Application Development  | Leak of source code from an application in development | • Company missions and services<br />• Competitive advantage<br />• Image and trust<br />• Financials | 3        |
+| User Management Platform | Platform unavailability for more than 4 hours          | • Company missions and services<br />• Financials<br />• Image and trust<br />• User satisfaction     | 4        |
+| User Data                | Massive theft of personal user data                    | • Legal<br />• Image and trust<br />• Financials<br />• User satisfaction                             | 4        |
+| Cloud Infrastructure     | Compromise of cloud infrastructure                     | • Company missions and services<br />• Data confidentiality<br />• System integrity<br />• Financials | 3        |
+
+This table presents the main feared events for MobiTech, associated with each business value identified earlier. The severity is evaluated on a scale of 1 to 4, where 4 represents the most critical level.
+
+| Type of Repository                        | Repository Name                                     | Application Status        | Deviations                                         | Deviation Justification                                                                                               |
+| ----------------------------------------- | --------------------------------------------------- | ------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Computer Hygiene Rules and Best Practices | ANSSI Computer Hygiene Guide                        | Applied with restrictions | Rule 12: Partition the network into zones of trust | The current network architecture does not allow complete partitioning between development and production environments |
+| Internal Security Rules                   | MobiTech Information Systems Security Policy (ISSP) | Applied with restrictions | Password management policy                         | Password complexity is not applied on all legacy systems                                                              |
+| Regulatory Requirements                   | GDPR                                                | Applied with restrictions | Right to erasure of personal data                  | The data erasure process is not fully automated on all applications                                                   |
+| Standards                                 | ISO 27001                                           | Not applied               | All requirements of the standard                   | ISO 27001 certification is a medium-term goal for the company                                                         |
+
+This table presents an overview of MobiTech's security foundation, highlighting the main applicable repositories, their application status, and the identified deviations and their justifications. It provides a clear view of the areas where improvements are needed to enhance the company's security.
+
+## Workshop 2 - Risk Sources
+
+### 1. Identification of RS/OV
+
+| Risk Sources         | Target Objectives                                                                                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Competitor           | Steal source code of under-development applications to copy innovative features and gain a competitive advantage |
+| Cybercriminal        | Exfiltrate users' personal data for resale on the dark web                                                       |
+| Hacktivist           | Disrupt MobiTech's services to damage its image and denounce excessive personal data collection                  |
+| Disgruntled employee | Sabotage the development of a major application to take revenge for a dismissal                                  |
+| Foreign state        | Implement a backdoor in a popular application to monitor user communications                                     |
+
+This table presents a selection of relevant risk source/target objective (RS/OV) pairs for MobiTech. It covers different types of potential attackers and their possible motivations, related to the specific activities of the company.
+
+### 2. Relevance Assessment
+
+| Risk Sources         | Target Objectives                                                                               | Motivation | Activity    | Resources   | Relevance |
+| -------------------- | ----------------------------------------------------------------------------------------------- | ---------- | ----------- | ----------- | --------- |
+| Competitor           | Steal source code of under-development applications to copy innovative features                 | High       | Moderate    | Significant | High      |
+| Cybercriminal        | Exfiltrate users' personal data for resale on the dark web                                      | High       | Significant | Significant | High      |
+| Hacktivist           | Disrupt MobiTech's services to damage its image and denounce excessive personal data collection | Moderate   | Low         | Moderate    | Medium    |
+| Disgruntled employee | Sabotage the development of a major application to take revenge for a dismissal                 | High       | Low         | Limited     | Medium    |
+| Foreign state        | Implement a backdoor in a popular application to monitor user communications                    | Moderate   | Low         | Significant | Low       |
+
+This table presents an assessment of the relevance of the risk source/target objective (RS/OV) pairs for MobiTech. Relevance is evaluated based on the risk source's motivation, its level of activity in the sector, and the resources available to achieve its objective.
+
+Here is an example of assessing the relevance of risk sources for MobiTech:
+
+- **Competitor / Steal source code of under-development applications**
+
+"MobiTech's latest quarterly report mentions the development of an innovative augmented reality feature for their flagship application, generating a lot of interest in the industry."
+
+- **Cybercriminal / Exfiltrate users' personal data**
+
+"The annual report from ANSSI indicates a 30% increase in attacks aimed at stealing personal data in the mobile applications sector over the past year."
+
+- **Hacktivist / Disrupt MobiTech's services**
+
+"A well-known hacktivist group recently published a manifesto criticising data collection practices of tech companies and threatened to target several startups, potentially including MobiTech."
+
+- **Disgruntled employee / Sabotage the development of a major application**
+
+"MobiTech recently restructured its development team, resulting in the dismissal of several senior employees."
+
+The RS/OV pairs deemed most relevant (High relevance) will likely be prioritised for further risk analysis, while those of Medium relevance may be considered later. The Low relevance pair might initially be dismissed but could be subject to monitoring.
+
+## Workshop 3 - Strategic Scenarios
+
+### 1. Stakeholder Risk Mapping
+
+| **Stakeholder**           | **Category**                                                       |
+| ------------------------- | ------------------------------------------------------------------ |
+| **Customers**             | End users of mobile applications                                   |
+| **Technology Partners**   | Cloud service providers and external APIs                          |
+| **Contractors**           | Companies subcontracted for application development or maintenance |
+| **Regulators**            | Data protection regulatory authorities (e.g., CNIL for GDPR)       |
+| **Third-party Suppliers** | Developers of tools or libraries integrated into applications      |
+
+| **Stakeholder**       | **Exposure** | **Cyber Reliability** | **Risk Level** |
+| --------------------- | ------------ | --------------------- | -------------- |
+| Customers             | Low          | Moderate              | Low            |
+| Technology Partners   | High         | Moderate              | High           |
+| Contractors           | Medium       | Low                   | Medium         |
+| Regulators            | Low          | High                  | Low            |
+| Third-party Suppliers | Medium       | Low                   | Medium         |
+
+This analysis highlights the critical stakeholders requiring special attention in the development of strategic scenarios and the implementation of appropriate security measures.
+
+The following diagram represents MobiTech's stakeholder risk mapping. Stakeholders are positioned according to their **exposure level** (vertical axis) and their **cyber reliability** (horizontal axis).
+
+The represented stakeholders are (for illustration):
+
+- F3: Cloud service provider
+- C1: Main customers
+- P2: Technology partners
+- F1: Development tool suppliers
+- P1: External development contractors
+- F2: Payment service provider
+
+In this diagram:
+
+- The danger zone (upper left quadrant) contains F2 and F3, who are the most critical stakeholders for MobiTech.
+- The control zone (upper right quadrant) contains P1 and F1, requiring special attention.
+- The watch zone (lower left quadrant) contains C1 and P2, posing less risk but needing monitoring.
+
+This representation allows MobiTech to quickly identify stakeholders needing particular attention in its risk management strategy.
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M02-Risk_Management_and_Network_Security_(Purple)/D02-Security_Audits_and_Governance/01-lectures/atelier3-ppc.svg' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+### 2. Strategic Scenarios
+
+The project team decided to represent operational scenarios in the form of attack graphs. They chose to focus on implementing a first operational scenario corresponding to a strategic attack path identified in workshop 2.
+
+<Note>
+
+Operational scenario related to the attack path "A cybercriminal exfiltrates user data by exploiting a vulnerability in the user management platform".
+
+The project team studied several access techniques, including social engineering actions, allowing the attacker to enter the information system. The exploitation of a possible unpatched security flaw was considered following feedback from the CISO but remains to be explored further. If such a flaw exists, it could also serve as an entry point for other attacks (dotted arrow).
+
+Three modus operandi were considered relevant.
+
+1. The attacker infiltrates the information system by exploiting an unpatched security flaw in the web framework. They then access user data due to the lack of partitioning between different parts of the application and exfiltrate them using a hidden channel.
+
+2. The attacker corrupts a development team employee who then easily retrieves information from their workstation, as no monitoring actions are performed on access to sensitive data.
+
+3. The attacker exploits a zero-day vulnerability in the database management system. This operation is facilitated by the fact that security updates are not regularly applied and access to the database is not sufficiently restricted.
+
+During the workshop, it was repeatedly noted that the current lack of rigour in applying security patches significantly facilitated vulnerability exploitation.
+
+User data exfiltration by exploiting a vulnerability in the management platform is considered almost certain. On one hand, the platform uses obsolete software components and on the other hand, access controls to sensitive data are insufficient. The combination of these aggravating factors makes this scenario particularly critical for MobiTech.
+
+</Note>
+
+Here's another example of an operational scenario for MobiTech:
+
+<Note>
+
+Operational scenario related to the attack path "A hacktivist disrupts MobiTech's services to damage its image and denounce excessive personal data collection".
+
+The project team studied several access techniques, including social engineering actions, allowing the attacker to enter the information system. The exploitation of a possible unpatched security flaw was considered following feedback from the CISO but remains to be explored further. If such a flaw exists, it could also serve as an entry point for other attacks (dotted arrow).
+
+Three modus operandi were considered relevant.
+
+1. The attacker infiltrates the information system by exploiting an unpatched security flaw in the web framework used for the user management platform. They then access user data due to the lack of partitioning between different parts of the application and exfiltrate them using a hidden channel.
+
+2. The attacker corrupts a development team employee who then easily retrieves information from their workstation, as no monitoring actions are performed on access to sensitive data.
+
+3. The attacker launches a massive DDoS attack on MobiTech's cloud infrastructure, exploiting the fact that protection measures against this type of attack are insufficient. This operation is facilitated by the fact that mitigation capabilities have not been properly sized and incident response procedures are not regularly tested.
+
+During the workshop, it was repeatedly noted that the current lack of rigour in applying security patches significantly facilitated vulnerability exploitation.
+
+Disrupting MobiTech's services by a DDoS attack on the cloud infrastructure is considered very likely. On one hand, protection measures against DDoS attacks are insufficient and on the other hand, incident response procedures are not regularly tested. The combination of these aggravating factors makes this scenario particularly critical for MobiTech.
+
+</Note>
+
+Here are the main strategic scenarios for MobiTech with their associated severity level:
+
+| Risk Sources  | Objectives                                                                                      | Strategic Attack Paths                                                                                                                                                                                                                                                           | Severity   |
+| ------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Cybercriminal | Exfiltrate user data for resale                                                                 | Three attack paths to investigate. A cybercriminal exfiltrates user data: 1. by compromising a cloud service provider; 2. by exploiting a vulnerability in the user management platform; 3. by directly attacking the data storage infrastructure.                               | 4 Critical |
+| Hacktivist    | Disrupt MobiTech's services to damage its image and denounce excessive personal data collection | Two attack paths to investigate. A hacktivist disrupts MobiTech's services: 1. by causing service interruption through a massive DDoS attack on the cloud infrastructure; 2. by exploiting a security flaw in the user management platform to access and disclose personal data. | 4 Critical |
+
+### 3. Defining Security Measures on the Ecosystem
+
+| Stakeholder              | Strategic Attack Paths                                                        | Security Measures                                                                                                                                                                                | Initial Threat | Residual Threat |
+| ------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- | --------------- |
+| User Management Platform | Exploit a vulnerability in the platform to access user data.                  | - Implement a strict update policy for frameworks and libraries. <br /> - Strengthen authentication mechanisms (multi-factor authentication). <br /> - Partition sensitive data to limit access. | 3.5            | 2               |
+| Cloud Infrastructure     | Launch a massive DDoS attack on the cloud infrastructure to disrupt services. | - Increase the DDoS attack mitigation capacity through a specialized provider. <br /> - Regularly test incident response procedures. <br /> - Implement proactive network flow monitoring.       | 4              | 2.5             |
+
+This table synthesizes the identified strategic attack paths, the proposed security measures to reduce risk, and the estimated evolution of threat levels after implementing the measures.
+
+## Workshop 4 - Operational Scenarios
+
+### 1. Developing Operational Scenarios
+
+The project team has decided to represent operational scenarios in the form of attack graphs. They have chosen to focus on developing an initial operational scenario corresponding to a strategic attack path identified in Workshop 3.
+
+Operational scenario related to the attack path "A cybercriminal exfiltrates user data by exploiting a vulnerability in the user management platform":
+
+| Know                                                                       | Enter                                                | Find                                                       | Exploit                                                                      |
+| -------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| External open source reconnaissance                                        | Exploitation of a security flaw in the web framework | Lateral movement to user database                          | Theft and exfiltration of user data                                          |
+| Advanced external reconnaissance                                           | Phishing email targeted at a developer               | Internal network reconnaissance                            | Creation and maintenance of an exfiltration channel via a compromised server |
+| Corruption of a development team member                                    | Privilege escalation                                 | Exploitation of a data collection and exfiltration malware |
+| Exploitation of a zero-day vulnerability in the database management system |                                                      |
+
+The project team has studied several access techniques, including social engineering actions, that allow the attacker to enter the information system. The exploitation of a potential unpatched security flaw has been considered following the feedback from the CISO, but needs further investigation. If such a flaw exists, it could also serve as an entry point for other attacks (dotted arrow).
+
+Three methods of operation were deemed relevant.
+
+1. The attacker infiltrates the information system by exploiting an unpatched security flaw in the web framework. He then accesses user data due, in part, to the lack of partitioning between different parts of the application and exfiltrates them using a hidden channel.
+
+2. The attacker corrupts a member of the development team who then easily retrieves information from his workstation, as no supervision is performed on access to sensitive data.
+
+3. The attacker exploits a zero-day vulnerability in the database management system. This operation is facilitated by the fact that security updates are not regularly applied and that database access is not sufficiently restricted.
+
+<img src='https://cyber-lead-assets.s3.amazonaws.com/M02-Risk_Management_and_Network_Security_(Purple)/D02-Security_Audits_and_Governance/01-lectures/atelier4-attaques.svg' style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }} />
+
+### 2. Evaluating the Likelihood of Operational Scenarios
+
+| Strategic attack paths (associated with operational scenarios)                                                                    | Overall likelihood |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| A cybercriminal exfiltrates user data by exploiting a security flaw in the web framework                                          | V4 Almost certain  |
+| A cybercriminal exfiltrates user data by corrupting a member of the development team                                              | V2 Probable        |
+| A cybercriminal exfiltrates user data by exploiting a zero-day vulnerability in the database management system                    | V3 Highly probable |
+| A hacktivist disrupts services by launching a massive DDoS attack on the cloud infrastructure                                     | V3 Highly probable |
+| A hacktivist disrupts services by exploiting a security flaw in the user management platform to access and disclose personal data | V2 Probable        |
+
+The exfiltration of user data by exploiting a security flaw in the web framework is considered almost certain. On the one hand, the framework used includes obsolete software components and on the other hand, security updates are not regularly applied. The combination of these aggravating factors makes this scenario particularly critical for MobiTech.
+
+## Workshop 5 - Risk Management
+
+### 1. Develop a summary of risk scenarios
+
+| Strategic Scenario                                                                                                                | Severity | Likelihood | Risk Level |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | ---------- |
+| A cybercriminal exfiltrates user data by exploiting a security flaw in the web framework                                          | 4        | 4          | Critical   |
+| A cybercriminal exfiltrates user data by bribing a member of the development team                                                 | 4        | 2          | Major      |
+| A cybercriminal exfiltrates user data by exploiting a zero-day vulnerability in the database management system                    | 4        | 3          | Critical   |
+| A hacktivist disrupts services by launching a massive DDoS attack on the cloud infrastructure                                     | 4        | 3          | Critical   |
+| A hacktivist disrupts services by exploiting a security flaw in the user management platform to access and disclose personal data | 4        | 2          | Major      |
+
+This table summarises the strategic scenarios identified for MobiTech, indicating their severity, likelihood, and the resulting risk level. Risk levels are determined by combining the severity and likelihood of each scenario.
+
+Exfiltrating user data by exploiting a security flaw in the web framework is considered the most critical risk, with maximum severity and likelihood. This can be explained by the use of outdated software components and lack of rigour in applying security updates.
+
+DDoS attacks and exploiting zero-day vulnerabilities are also considered critical risks due to their potentially high impact and significant likelihood.
+
+Scenarios involving bribing an employee or exploiting a flaw to disclose personal data are deemed major risks, mainly due to their lower likelihood.
+
+### 2. Decide on the risk management strategy and define security measures
+
+| Strategic Scenario                                                                                                                | Severity | Likelihood | Risk Level | Treatment | Security Measures                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A cybercriminal exfiltrates user data by exploiting a security flaw in the web framework                                          | 4        | 4          | Critical   | Reduce    | - Implement a strict policy for updating frameworks and libraries<br />- Strengthen authentication mechanisms (multi-factor authentication)<br />- Segregate sensitive data to limit access |
+| A cybercriminal exfiltrates user data by bribing a member of the development team                                                 | 4        | 2          | Major      | Reduce    | - Regularly sensitize and train employees in security<br />- Implement a strict access control policy<br />- Implement a system for detecting suspicious behaviour                          |
+| A cybercriminal exfiltrates user data by exploiting a zero-day vulnerability in the database management system                    | 4        | 3          | Critical   | Reduce    | - Implement proactive vulnerability monitoring<br />- Strengthen network segmentation<br />- Implement an intrusion detection system (IDS)                                                  |
+| A hacktivist disrupts services by launching a massive DDoS attack on the cloud infrastructure                                     | 4        | 3          | Critical   | Reduce    | - Increase the capacity to mitigate DDoS attacks<br />- Implement proactive network flow monitoring<br />- Regularly develop and test a business continuity plan                            |
+| A hacktivist disrupts services by exploiting a security flaw in the user management platform to access and disclose personal data | 4        | 2          | Major      | Reduce    | - Regularly perform security audits of the platform<br />- Strengthen the encryption of personal data<br />- Implement a privileged access management system                                |
+
+This table summarises the strategic scenarios identified for MobiTech by adding the chosen treatment strategy and the proposed security measures to reduce each risk.
+
+For all scenarios, the chosen treatment strategy is to reduce the risk, given their potentially significant impact on the company. The proposed security measures aim to reinforce data protection, improve threat detection, and strengthen the resilience of MobiTech's infrastructure.
+
+## Resources 📚📚
+
+- [The EBIOS Risk Manager Method](https://cyber.gouv.fr/la-methode-ebios-risk-manager)
+- [EBIOS-RM v1.5 Guide](https://cyber.gouv.fr/sites/default/files/document/20240901_Guide-EBIOS-RM-V1.5.pdf)

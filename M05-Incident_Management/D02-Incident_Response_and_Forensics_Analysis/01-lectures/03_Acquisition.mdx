@@ -1,0 +1,211 @@
+# Acquisition
+
+## Memory Dump Analysis
+
+Memory forensics involves analyzing the RAM (Random Access Memory) of a computer to find out what activities have taken place. Data in memory can include running processes, active network connections, open files, unsaved data, and even plain text passwords.
+
+### Preparation
+
+To recover and analyze a memory dump, you'll need some tools and access. Firstly, install essential software tools include [**DumpIt**](https://go.magnetforensics.com/e/52162/dumpit/lj9tdq/1505558652/h/aM6qjhrYavz4w89a_RqTcIjeQMJufjc2x6Pz8CJwx6o) for Windows, [**LiME**](https://github.com/504ensicsLabs/LiME) for Linux, and [**Volatility**](https://github.com/volatilityfoundation/volatility) for both memory analysis. And You'll also need a USB drive or an external hard drive to store the memory image. For windows just executable files and everything should work correctly. For linux, its a bit more complex :
+
+**LiME:**
+
+```
+git clone https://github.com/504ensicsLabs/LiME.git
+sudo apt install linux-headers-6.6.9-amd64
+cd LiME/src
+make
+```
+
+**Volatily2:**
+
+```
+git clone https://github.com/volatilityfoundation/volatility.git
+cd volatily
+python2 setup.py install
+```
+
+### Capturing Memory
+
+#### DumpIT (Windows)
+
+For Windows, simply run `DumpIt.exe` as an administrator and enter `y`. This will capture the memory image and save it as a `.raw` file.
+
+```
+DumpIt 3.6.20230117 (X64) (Jan 17 2023)
+Copyright (C) 2007 - 2021, Matt Suiche (msuiche)
+Copyright (C) 2016 - 2021, Comae Technologies DMCC <https://www.comae.com>
+Copyright (c) 2022, Magnet Forensics, Inc. <https://www.magnetforensics.com/>
+All rights reserved.
+
+Thanks for using DumpIt! Always use Microsoft crash dumps!
+
+Destination path:           \??\C:\Users\JEDHA\Desktop\Comae-Toolkit-v20230117\x64\R2-D2-20240726-101914.dmp
+
+Computer name:              R2-D2
+
+
+--> Proceed with the acquisition ? [y/n]
+```
+
+When using **DumpIt** to capture a memory dump, it’s important to follow best practices to ensure the integrity and reliability of the data collected.
+
+- Always use the latest official version of DumpIt to ensure its reliability and minimize potential issues.
+
+- Running DumpIt from a removable media, such as a USB drive, is recommended to reduce its impact on the target system. Additionally, ensure sufficient storage is available for the memory dump, as the file size will be equivalent to the size of the system's RAM.
+
+- The output location should be set to an external storage device to avoid overwriting local data, and the process should not be interrupted once started to preserve the integrity of the dump.
+
+- During execution, **DumpIt** should be run with **administrator privileges** to grant access to the physical memory.
+
+After completing the memory dump, it's essential to **document the procedure** thoroughly, including the exact time of acquisition. **Immediately calculating a hash** (e.g., SHA256) of the dump file helps ensure its integrity, verifying that the data remains unchanged throughout the investigation. **Minimize any interaction with the system during the acquisition** to avoid altering volatile data. And of course it's also crucial to **perform the acquisition as quickly as possible** following an incident to capture critical volatile information.
+
+#### LiME (Linux)
+
+For Linux, use **LiME** to extract the memory dump. And then load the module with the command `insmod lime-<kernel-version>.ko "path=<output-path>/memory.lime format=lime"`. The memory image will be saved at the specified location. Here is an exemple:
+
+```
+insmod ./lime-4.18.0-240.el8.x86_64.ko "path=../RHEL8.3_64bit.mem format=lime"
+```
+
+### Analyzing the Memory Image
+
+Now that you have recovered an image of the memory, you will need to analyse it using various tools. To set up your analysis environment, install **Volatility** on a dedicated machine.
+
+With Volatility, first identify the memory profile using `volatility -f memory.raw imageinfo`.
+
+![Volatility_sample](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/Volatility_sample.png)
+
+This will give you information about the operating system profile of the memory image. But you can also interact more deeper with different options such as `pslist` for listing active processes, `netscan` for listing network connections, `handles` to get open handles, `dlllist tp <PID>` for extracting loaded DLLs from a process and `hivelist` for analyzing the windows registry and much more.
+
+## Disk Image
+
+Disk image analysis is crucial for recovering and examining data from suspect computers. The process includes creating a disk image, verifying its integrity, and analyzing the data on both Windows and Linux.
+
+### Preparing
+
+This time we will need for Windows, **FTK Imager** to create a disk image. Download FTK Imager from its [official website](https://go.exterro.com/l/43312/2023-05-03/fc4b78). And for sure, you can use a [temp mail](https://temp-mail.org/fr/) and a fake identity to get access of the download.
+
+![FTK_Imager](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/FTK_Imager.png)
+
+For Linux, install tools like **dd** or **dcfldd** for creating a disk image. Use these commands to install the tools:
+
+```bash
+sudo apt-get update
+sudo apt-get install dcfldd
+```
+
+You will also need tool such as **Autopsy** to analyze it. And additionally **The Sleuth Kit**, **foremost**, **icat** or **photorec**
+
+```bash
+sudo apt-get update
+sudo apt-get install autopsy sleuthkit foremost photorec icat
+```
+
+For Windows, you can download Autopsy [here](https://www.autopsy.com/download/).
+
+Also, prepare an external hard drive or USB stick for storage.
+
+### Creating the Disk Image
+
+To create a disk image, you need to carefully follow a set of steps to ensure you capture the entire contents of the drive accurately. This process can be done on both Windows and Linux, and each system has its own recommended tools. Here, we’ll break down the process for both platforms and provide additional details about identifying the correct drive and ensuring you have the necessary equipment, such as adapters, when working with different types of storage devices.
+
+#### Windows: Using FTK Imager
+
+For Windows, **FTK Imager** is a widely-used forensic tool to create a disk image. Start by launching FTK Imager and navigating to "File > Create Disk Image".
+
+![FTK_Imager](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/FTK_Imager.png)
+
+1. **Selecting the Source Type**: FTK Imager supports imaging from different types of sources, such as a physical drive or a logical volume. In most cases, you'll be creating an image of a **physical drive** (i.e., the entire hard disk), so choose "Physical Drive" from the source type menu.
+2. **Identifying the Correct Drive**: Before proceeding, it’s critical to identify the correct drive to avoid imaging the wrong disk, especially if there are multiple drives connected to the system. You can identify the target drive by reviewing its size, model, and serial number, which FTK Imager displays. If you’re working with a laptop or another system with limited drive connections, and the target drive is external (e.g., a USB drive or SSD), verify its connection through Windows Disk Management or Device Manager.
+
+    - **Using adapters**: If the disk is from a different system, you may need adapters to connect it to the forensic workstation. For example, if you're imaging an SSD or hard drive from a laptop, you might need a **SATA to USB** adapter, or for newer laptops, a **M.2 NVMe adapter** for SSDs. Ensure you have the right adapter to connect the drive to the forensic system without altering its contents.
+
+3. **Choosing the Image Format**: Next, specify the format for the image file. FTK Imager supports formats like **E01** (EnCase image format), **RAW** (a direct byte-for-byte copy), and **AFF** (Advanced Forensic Format). The most common choice in digital forensics is **E01** because it includes metadata, compression, and optional hashing, which helps in verifying the integrity of the image.
+
+4. **Setting the Destination and Metadata**: Once the drive is selected, choose the location to save the disk image. It’s best practice to save the image to an external drive or network location with enough space. You will also be prompted to enter case-related metadata such as case name, examiner name, and evidence number, which are important for the forensic process and reporting.
+
+5. **Start the Imaging Process**: After reviewing all the settings, start the imaging process. FTK Imager will show the progress, and you can optionally choose to hash the disk during imaging to ensure data integrity.
+
+#### Linux: Using dd or dcfldd
+
+On Linux, the imaging process is often carried out using the **dd** or **dcfldd** command-line utilities. These are powerful tools that allow you to create bit-by-bit copies of disks.
+
+1. **Identifying the Target Disk**: First, you need to identify the correct disk to image. Running the command `sudo fdisk -l` will list all the disks and partitions connected to the system. Look for the correct disk by matching its size and device path, which will be something like `/dev/sdX`, where `X` represents the drive identifier (e.g., `/dev/sda`, `/dev/sdb`, etc.). Be careful to verify the correct disk, as imaging the wrong one could result in loss of important data.
+
+    You can also find out which disk you are using by typing `lsblk`:
+
+    ```
+    $ lsblk
+    NAME    MAJ:MIN    RM    SIZE    RO    TYPE    MOUNTPOINTS
+    sda              8:0            0  80.1G       0     disk
+    sda1            8:1            0  80.1G       0     part    /
+    ```
+
+    - If you are dealing with external or non-standard drives (e.g., SSDs, USB drives, or drives removed from other machines), you may need additional hardware like USB adapters for **SATA** or **NVMe** drives. For instance, connecting an M.2 SSD might require a specialized **M.2 to USB** adapter if the forensic workstation doesn’t have native support.
+
+2. **Running the dd Command**: Once the correct disk is identified, the following `dd` command will create a disk image:
+
+    ```bash
+    sudo dd if=/dev/sdX of=/path/to/image.dd bs=4M
+    ```
+
+    - **if (input file)**: This specifies the source drive you wish to image. For example, if the target disk is `/dev/sda`, the `if` parameter will be `if=/dev/sda`.
+
+    - **of (output file)**: This defines the output location for the disk image. For instance, `of=/path/to/image.dd` specifies where to save the image file. It's recommended to use an external hard drive or a secure network location with enough storage space.
+
+    - **bs (block size)**: Setting the block size to `bs=4M` ensures faster processing by reading and writing larger chunks of data at once. The default block size is typically much smaller and can result in slower imaging.
+
+3. **Ensuring Data Integrity**: Once the imaging process is complete, you should generate a cryptographic hash (e.g., **SHA256** or **MD5**) of the image file to verify its integrity. This can be done using the following command:
+
+    ```bash
+    sha256sum /path/to/image.dd
+    ```
+
+    By comparing this hash with the source drive’s hash (if available), you can confirm that the image is an exact copy of the original data.
+
+4. **Using dcfldd for Additional Forensic Features**: If you require more advanced functionality during the imaging process, such as automatic hashing of the image, **dcfldd** can be used instead of `dd`. The following command would create a disk image and simultaneously generate a hash:
+
+    ```bash
+    sudo dcfldd if=/dev/sdX of=/path/to/image.dd hash=sha256 hashlog=/path/to/hash.txt bs=4M
+    ```
+
+    This command not only creates the image but also logs the hash into a file, ensuring the integrity of the image is maintained.
+
+### Analyzing the Disk Image
+
+We are now going to use **Autopsy** to get more information with the cloned image. With the graphical Windows Software, simply start by launching it, creating a new case, adding the disk image to the case, and analyzing the artifacts (deleted files, browsing history, etc.)
+
+On Linux, launch Autopsy with the command:
+
+```bash
+sudo autopsy
+```
+
+Open the web interface at `http://localhost:9999/autopsy`, create a new case, and add the disk image.
+
+![Autopsy_web](Autopsy_web.png)
+
+You can also use **The Sleuth Kit** to examine the image structure with commands like **fls**, **istat** or **ffind**:
+
+```bash
+fls -r -m / /path/to/image.dd
+```
+
+Analyzing files with **icat** and strings:
+
+```bash
+icat /path/to/image.dd 1024 > recovered_file.txt
+```
+
+Or recovering, by using **foremost** or **photorec**:
+
+```bash
+foremost -i /path/to/image.dd -o /path/to/output_folder
+photorec /path/to/image.dd
+```
+
+## Resources
+
+- [Hack&Tricks Memory Dmp](https://book.hacktricks.xyz/v/fr/generic-methodologies-and-resources/basic-forensic-methodology/memory-dump-analysis)
+- [Set Up Disk Imaging](https://ctf101.org/forensics/what-is-disk-imaging/)

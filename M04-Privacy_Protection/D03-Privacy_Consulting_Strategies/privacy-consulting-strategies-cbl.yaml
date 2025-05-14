@@ -1,0 +1,17 @@
+slug: privacy-consulting-strategies-cbl
+title: Privacy Consulting Strategies
+duration: 1 day
+kind: course
+children:
+  - content: 01-Compliance_Audits_in_Data_Protection.mdx
+    duration: 210
+    resources: null
+    slug: compliance-audits-in-data-protection-cbl
+    title: Compliance Audits in Data Protection
+    type: lecture
+  - content: 02-Responding_to_Data_Breaches.mdx
+    duration: 210
+    resources: null
+    slug: responding-to-data-breaches-cbl
+    title: Responding to Data Breaches
+    type: lecture

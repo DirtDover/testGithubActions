@@ -1,0 +1,175 @@
+# Fuzzing a JSON-based Banking API
+
+## Context
+
+During a meeting with IBC, you took notes about a banking API that requires a security audit. The API exposes a REST service that processes transactions between client accounts. The client wants a thorough test of the JSON parser they use, ensuring it remains stable under malicious or malformed inputs. The parser is custom-built for efficiency, but it lacks input validation. Your job is to apply fuzzing techniques to identify vulnerabilities and produce concrete recommendations for securing the API.
+
+## Consultant's Notes
+
+- **API**: Transfers between accounts, no authentication required.
+- **POST request** with JSON object array:
+  - `sender`: sender account
+  - `receiver`: receiver account
+  - `amount`: amount to transfer
+- **Custom JSON parser** (no external libraries).
+- **No input validation**: The parser’s behavior on malformed JSON is unknown.
+- **Fuzzing needed** to test parser resilience.
+- **MySQL** backend for accounts and transactions.
+- Users: B2B context.
+- **Goal**: Uncover bugs like buffer overflow or invalid JSON handling.
+- Must avoid compromising service availability during testing.
+- No mention of **SQL injection protection** in the API.
+
+## Task
+
+Your task is to audit this API using fuzzing techniques to stress test the custom JSON parser. Identify vulnerabilities in how JSON data is processed and determine if malicious or malformed inputs can cause unexpected behavior or system instability.
+
+You will:
+
+1. Use fuzzing tools to generate malformed JSON and feed it to the parser.
+2. Monitor the parser’s responses, looking for memory errors (e.g., buffer overflows) or incorrect error handling.
+3. Examine how malformed data affects the database layer (MySQL).
+4. Document all findings in a detailed report:
+
+- Vulnerabilities discovered.
+- Steps to reproduce.
+- Recommendations for securing the API.
+
+**Key Objectives:**
+
+1. Develop a fuzzing strategy based on your notes and target areas where the parser may fail.
+2. Identify and understand memory management issues, including potential buffer overflows.
+3. Assess how the system handles malicious inputs and ensure stability under hostile conditions.
+4. Provide actionable security recommendations, such as adding input validation or using safer parsing libraries.
+
+<Note type="hint" title="Writing a Dedicated Fuzzing Harness">
+
+Directly fuzzing the API endpoints might be challenging due to the complexity of HTTP requests and database interactions. Instead, consider testing the parser in isolation first. A dedicated harness can feed malformed JSON files into the parser repeatedly, making it easier to detect and analyze issues.
+
+Below is an example of a small C program that:
+
+- Reads a JSON file from disk.
+- Parses the content using the provided `json_parse` function.
+- Prints the parsed structure or an error message.
+
+You can adapt a similar approach to integrate with fuzzing tools (like AFL) by using file-based or standard input-based test cases. By doing so, you bypass the networking and database layers, focusing on the parser’s core functionality. Once you discover parser-level issues, you can then consider the full API stack.
+
+**Example Code Snippet:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include "json.h"
+
+static void process_value(json_value* value, int depth);
+static void print_depth_shift(int depth) {
+    for (int j = 0; j < depth; j++) {
+        printf(" ");
+    }
+}
+
+static void process_object(json_value* value, int depth) {
+    if (!value) return;
+    int length = value->u.object.length;
+    for (int x = 0; x < length; x++) {
+        print_depth_shift(depth);
+        printf("object[%d].name = %s\n", x, value->u.object.values[x].name);
+        process_value(value->u.object.values[x].value, depth+1);
+    }
+}
+
+static void process_array(json_value* value, int depth) {
+    if (!value) return;
+    int length = value->u.array.length;
+    printf("array\n");
+    for (int x = 0; x < length; x++) {
+        process_value(value->u.array.values[x], depth);
+    }
+}
+
+static void process_value(json_value* value, int depth) {
+    if (!value) return;
+    if (value->type != json_object) {
+        print_depth_shift(depth);
+    }
+    switch (value->type) {
+        case json_none:
+            printf("none\n");
+            break;
+        case json_object:
+            process_object(value, depth+1);
+            break;
+        case json_array:
+            process_array(value, depth+1);
+            break;
+        case json_integer:
+            printf("int: %10" PRId64 "\n", value->u.integer);
+            break;
+        case json_double:
+            printf("double: %f\n", value->u.dbl);
+            break;
+        case json_string:
+            printf("string: %s\n", value->u.string.ptr);
+            break;
+        case json_boolean:
+            printf("bool: %d\n", value->u.boolean);
+            break;
+    }
+}
+
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        fprintf(stderr, "%s <file_json>\n", argv[0]);
+        return 1;
+    }
+    char* filename = argv[1];
+
+    struct stat filestatus;
+    if (stat(filename, &filestatus) != 0) {
+        fprintf(stderr, "File %s not found\n", filename);
+        return 1;
+    }
+
+    int file_size = filestatus.st_size;
+    char* file_contents = (char*)malloc(file_size);
+    if (!file_contents) {
+        fprintf(stderr, "Memory error: unable to allocate %d bytes\n", file_size);
+        return 1;
+    }
+
+    FILE* fp = fopen(filename, "rt");
+    if (!fp) {
+        fprintf(stderr, "Unable to open %s\n", filename);
+        free(file_contents);
+        return 1;
+    }
+
+    if (fread(file_contents, file_size, 1, fp) != 1) {
+        fprintf(stderr, "Unable to read content of %s\n", filename);
+        fclose(fp);
+        free(file_contents);
+        return 1;
+    }
+    fclose(fp);
+
+    printf("%s\n", file_contents);
+    printf("--------------------------------\n\n");
+
+    json_value* value = json_parse((json_char*)file_contents, file_size);
+    if (!value) {
+        fprintf(stderr, "Unable to parse data\n");
+        free(file_contents);
+        return 1;
+    }
+
+    process_value(value, 0);
+    json_value_free(value);
+    free(file_contents);
+    return 0;
+}
+```
+
+Use this as inspiration to create your own test harness that integrates with your fuzzing workflows. This approach will help you systematically uncover and understand parser-level vulnerabilities before scaling the tests to the full API environment.
+
+</Note>

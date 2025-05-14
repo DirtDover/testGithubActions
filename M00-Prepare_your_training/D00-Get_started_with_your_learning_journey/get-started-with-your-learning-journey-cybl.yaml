@@ -1,0 +1,53 @@
+children:
+  - content: "815902487"
+    duration: 1
+    resources: null
+    slug: welcome-to-your-training-cybl
+    title: "Welcome to your training 👋"
+    type: video
+  - content: "816057312"
+    duration: 2
+    resources: null
+    slug: prep-work-presentation-cybl
+    title: "Prep-work presentation 🔥"
+    type: video
+  # - content: 00-How_to_prepare_your_bootcamp.mdx
+  #   duration: 300
+  #   resources: null
+  #   slug: prep-work-cybl
+  #   title: "Prep work \U0001F4AA"
+  #   type: lecture
+  - content: "816056684"
+    duration: 8
+    resources: null
+    slug: how-to-use-julie-cybl
+    title: "How to use Julie - your learning platform 🪐"
+    type: video
+  - content: "816056635"
+    duration: 8
+    resources: null
+    slug: how-to-use-discord-cybl
+    title: "How to leverage our Discord community 💬"
+    type: video
+  - content: "815440865"
+    duration: 20
+    resources: null
+    slug: how-to-learn-x10-faster-cybl
+    title: "How to learn x10 faster 💪"
+    type: video
+  - content: "816056607"
+    duration: 2
+    resources: null
+    slug: who-to-reach-out-for-cybl
+    title: "Need help? Here is who to reach out for 🙋‍♀️"
+    type: video
+  - content: "816056596"
+    duration: 2
+    resources: null
+    slug: happy-learning-cybl
+    title: "Happy Learning & Thank you for choosing us 🙏"
+    type: video
+duration: 351 min
+kind: course
+slug: get-started-with-your-learning-journey-cybl
+title: "Get started with your learning journey"

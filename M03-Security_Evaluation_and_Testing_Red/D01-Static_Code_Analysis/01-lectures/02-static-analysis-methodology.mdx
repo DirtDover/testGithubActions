@@ -1,0 +1,325 @@
+# How SAST work?
+
+## What you will learn in this course 🧐🧐
+
+- Understand the methods used in static code analysis
+- Learn about common coding errors and anti-patterns
+
+Let's get to the heart of the matter. What methods do we use in static code analysis? While there isn't a single technique, we will try to understand how to perform static code analysis and the errors and anti-patterns to avoid.
+
+## The challenge of building Static Code Analysis tools
+
+Static code analysis tools face many challenges in their development.
+
+**Understanding multiple programming languages** is particularly complex. Using AST (Abstract Syntax Tree, _more on this below_) is essential to represent the structure of the code, but an AST differs for Java and JavaScript due to the specific features of each language. For example, type inference and lambdas in Java do not work the same way as in JavaScript.
+
+Sometimes, analysing the bytecode can resolve these issues. However, challenges remain, such as `invokeDynamic` in Java, which allows calling methods at runtime rather than at compile time. This makes it difficult to track the data flow.
+
+**Compile time** is when the source code, written by a programmer, is translated into machine code understandable by the computer using a compiler. During this phase, the compiler checks the syntax, ensures that variables and data types are used correctly, and can also optimise the code for efficiency. In other words, compile time prepares the program for proper execution.
+
+**Runtime**, on the other hand, is when the compiled program actually runs on the computer. During this phase, the computer's processor executes the program's instructions, manages memory allocation and deallocation, and handles runtime errors such as division by zero or access to unauthorized memory areas. In summary, compile time is the preparation and verification phase, while runtime is when the program is actually executed.
+
+Code containing `invokeDynamic` does not immediately determine which method will be called. This determination is deferred to runtime, allowing the JVM to dynamically resolve the method, thus offering flexibility and improved performance for certain types of applications. You can see the challenge? This can lead to security breaches that are difficult to predict.
+
+Finally, **SAST tools must balance raising false positives and false negatives**. This is a crucial challenge for the teams using the tools.
+
+As you can see, static code analysis is not a trivial problem to solve. There is a lot of complexity in implementing these solutions, and while you can start with a simple `grep` solution and go up to data flow graph analysis, the solutions are never perfect.
+
+## Methods Used
+
+There are several ways to perform static code analysis. Technically, static code analysis tools use techniques ranging from grep-based to advanced flow-based tools.
+
+A static analysis tool combines parsers, tree builders, tree analyzers, symbol table builders, flow analyzers, and many other approaches to cover as many areas as possible.
+
+We have described a few techniques here, but there are many more, and they continue to evolve, as shown by [some research](https://arxiv.org/pdf/2310.08837) on the use of LLMs in static code analysis tools.
+
+### Peer Review
+
+First, let's talk about peer review. Although not technical, a review by a more experienced colleague can identify maintenance or security issues that might escape any software analysis.
+
+Simple and effective 👌.
+
+### Pattern Matching
+
+The second methodology is simple pattern matching. This involves using regex and expert knowledge to search the code. It's a sophisticated expert system.
+
+For example, if you use a single `=` in a condition instead of the more common `==`, pattern matching will detect it. You could do this with a simple `grep`!
+
+**Linters** (considered SAST tools) work on this principle. They also use an additional code abstraction called the **AST (Abstract Syntax Tree)**. This represents the code not as text (as you typically write it), but as a tree that contains the code's syntax. You can traverse this tree in any direction while visualising the code. This helps detect patterns more quickly (e.g., a node linked to another node it shouldn't be).
+
+For example, we can visualize the AST using the Python library [`showast`](https://pypi.org/project/showast/) (the code is available in resources on the right 👉):
+
+![Python AST](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/PythonAST.png)
+
+By looking at the AST, you can see some patterns that are not visible in the code itself. This is the power of ASTs.
+
+This method is simple and effective even on a large codebase. However, it can generate false positives or fail to detect certain types of errors (such as division by zero).
+
+<Note type="tip" title="What is a linter?">
+
+A linter is a tool that analyses your code to detect errors or bad practices. It starts by transforming your code into an internal representation called an Abstract Syntax Tree (AST), which helps it understand your program's structure. Then, it compares each part of this tree against a predefined set of rules, looking for issues like unused variables, overly complex functions, or elements that don't follow coding best practices.
+
+This is how it looks in VSCode for Python code:
+
+![VSCode Linter](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/VSCodeLinterExample.png)
+
+When the linter finds a problem, it reports it, specifying the affected line and often suggesting ways to fix the error. Some linters go even further by calculating metrics like cyclomatic complexity to identify code segments that might be too complicated or difficult to maintain.
+
+One of the key benefits of a linter is its ability to integrate directly into your development environment (IDE) or project management tools, such as CI/CD pipelines. This integration provides real-time feedback on your code, making it easier to spot and fix errors before the code is even executed.
+
+Here are some popular linters for different programming languages:
+
+- [ESLint](https://eslint.org/) (JavaScript/TypeScript)
+- [Pylint](https://github.com/PyCQA/pylint) (Python)
+- [RuboCop](https://github.com/rubocop/rubocop) (Ruby)
+- [Flake8](https://github.com/PyCQA/flake8) (Python)
+- [TSLint](https://github.com/palantir/tslint) (TypeScript)
+- [Stylelint](https://stylelint.io/) (CSS/SCSS/Less)
+
+</Note>
+
+### Data Flow Analysis
+
+**Data Flow Analysis** (DFA) focuses on how data moves through the code.
+
+This method uses a **Control Flow Graph** (CFG) instead of an AST. A CFG is a graph representation (a tree is a type of graph) where the nodes are basic blocks, meaning data enters and exits at the same points, avoiding branches.
+
+The main drawback of this method is that it consumes a lot of time and resources. The larger the codebase, the more demanding it becomes. So, use it sparingly.
+
+One application of DFA is **taint flow analysis**.
+
+Taint analysis aims to detect insecure data flows in a program. It tracks tainted data to see if it triggers unwanted behaviours. You follow the data to sinks, which are sensitive points like database calls or command executions.
+
+This method helps mitigate many errors like SQL injection, XSS, template injection, and more.
+
+Let's take a simple example:
+
+```php
+$username = $_GET['username'];
+$query = "SELECT * FROM users WHERE username = '" . $username . "'";
+$result = mysqli_query($connection, $query);
+```
+
+1. The `$username` variable is considered a **tainted source** because it comes directly from user input (`$_GET['username']`).
+2. The `mysqli_query()` function is considered a **sink**, as it's a vulnerable function that could potentially execute malicious SQL if given tainted data.
+3. The **tainted data flows** from the source (`$_GET['username']`) to the sink (`mysqli_query()`) without proper sanitization, creating a potential SQL injection vulnerability.
+
+More genrally, a tainted flow analysis tool would track this flow as follows:
+
+- **Identify sources:** The tool recognizes `$_GET['username']` as a tainted source of user input.
+- **Track propagation:** It follows how the tainted data moves through the program, in this case, into the $username variable and then into the $query string.
+- **Identify sinks:** The tool recognizes mysqli_query() as a potential sink where tainted data could cause harm.
+- **Detect vulnerabilities:** Since tainted data reaches the sink without sanitization, the tool would flag this as a potential SQL injection vulnerability.
+
+To address this vulnerability, you would need to sanitize the input:
+
+```php
+$username = mysqli_real_escape_string($connection, $_GET['username']);
+$query = "SELECT * FROM users WHERE username = '" . $username . "'";
+$result = mysqli_query($connection, $query);
+```
+
+Here, `mysqli_real_escape_string()` acts as a **sanitizer**, cleaning the input before it reaches the sink. A tainted flow analysis tool would recognize this sanitization and no longer flag the code as vulnerable.
+
+This is how taint analysis can help identify and mitigate security vulnerabilities in code.
+
+However, Data Flow Analysis can be complex because loops and conditions add extra complexity due to the combinatorial explosion of possible execution paths. It isn't always possible to explore everything.
+
+### Model Checking
+
+Model Checking involves exhaustively exploring the different possible states of a program to verify that it meets certain defined properties. For example, you can check that a program never exceeds its allocated memory limits (buffer overflow).
+
+Let's use a simple example of a traffic light system to illustrate model checking.
+
+Consider a basic traffic light with three states: Red, Yellow, and Green. We can model this as a **finite state machine**:
+
+```
+   +----> Red ----+
+   |              |
+   |              v
+Green <---- Yellow
+```
+
+We want to verify some safety properties of this system:
+
+1. The light is never simultaneously Red and Green.
+2. After Red, the light always turns Green next (not Yellow).
+3. The light will always eventually turn Red.
+
+We can express these properties using temporal logic:
+
+- Property 1: `AG !(Red & Green)` means "Always Globally, it's not the case that Red and Green are true simultaneously"
+- Property 2: `AG (Red -> AX Green)` means "Always Globally, if Red is true, then Always neXt, Green is true"
+- Property 3: `AG (AF Red)` means "Always Globally, it's Always in the Future that Red will be true"
+
+Then we use a model checker to verify these properties against our traffic light model:
+
+1. The model checker takes the finite state machine representation of the traffic light and the temporal logic formulas as input.
+2. It exhaustively explores all possible states and transitions of the model.
+3. For each property, it checks if the model satisfies the specification.
+4. If a property is violated, the model checker provides a counterexample - a sequence of states that leads to the violation.
+
+This leads to the following results:
+
+1. Property 1: Satisfied (The model never allows Red and Green simultaneously)
+2. Property 2: Violated
+   Counterexample: Red -> Yellow -> Green
+   (The model allows Yellow after Red, violating our specification)
+3. Property 3: Satisfied (The model always eventually reaches Red)
+
+The model checking process revealed that our traffic light system satisfies two critical safety properties (1 and 3), but violates property 2. This violation isn't necessarily an error - it might be intentional in the design to have a Yellow state between Red and Green. However, if this wasn't intended, it highlights a discrepancy between the model and the specification that needs to be addressed.
+
+This is how model checking can automatically verify (or find violations of) complex behavioral properties in finite-state systems, providing valuable insights for system design and verification.
+
+This method is very precise but costly in terms of time and resources because it tries to verify all possible execution paths of the program. This problem is known as the state-explosion problem. Several techniques address this issue, such as analysing only part of the program or using symbolic checking, which allows for simple Boolean operations.
+
+### Abstract Interpretation
+
+Abstract interpretation is a fundamental theory and technique for static program analysis. Its goal is to **safely approximate a program's semantics** without executing it, in order to infer interesting properties.
+
+Instead of analysing the concrete and precise behaviour of a program (which is generally undecidable), abstract interpretation defines an approximate but computable abstract semantics. This semantics operates on a simplified abstract domain that captures certain properties of the program approximately.
+
+For example, instead of tracking the exact values of variables, you might **only track their sign (positive, negative, or zero)**. This loses precision but makes the analysis decidable.
+
+If you are interested in a deeper example, you can unhide the following section:
+
+<Note type="hint">
+
+Let's consider a small program that computes the absolute value of an integer:
+
+```python
+def abs(x):
+    if x < 0:
+        return -x
+    else:
+        return x
+```
+
+Now, let's apply abstract interpretation using the "sign" abstract domain. This domain has three abstract values: positive (+), negative (-), and zero (0).
+
+Our abstract domain is: `{+, -, 0, ⊤}`
+
+Where `⊤` (top) represents "any value" or "unknown".
+
+We define abstract operations for this domain:
+
+- Negation:
+  - `neg(+) = -`
+  - `neg(-) = +`
+  - `neg(0) = 0`
+  - `neg(⊤) = ⊤`
+- Less than zero:
+  - `(<0)(+) = false`
+  - `(<0)(-) = true`
+  - `(<0)(0) = false`
+  - `(<0)(⊤) = ⊤`
+
+Now, let's interpret our `abs` function abstractly:
+
+1. Input: `x = ⊤` (we don't know the sign of the input)
+2. if `x < 0`:
+   - `(<0)(⊤) = ⊤` (we don't know if this condition is true or false)
+3. We need to consider both branches:
+   - True branch: return `-x`
+     - `neg(⊤) = ⊤`
+   - False branch: return x
+     - `x = ⊤`
+4. Combining results:
+   The result could be either `⊤` or `⊤`, which is still `⊤`.
+
+Our abstract interpretation tells us that the output of the `abs` function is `⊤`, meaning it could be any value. This is a sound approximation, as the absolute value of a number is indeed always some value.
+
+However, we can make a more precise observation: the result of `abs` is always non-negative. To capture this, we would need a more expressive abstract domain, such as `{+, 0, ⊤}`, where `⊤` now represents "non-negative or zero".
+
+This example demonstrates how abstract interpretation provides a sound approximation of program behavior, even when we don't know exact values. It also shows that the choice of abstract domain affects the precision of the analysis.
+
+</Note>
+
+## Common Coding Errors and Anti-Patterns
+
+In this section, we will review common coding errors and anti-patterns that often indicate problems in the code. This list is not exhaustive, but it provides a good overview of what to generally avoid.
+
+- **Strange behaviours**
+
+It includes a wide range of issues such as infinite loops, buffer overflows, invalid memory access, and more. These errors often arise from coding mistakes or incorrect assumptions by developers.
+
+- **Lack of validation**
+
+This includes user input validation (all inputs!), error handling (all errors!), and handling null values (all of them!). The lack of validation leads to undesirable behaviours or security vulnerabilities.
+
+- **Complexity**
+
+There are several types of complexity: cyclomatic complexity (this term refers to the structural complexity of source code), nesting depth, and function length. Complex code is often less maintainable, increasing the risk of errors.
+
+In complex codebases, multiple functions, methods, or classes sometimes **overlap** in their roles. This makes it difficult to analyse and understand where strange behaviours originate.
+
+- **Logical errors**
+
+This frequently occur in conditions (`if/else`), especially when developers misunderstand the logic. This might seem basic, but it happens more often than you'd think.
+
+- **Using regex or string matching**
+
+Different regex engines have different implementations, and developers sometimes do not thoroughly test the edge cases, leading to unexpected behaviours.
+
+In general, **using `eval` in code** is strongly discouraged unless you are certain of its necessity. Even then, you risk serious problems!
+
+- **Resource leaks**
+
+Often due to unclosed files, unclosed connections, unreleased objects, etc., lead to memory leaks that can be exploited. These can also affect performance and cause runtime errors.
+
+- **Multi-threading and distributed computing**
+
+When an application uses multi-threading or distributed computing, ensure that concurrent accesses are properly managed and secured. Pay attention to race conditions, deadlocks, and data corruption.
+
+- **Obsolete functions**
+
+Using obsolete (or dangerous) functions (including third-party libraries) is frequently encountered in code analysis. Be very cautious with this.
+
+- **Violation of coding conventions**
+
+Violating coding conventions (like naming rules, formatting styles, comments, etc.) is a source of long-term errors. It tends to make the codebase less consistent and more complex.
+
+## How to Secure Your Code?
+
+Now that we've highlighted developers' mediocre coding practices (but without them, we wouldn't have jobs, right?), let's look at some recommendations to help them avoid these mistakes.
+
+Many common best practices help create clean, maintainable, and secure code. One such principle is the **principle of least privilege**, which states that each part of the code (module, function, process, etc.) should have the minimal privileges necessary to accomplish its task. This reduces the potential attack surface and limits damage.
+
+Of course, encourage developers to always **validate inputs** from untrusted sources (user, files, network, etc.). Validate and sanitise them to avoid issues like code injection.
+
+Ensure that **error and exception handling is clear**. Make sure not to expose sensitive information in messages that an attacker could exploit (for example, in an authentication form, don't specify whether the username or password is incorrect; just state that one of them is wrong).
+
+The [folks at Facebook](https://krebsonsecurity.com/2019/03/facebook-stored-hundreds-of-millions-of-user-passwords-in-plain-text-for-years/) learned the hard way, but **always use encryption** for sensitive data, whether for storage or transmission.
+
+Proper use of **logs and journaling** is beneficial. However, implement it correctly and associate it with good monitoring tools to use it effectively.
+
+<Note type="tip">
+
+We often detect code errors thanks to logs! This is a great way to understand what's happening in the code and to detect potential issues.
+
+However, logs can also be a source of vulnerabilities if they contain sensitive information. Make sure to **sanitize logs** and **avoid logging sensitive data**.
+
+</Note>
+
+Please, regularly **update your third-party libraries**. Yes, you might have the most maintainable and robust code, but if a framework you use is compromised, your entire project is compromised!
+
+**Assume that attackers have complete knowledge of the system** and its defences. Design the code with this in mind. Don't make assumptions like "what if" – just don't.
+
+Finally, **think of defence in depth**, like an onion. Each layer of the system should have its own defences. This increases redundancy and makes it harder for an attacker to move within the system.
+
+These are a few educational tips we can provide to our dedicated developers to help us in our mission. If you want another list, OWASP did a great job with their [Secure Coding Practices Quick Reference Guide](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/stable-en/).
+
+![Clean Code book](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/clean-code.png)
+
+Another bible that every developper should read is the **[Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)
+book by Robert C. Martin**. It's a must-read for every developer.
+
+## Resources 📚📚
+
+- [Static Code Analysis - A Behind-the-scenes Look • Arno Haase • GOTO 2022](https://www.youtube.com/watch?v=4HhHER0n8ls)
+- [Comparing Model Checking and Static Program Analysis: A Case Study in Error Detection Approaches](https://www.usenix.org/legacy/event/ssv10/tech/full_papers/Vorobyov.pdf)
+- [Model Checking: an overview presentation](https://web.stanford.edu/class/cs357/lecture12.pdf)
+- [Use of graph databases for static code analysis](https://adalog.fr/aeic-2022/dauprat2022.pdf)
+- [Wiki Mozilla on Abstract Interpretation](https://wiki.mozilla.org/Abstract_Interpretation)
+- [OWASP Secure coding](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/stable-en/)
+- [The architecture of SAST tools: An explainer for developers](https://github.blog/enterprise-software/secure-software-development/the-architecture-of-sast-tools-an-explainer-for-developers/)

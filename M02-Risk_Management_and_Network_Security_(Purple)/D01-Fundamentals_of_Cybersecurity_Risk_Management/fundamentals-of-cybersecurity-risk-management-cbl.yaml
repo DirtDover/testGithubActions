@@ -1,0 +1,38 @@
+slug: fundamentals-of-cybersecurity-risk-management-cbl
+title: Fundamentals of Cybersecurity Risk Management
+duration: 1 day
+kind: course
+notes:
+  content: 01-audit_teacher_notes.mdx
+  resources:
+    - target: stacked_briefs.pdf
+      title: stacked_briefs.pdf
+children:
+  - content: 01-Intro_governance_information_security.mdx
+    duration: 45
+    resources: null
+    slug: intro-governance-information-security-cbl
+    title: Introduction to Governance and Information Security
+    type: lecture
+  - content: 02-Standards_and_governance_frameworks.mdx
+    duration: 45
+    resources: null
+    slug: standards-and-governance-frameworks-cbl
+    title: Standards and Governance Frameworks
+    type: lecture
+  - content: 03-Information_security_audit_methodology.mdx
+    duration: 45
+    resources: null
+    slug: governance-audit-methodology-cbl
+    title: Governance Audit Methodology
+    type: lecture
+  - content: 01-audit.mdx
+    duration: 285
+    resources:
+      - target: IBC-docs.zip
+        title: IBC-docs.zip
+      - target: ISO27001_Workbook.xlsx
+        title: ISO27001_Workbook.xlsx
+    slug: security-audit-cbl
+    title: Security Audit Project
+    type: project

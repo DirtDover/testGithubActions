@@ -1,0 +1,9 @@
+slug: risk-management-and-network-security-purple-cbl
+title: Risk Management and Network Security
+duration: 3 days
+halfDays: 6
+kind: track
+children:
+  - fundamentals-of-cybersecurity-risk-management-cbl
+  - security-audits-and-governance-cbl
+  - preparation-for-cybersecurity-consulting-cbl

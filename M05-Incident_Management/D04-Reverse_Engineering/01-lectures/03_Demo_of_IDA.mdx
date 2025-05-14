@@ -1,0 +1,162 @@
+# Demo of IDA
+
+![IDA_PRO](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/IDA_Pro.png)
+IDA Pro, or _Interactive Disassembler_, is a widely-used commercial interactive disassembler in the field of reverse engineering. Initially created by Ilfak Guilfanov and now developed by Hex-Rays, IDA Pro allows for the conversion of binary code into assembly code, facilitating the analysis and understanding of compiled programs without access to the source code. Its main features are:
+
+- **Interactive Disassembly**: IDA Pro allows users to navigate through the obtained assembly code, annotate it, and enhance it. Users can explore the code, add comments, and rename functions and variables for better comprehension.
+
+- **Debugging**: In addition to disassembly, IDA Pro includes debugging features for multiple architectures. This allows users to trace program execution, inspect registers and memory, and set breakpoints.
+
+- **Decompilation**: The commercial version includes a decompiler that converts assembly code into high-level source code, making analysis even easier. This provides a more readable and understandable view of the code.
+
+- **Multi-Architecture Support**: IDA Pro supports numerous processor architectures, making it highly versatile. It can disassemble binaries for architectures such as x86, ARM, MIPS, and many others.
+
+- **Automatic Analysis**: IDA Pro features automatic analysis algorithms that can identify functions, code blocks, function calls, and more, helping to structure the disassembly.
+
+- **Scripting and Plugins**: IDA Pro supports scripting (notably in Python) and plugins, allowing users to automate repetitive tasks and extend the tool's functionality.
+
+## How to use it?
+
+To effectively use IDA Pro, follow these steps:
+
+First, prepare your environment. Ensure you have a secure workspace, particularly if analyzing malicious software. Utilize virtual machines or isolated environments to prevent potential infections. Next, load the sample by opening the binary file you wish to analyze in IDA Pro. The software will automatically begin disassembling the code.
+
+Navigate and annotate the code using IDA Pro's interactive features. You can add comments and rename functions and variables to better understand the program's operation. If the binary is executable, use the debugger to step through the code, observe registers and memory, and identify any suspicious behaviors.
+
+Finally, if you have access to the commercial version of IDA Pro, decompile the code. This feature converts assembly code into high-level source code, greatly simplifying the analysis process.
+
+IDA Pro offers several significant advantages. It provides a deep understanding of a program's internal workings, which is crucial for reverse engineering. Security researchers use IDA Pro to detect vulnerabilities in software by analyzing binary code. Additionally, security analysts employ IDA Pro to disassemble and analyze malicious software, understand its functionality, and develop countermeasures. It is also valuable for recovering features from legacy software with lost source code, enabling maintenance or modernization of these programs.
+
+## Installation steps
+
+To install IDA, you can follow these steps:
+
+**On Windows:**
+
+Simply click on the following link and Install the [Windows Installer](https://hex-rays.com/ida-free/#download).
+
+**On Linux :**
+
+- Install dependencies :
+
+```
+sudo apt-get install --reinstall libxcb-xinerama0
+```
+
+- Download IDA Free
+
+```
+wget https://out7.hex-rays.com/files/idafree84_linux.run
+```
+
+- Provide necessary permission
+
+```
+chmod +x idafree84_linux.run
+```
+
+- Start the installation process
+
+```
+./idafree84_linux.run
+```
+
+- Launch it
+
+```
+cd /opt/idafree-8.4
+./ida64
+```
+
+## Reversing a PIN Checker
+
+Its time to pratice! We are going to reverse engineering this [little script](https://mega.nz/#!PXYjCKCY!F2gcs83XD6RxjOR-FNWGQZpyvUFvDbuT-PTnqRhBPGQ) . We can try to run it manually. We observe that you need to enter a pin for this to work. If you enter any random input it will output “PIN Salah!” Clearly we want to find the PIN which gives the other possibility.
+
+```
+┌──(kali㉿kali)-[~/Downloads]
+└─$ chmod u+x rev1
+
+┌──(kali㉿kali)-[~/Downloads]
+└─$ ./rev1
+Masukan PIN = 1234
+PIN salah !
+```
+
+Lets go deeper in this by using IDA.
+
+- First of all launch it and select "new project"
+
+![IDA_New_Project](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/IDA_New_Project.png)
+
+- Keep every settings as default and just press `OK`
+
+![Import_Settings](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Import_Settings.png)
+
+- If everything worked correctly you should get the following interface.
+
+![Home_Page_IDA](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Home_Page_IDA.png)
+
+<Note type="tip">
+## Reminder
+
+**The `MOV` Instruction:**
+
+```
+MOV AX, 1  ; Moves the value 1 into the AX register
+MOV BX, AX ; Moves the value from AX to BX
+```
+
+**Data Types:**
+
+```
+DB  'Data Byte'	; 8 bits
+DW  'Data Word'	; 16 bits
+DD  'Double Word'	; 32 bits
+```
+
+**Conditional Operations:**
+
+```
+CMP AX, 1  ; Compares AX with 1
+JE  LABEL1 ; Jumps to LABEL1 if AX is equal to 1
+JNE LABEL2 ; Jumps to LABEL2 if AX is not equal to 1
+```
+
+</Note>
+
+As we can see the below branches show us the other possibility, so if we send the good pin we should obtain `PIN benar!`. Observe that via `test` the only way we can get “PIN Salah!” is if `EAX` held the value 0.
+
+![Zoom_Main](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Zoom_Main.png)
+
+When we enter the wrong PIN, `EAX` is set to `0`. Notice the instruction `call cek`. In assembly, `call` means that a function is being invoked. Double-click on this instruction to view the code for the `cek` function.
+
+![Second_Graph](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Second_Graph.png)
+
+An important point in reverse engineering is to avoid analyzing every detail, as much of the code is generated by the compiler and can be difficult to interpret. Instead, focus on understanding the overall structure and operation of the program.
+
+Looking at the `cek` block, after all the initial processing, there are two possible outcomes. One path sets `eax` to `1`, while the other sets it to `0`. Our goal is to determine when `eax` is set to `1`, as this indicates the correct PIN.
+
+The branching decision is controlled by the `jnz` instruction, which stands for "jump if not zero." Since the program uses a `cmp` instruction, it means that the jump will only occur when the zero flag is not set—resulting in `EAX` being set to `1`.
+
+So, when is the zero flag set? This happens only when `[rbp+var_4]` equals `eax`. The preceding `mov` instructions indicate that the value now in `[rbp+var_4]` is the same as the value in `edi`, and the value in `eax` originates from a location referred to as `cs:valid`.
+
+What is `cs:valid`? It’s simply a label assigned by IDA to a specific value stored in the binary. If we double-click on this label, we can see the following value data:
+
+![secret_value](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/secret_value.png)
+
+We finally found were the secret pass is getting stored. The value seems to be `51615h` (which is given in hex) if we go back to the structure of the program, this value should make it possible to have `1` in `EAX` field and validate the test ! So let's try it.
+
+First convert this to decimal so that it can be entered manually when the script is run, just like a normal pin code.
+
+![Hex_to_decimal](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D04-Reverse_Engineering/01-lectures/Hex_to_decimal.png)
+
+The equivalent is `333333`. Now all we have to do is test it and see what wheter this is correct or not.
+
+```
+┌──(kali㉿kali)-[~/Downloads]
+└─$ ./rev1
+Masukan PIN = 333333
+PIN benar !
+```
+
+Yes it is, we get the correct string return who is `PIN benar !`.

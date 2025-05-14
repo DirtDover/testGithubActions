@@ -1,0 +1,71 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Définition des styles -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a0522d"/>
+        </marker>
+    </defs>
+
+    <!-- Sections principales -->
+    <rect x="10" y="10" width="150" height="40" fill="none" stroke="#daa520" stroke-width="2"/>
+    <text x="85" y="35" text-anchor="middle" fill="#daa520" font-weight="bold">CONNAÎTRE</text>
+
+    <rect x="220" y="10" width="150" height="40" fill="none" stroke="#daa520" stroke-width="2"/>
+    <text x="295" y="35" text-anchor="middle" fill="#daa520" font-weight="bold">RENTRER</text>
+
+    <rect x="430" y="10" width="150" height="40" fill="none" stroke="#daa520" stroke-width="2"/>
+    <text x="505" y="35" text-anchor="middle" fill="#daa520" font-weight="bold">TROUVER</text>
+
+    <rect x="640" y="10" width="150" height="40" fill="none" stroke="#daa520" stroke-width="2"/>
+    <text x="715" y="35" text-anchor="middle" fill="#daa520" font-weight="bold">EXPLOITER</text>
+
+    <!-- Boîtes de contenu -->
+    <rect x="20" y="80" width="200" height="110" fill="#fff3e0" stroke="#a0522d"/>
+    <text x="30" y="100" font-size="12">
+        <tspan x="30" dy="0">Reconnaissance externe</tspan>
+        <tspan x="30" dy="20">sources ouvertes</tspan>
+        <tspan x="30" dy="40">Reconnaissance externe</tspan>
+        <tspan x="30" dy="20">avancée</tspan>
+    </text>
+
+    <rect x="230" y="80" width="200" height="230" fill="#fff3e0" stroke="#a0522d"/>
+    <text x="240" y="100" font-size="12">
+        <tspan x="240" dy="0">Exploitation d'une faille de</tspan>
+        <tspan x="240" dy="20">sécurité dans le framework web</tspan>
+        <tspan x="240" dy="40">Instruction via mail de</tspan>
+        <tspan x="240" dy="20">hameçonnage ciblé</tspan>
+        <tspan x="240" dy="40">Corruption d'un employé de</tspan>
+        <tspan x="240" dy="20">l'équipe de développement</tspan>
+        <tspan x="240" dy="40">Exploitation d'une vulnérabilité</tspan>
+        <tspan x="240" dy="20">zero-day dans la BDD</tspan>
+    </text>
+
+    <rect x="440" y="80" width="200" height="150" fill="#fff3e0" stroke="#a0522d"/>
+    <text x="450" y="100" font-size="12">
+        <tspan x="450" dy="0">Latéralisation vers la base</tspan>
+        <tspan x="450" dy="20">de données utilisateurs</tspan>
+        <tspan x="450" dy="40">Reconnaissance interne</tspan>
+        <tspan x="450" dy="20">du réseau</tspan>
+        <tspan x="450" dy="40">Élévation de privilèges</tspan>
+    </text>
+
+    <rect x="650" y="80" width="200" height="170" fill="#fff3e0" stroke="#a0522d"/>
+    <text x="660" y="100" font-size="12">
+        <tspan x="660" dy="0">Vol et exfiltration des</tspan>
+        <tspan x="660" dy="20">données utilisateurs</tspan>
+        <tspan x="660" dy="40">Création et maintien d'un</tspan>
+        <tspan x="660" dy="20">canal d'exfiltration</tspan>
+        <tspan x="660" dy="40">Exploitation d'un maliciel</tspan>
+        <tspan x="660" dy="20">de collecte et d'exfiltration</tspan>
+    </text>
+
+    <!-- Flèches principales -->
+    <line x1="160" y1="30" x2="220" y2="30" stroke="#a0522d" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="370" y1="30" x2="430" y2="30" stroke="#a0522d" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="580" y1="30" x2="640" y2="30" stroke="#a0522d" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Flèches de connexion -->
+    <path d="M 220,130 L 230,130" stroke="#a0522d" stroke-width="1" marker-end="url(#arrowhead)"/>
+    <path d="M 430,140 L 440,140" stroke="#a0522d" stroke-width="1" marker-end="url(#arrowhead)"/>
+    <path d="M 640,150 L 650,150" stroke="#a0522d" stroke-width="1" marker-end="url(#arrowhead)"/>
+</svg>

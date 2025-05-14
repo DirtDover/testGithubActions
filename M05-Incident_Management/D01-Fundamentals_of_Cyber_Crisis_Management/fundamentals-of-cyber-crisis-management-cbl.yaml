@@ -1,0 +1,58 @@
+slug: fundamentals-of-cyber-crisis-management-cbl
+title: Fundamentals of Cyber Crisis Management
+duration: 1 day
+kind: course
+notes:
+  content: 01-Ransomware-notes.mdx
+  resources:
+    - target: Action_plan.pdf
+      title: Action_plan.pdf
+    - target: Action_plan.docx
+      title: Action_plan.docx
+children:
+  - content: L01_Incident_Response_Preparedness.mdx
+    duration: 35
+    resources: null
+    slug: incident-response-preparedness-cbl
+    title: Incident Response Preparedness
+    type: lecture
+  - content: L02_Initial_Incident_Response.mdx
+    duration: 35
+    resources: null
+    slug: incident-response-initial-cbl
+    title: Initial Incident Response
+    type: lecture
+  - content: L03_Organisation_and_Coordination_of_the_Response_Team.mdx
+    duration: 35
+    resources: null
+    slug: organisation-and-coordination-cbl
+    title: Organisation and Coordination of the Response Team
+    type: lecture
+  - content: L04_Incident_Response_Frameworks_and_Standards.mdx
+    duration: 35
+    resources: null
+    slug: incident-response-frameworks-standards-cbl
+    title: Incident Response Frameworks and Standards
+    type: lecture
+  - content: L05_Incident_Notification.mdx
+    duration: 35
+    resources: null
+    slug: incident-notification-cbl
+    title: Incident Notification
+    type: lecture
+  - content: L06_Isolation_of_Compromised_Systems.mdx
+    duration: 35
+    resources: null
+    slug: isolation-compromised-systems-cbl
+    title: Isolating Compromised Systems
+    type: lecture
+  - content: 01-Ransomware-exercice.mdx
+    duration: 210
+    resources:
+      - target: IBCBankIncidentResponseReport.pdf
+        title: IBCBankIncidentResponseReport.pdf
+      - target: IBCBankIncidentResponseReport.docx
+        title: IBCBankIncidentResponseReport.docx
+    slug: ransomware-project-cbl
+    title: Ransomware Project
+    type: project

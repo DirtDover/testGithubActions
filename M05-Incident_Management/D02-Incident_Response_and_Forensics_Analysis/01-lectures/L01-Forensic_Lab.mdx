@@ -1,0 +1,81 @@
+# Forensic Lab
+
+## Introduction to SIFT workstation
+
+![SIFT](https://cyber-lead-assets.s3.amazonaws.com/M03-Incident_Management/D02-Incident_Response_and_Forensics_Analysis/01-lectures/SIFT.png)
+
+**SIFT Workstation** (SANS Investigative Forensic Toolkit) is an advanced digital forensic toolkit developed by the SANS Institute. It provides a comprehensive set of open-source tools for digital forensic analysis, facilitating the investigation of digital evidence from a range of sources such as computers, mobile devices, and network systems.
+
+SIFT Workstation is designed to be user-friendly, making it accessible for both educational purposes and professional use. It is widely used in digital forensics training, incident response, and professional forensic investigations. For more details, you can visit the [SANS website](https://digital-forensics.sans.org/community/download) or explore the [SIFT Workstation GitHub Repository](https://github.com/sans-dfir/sift).
+
+### How to Install it
+
+#### Option 1: SIFT Workstation VM Appliance
+
+The first and easiest option is to directly download the VirtualBox and VMWare compatible virtual machine available [here](https://www.sans.org/tools/sift-workstation/).
+
+Click the 'Login to Download' button and input (or create) your SANS Portal account credentials to download the virtual machine. Once you have booted the virtual machine, use the credentials below to gain access.
+
+- Login = **sansforensics**
+- Password = **forensics**
+
+#### Option 2A: SIFT Easy Installation on Native Ubuntu System
+
+1. Download [Ubuntu 22.04](http://www.ubuntu.com/download/desktop) ISO file and install Ubuntu 22.04 on any system
+
+2. Install the Latest Cast Binary from its [release page](https://github.com/ekristen/cast/releases/latest)
+
+```
+wget https://github.com/ekristen/cast/archive/refs/tags/v0.14.35.tar.gz
+tar -xzvf v0.14.35.tar.gz
+```
+
+3. Install the latest version of SIFT
+
+```
+sudo cast install teamdfir/sift
+```
+
+And that's all! You can now log in using the same credentials as in method one.
+
+#### Option 2B: SIFT Easy Installation on Microsoft Windows using Windows Subsystem for Linux
+
+- Install Windows Subsystem for Linux (WSL) according to Microsoft’s [latest guidance](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
+- Choose Ubuntu 22.04 during the WSL installation process.
+
+- Launch the Ubuntu Bash Shell and elevate to root `sudo su` to avoid permissions issues during the installation process.
+
+- Install the Latest Cast Binary from its [release page](https://github.com/ekristen/cast/releases/latest)
+
+```
+wget https://github.com/ekristen/cast/archive/refs/tags/v0.14.35.tar.gz
+tar -xzvf v0.14.35.tar.gz
+```
+
+- Install the latest version of SIFT in WSL
+
+```
+sudo cast install --mode=server teamdfir/sift-saltstack
+```
+
+Here you go, you now have a SIFT Workstation in Windows!
+
+### Tools Includes
+
+In the realm of Digital Forensics and Incident Response (DFIR), several powerful tools within the SIFT (SANS Investigative Forensic Toolkit) suite stand out for their utility and effectiveness. These tools are essential for in-depth analysis and investigation of digital incidents. The complete list can be found directly on the [official website](https://www.sans.org/tools/sift-workstation/), but here is the TOP 5 most important ones:
+
+[**Plaso**](https://github.com/log2timeline/plaso) is a robust tool for generating comprehensive timelines by analyzing evidence from various sources such as system logs, registry changes, and browser histories. It parses and correlates data to create a unified timeline of events, enabling analysts to uncover indicators of compromise and patterns of malicious activity. Plaso's ability to handle large volumes of logs and output results in a format compatible with other forensic tools enhances collaborative investigation efforts and provides a detailed narrative of the incident.
+
+[**The Sleuth Kit (TSK)**](https://www.sleuthkit.org/sleuthkit/) offers a set of command-line tools designed for analyzing disk images and extracting valuable information from them. It is crucial for file system analysis, tracking file changes, searching for keywords, and recovering deleted or damaged files. TSK's graphical user interface frontend, Autopsy, simplifies the analysis process, making it more user-friendly and effective for generating visual reports and findings.
+
+[**Volatility**](https://github.com/volatilityfoundation/volatility) excels in memory forensics by extracting detailed information from RAM dumps. It reveals critical data such as running processes, open files, command line history, and credentials, providing insights into system activity at the time of the memory capture. Memory analysis is vital due to its transient nature, making Volatility an essential tool for preserving and examining volatile data that is often not logged to disk.
+
+[**RegRipper**](https://github.com/keydet89/RegRipper3.0) is an invaluable tool for parsing Windows Registry files, which store extensive information about system and application settings, hardware, and user configurations. RegRipper automates the extraction and analysis of registry data, allowing analysts to create timelines of registry key changes and reconstruct events like logons and application executions. This automation significantly reduces the time and effort required to sift through complex registry data.
+
+[**ClamAV**](https://www.clamav.net/) functions as an antivirus engine capable of detecting and removing malware through real-time or on-demand scans. Utilizing signature-based detection, heuristics, and machine learning algorithms, ClamAV identifies a wide range of malware, including zero-day threats. For DFIR analysts, ClamAV is instrumental in quickly identifying malware artifacts and compromised files, aiding in the swift containment and remediation of security incidents.
+
+## Resources
+
+- [SIFT Cheat Sheet](https://www.sans.org/posters/sift-cheat-sheet/)
+- [How to use SIFT Tools](https://linuxhint.com/sans_investigative_forensics_toolkit/)

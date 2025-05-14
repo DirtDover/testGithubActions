@@ -1,0 +1,23 @@
+slug: reverse-engineering-cbl
+title: Reverse Engineering
+duration: 1 day
+kind: course
+children:
+  - content: 01_Introduction_to_Reverse_Engineering.mdx
+    duration: 140
+    resources: null
+    slug: introduction-to-reverse-engineering-cbl
+    title: Introduction to Reverse Engineering
+    type: lecture
+  - content: 02_Introduction_to_advanced_static_techniques.mdx
+    duration: 140
+    resources: null
+    slug: introduction-to-advanced-static-techniques-cbl
+    title: Introduction to Advanced Static Techniques
+    type: lecture
+  - content: 04_Demo_of_IDA.mdx
+    duration: 140
+    resources: null
+    slug: demo-of-ida-cbl
+    title: Demo of IDA
+    type: lecture

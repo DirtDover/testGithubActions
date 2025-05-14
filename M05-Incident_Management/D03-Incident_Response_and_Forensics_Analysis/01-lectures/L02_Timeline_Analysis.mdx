@@ -1,0 +1,225 @@
+# Timeline Analysis
+
+Timeline analysis in digital forensics is the process of examining chronological data to reconstruct events that occurred on a computer or digital device. It involves analyzing timestamps, file metadata, and other artifacts to piece together a timeline of user activities and chronologically arranging and examining events related to an incident. This approach helps investigators piece together the sequence of actions that occurred before, during, and after a security breach. By understanding the timeline, investigators can comprehend the scope, impact, and nature of the incident, enabling effective remediation and prevention of future attacks.
+
+## Filesystem
+
+The filesystem is a vital source of information for timeline analysis. By examining file metadata such as creation, modification, and access times, investigators can build a detailed picture of the events surrounding an incident. Log files, recording various events such as user logins and file accesses, can reveal the initial compromise and subsequent attacker actions. Additionally, uncovering hidden files and recovering deleted ones can provide critical evidence.
+
+### Preparation
+
+Before you begin, ensure that you have a copy of the files to analyze. If possible, use cloning tools to create forensic images of the disks. This practice helps to preserve the integrity of the original data and prevents any accidental modification during the analysis process.
+
+### Metadata Extraction
+
+We now need to extract the data from the various files. To do this, we can either be precise and analyse a single file using the `exiftool` or `stat` tools. However, it's rare to already know which files you might be interested in, which is why `TSK (The Sleuth Kit )` allows you to directly analyse the entire file architecture of a copy of a disk.
+
+#### a. Using `exiftool`
+
+`exiftool` is a powerful tool for extracting metadata from files. It provides detailed information about file attributes, including timestamps.
+
+- **Display all metadata of a file:**
+
+```bash
+┌──(root㉿kali)-[~]
+└─# exiftool test.txt
+ExifTool Version Number         : 12.76
+File Name                       : test.txt
+Directory                       : .
+File Size                       : 5 bytes
+File Modification Date/Time     : 2024:07:31 08:41:40-04:00
+File Access Date/Time           : 2024:07:31 08:41:43-04:00
+File Inode Change Date/Time     : 2024:07:31 08:41:40-04:00
+File Permissions                : -rw-r--r--
+File Type                       : TXT
+File Type Extension             : txt
+MIME Type                       : text/plain
+MIME Encoding                   : us-ascii
+Newlines                        : Unix LF
+Line Count                      : 1
+Word Count                      : 1
+```
+
+#### b. Using `stat` (for Unix-like systems)
+
+The `stat` command can also be useful.
+
+- **Display timestamps of a file:**
+
+```bash
+┌──(root㉿kali)-[~]
+└─# stat test.txt
+File: test.txt
+Size: 5               Blocks: 8          IO Block: 4096   regular file
+Device: 8,1     Inode: 2803773     Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2024-07-31 08:41:43.614259739 -0400
+Modify: 2024-07-31 08:41:43.810259661 -0400
+Change: 2024-07-31 08:41:40.814259661 -0400
+Birth: 2024-07-31 08:41:40.810259661 -0400
+```
+
+#### c. Using `The Sleuth Kit (TSK)`
+
+`TSK` is a suite of tools designed for forensic analysis of file systems. It helps to extract and analyze file system metadata. In this case, we will analyze a complete disk copy.
+
+- **Analyze a disk or image:**
+
+```bash
+┌──(root㉿kali)-[~]
+└─# fls -r -m / image.dd
+r-------- 1 0 0 1234567 Jul 31 12:00 /home/user/documents/file1.txt
+r-------- 1 0 0 2345678 Jul 30 09:15 /home/user/pictures/image.jpg
+d-------- 1 0 0 0 Jul 29 18:45 /home/user/documents
+d-------- 1 0 0 0 Jul 29 19:00 /home/user/pictures
+r-------- 1 0 0 3456789 Jul 31 14:30 /home/user/archives/archive.zip
+```
+
+This command lists all files and directories along with their timestamps, providing a view of the file system structure. But the most important thing to note here is the inode number, which will give us more information about the file later. In the case of the first line, the inode number is `1234567`. If you want to know more about a special file, you can use the following command:
+
+```bash
+┌──(root㉿kali)-[~]
+└─# istat image.dd 1234567
+Inode: 1234567
+File Type: Regular File
+Mode: 0644
+UID: 1000
+GID: 1000
+Size: 2048 bytes
+Access Time: 2024-07-31 12:00:00
+Modification Time: 2024-07-30 09:15:00
+Change Time: 2024-07-29 18:45:00
+Links Count: 1
+Block Count: 8
+Blocks:
+  12345678
+  12345679
+  12345680
+  12345681
+  12345682
+  12345683
+  12345684
+  12345685
+```
+
+### Chronological Analysis
+
+You can also get a chronological view by sorting and organizing it with `log2timeline`. Its a tool for creating a timeline of events from various data sources. It helps to construct a chronological order of file system activities. In our case we are going to use it to sort all of the files present in the disk copy.
+
+- **Create a timeline from a file system image:**
+
+```bash
+log2timeline.py timeline.plaso image.dd
+```
+
+`timeline.plaso` is the output file containing the extracted chronological events. You can now visualize it with `psort` to format and analyze the timeline:
+
+```bash
+psort.py -o l2tcsv timeline.plaso
+```
+
+Alternatively, you can directly output to CSV for analysis in an external spreadsheet application:
+
+```bash
+psort.py -o l2tcsv timeline.plaso > timeline.csv
+```
+
+Here is an example of what the CSV output might look like:
+
+```csv
+"Timestamp","Source","Type","Message","Filename","Path","Additional Info"
+"2024-07-31 12:00:00","NTFS","File Modification","File modified","document.txt","C:\\Users\\User\\Documents\\","Modified by User123"
+"2024-07-30 09:15:00","NTFS","File Creation","File created","image.jpg","C:\\Users\\User\\Pictures\\","Created by User123"
+"2024-07-29 18:45:00","Windows Event Log","Logon","User logon","N/A","N/A","User123 logged in"
+"2024-07-29 19:00:00","NTFS","File Access","File accessed","document.txt","C:\\Users\\User\\Documents\\","Accessed by User123"
+"2024-07-31 14:30:00","NTFS","File Deletion","File deleted","archive.zip","C:\\Users\\User\\Downloads\\","Deleted by User123"
+```
+
+## Memory
+
+Memory analysis, or live memory forensics, involves examining the contents of a system's RAM to uncover volatile data that is lost when the system is powered down. This analysis provides insights into the system's running state at the time of the incident. Memory analysis reveals active processes and associated data, helping identify malicious software that might not be visible on the disk. It also provides details of active and recent network connections, indicating data exfiltration and communication with external command-and-control servers. Memory can contain sensitive information such as user credentials and session tokens, which attackers may exploit, as well as artifacts like clipboard contents, open files, and running scripts, offering additional context to the incident.
+
+### Preparation
+
+Before beginning memory analysis, ensure you have a memory dump from the system of interest. This can be achieved using various tools such as `dumpit` on Windows or `dd` on Unix-like systems. Always ensure to capture the memory in a forensically sound manner to maintain the integrity of the evidence.
+
+### Memory Analysis
+
+#### Using `volatility`
+
+`Volatility` is a popular open-source tool for memory forensics. It supports a wide range of plugins for analyzing memory dumps from different operating systems.
+
+- **Identify the profile:**
+
+First, identify the appropriate profile for the memory dump:
+
+```bash
+volatility -f memory_dump.img imageinfo
+```
+
+This command will provide information about the memory dump, including the suggested profile to use.
+
+### Extracting Data
+
+You can start by listing running processes when dump was created.
+
+```bash
+┌──(root㉿kali)-[~]
+└─# volatility -f memory_dump.img --profile=Win7SP1x64 pslist
+Volatility Foundation Volatility Framework 2.6.1
+Offset(P)          Name                 PID   PPID   Thds     Hnds   Sess  Wow64 Start
+------------------ -------------------- ----- ------ -------- ------ ----- ------ ------------------------------
+0xfffffa8001002060 System                    4      0       78     558 ------ 2024-07-31 12:00:00 UTC+0000
+0xfffffa800142b040 smss.exe                296      4        2       29 ------ 2024-07-31 12:00:00 UTC+0000
+0xfffffa800193db30 csrss.exe               392    380       11      426      1 ------ 2024-07-31 12:00:00 UTC+0000
+0xfffffa80012d5b30 wininit.exe             412    380        3       79      1 ------ 2024-07-31 12:00:00 UTC+0000
+0xfffffa80012e2040 services.exe            500    488       14      217      0 ------ 2024-07-31 12:00:00 UTC+0000
+0xfffffa800136f1a0 lsass.exe               508    488       10      560      0 ------ 2024-07-31 12:00:00 UTC+0000
+```
+
+You can also extract network connections:
+
+```bash
+┌──(root㉿kali)-[~]
+└─# volatility -f memory_dump.img --profile=Win7SP1x64 netscan
+Offset(P)          Proto    Local Address                  Foreign Address      State            Pid
+------------------ -------- ------------------------------ -------------------- -------------- ------
+0xfffffa80014e2060 TCPv4    192.168.1.100:49152            192.168.1.1:80       ESTABLISHED     1234
+0xfffffa80014e30a0 UDPv4    0.0.0.0:68                     *:*                                 5678
+```
+
+### Creating & Analyzing a Comprehensive Timeline
+
+As before we can use `log2timeline` to create a comprehensive timeline.
+
+```bash
+log2timeline.py timeline.plaso memory_dump.img
+```
+
+And analyze it with `psort` like we did for disk image.
+
+```bash
+psort.py -o l2tcsv timeline.plaso
+```
+
+or exporting it to CSV:
+
+```bash
+psort.py -o l2tcsv timeline.plaso > timeline.csv
+```
+
+Finally, here's what the final CSV looks like, based on the information obtained from the memory:
+
+```csv
+"Timestamp","Source","Type","Message","Filename","Path","Additional Info"
+"2024-07-31 12:00:00","Memory","Process Execution","Process started","smss.exe","N/A","PID: 296"
+"2024-07-30 09:15:00","Memory","Network Connection","TCP connection established","N/A","192.168.1.100:49152 -> 192.168.1.1:80","PID: 1234"
+"2024-07-29 18:45:00","Memory","Process Execution","Process started","csrss.exe","N/A","PID: 392"
+"2024-07-29 19:00:00","Memory","Process Execution","Process started","services.exe","N/A","PID: 500"
+"2024-07-31 14:30:00","Memory","Network Connection","UDP connection detected","N/A","0.0.0.0:68","PID: 5678"
+```
+
+## Resources
+
+- [Understanding TimeLine Analyses in Forensic](https://medium.com/@cyberengage.org/understanding-timeline-analysis-in-digital-forensics-eb84bb297fc7)
+- [The Importance of forensic Analyses](https://www.linkedin.com/pulse/importance-forensic-timelines-lucid-truth-technologies-vftdc)

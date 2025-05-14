@@ -1,0 +1,126 @@
+# Demo with SonarQube
+
+## What you will learn in this course 🧐🧐
+
+- SonarQube demonstration and hands-on practice
+
+Let's practice with SonarQube! Why SonarQube? Because it is a popular tool for static code analysis. It is open-source and supports multiple programming languages. It is also easy to use and provides a lot of useful features.
+
+What else? ☕️
+
+## Basic example
+
+We have a server that runs and stores the analyses: SonarQube.
+
+We also have a scanner, sonar-scanner, which performs the analyses and sends them to the server.
+
+We will use Docker for the server for convenience (setting up the server otherwise takes quite some time). Your CLI should already be configured (double-check this just in case).
+
+To start the server, simply run:
+
+```bash
+docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
+```
+
+starts the server on `http://localhost:9000`. To connect for the first time, use the login `admin` and password `admin`. It may take a few minutes for the application to start.
+
+![Sonar Login](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic1.png)
+
+Once logged in, SonarQube will ask you to change your password. Do this, but don't worry for now as we will only use it locally.
+
+We arrive at the main view, which is the projects view:
+
+![Sonar Projects](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic2.png)
+
+We are ready to test SonarQube. We have prepared two projects to test how SonarQube and the vulnerability scan work.
+
+Let's start with the analysis of the `sonarqube_simple` directory. Create a local project with a descriptive **Project display name** like `SonarQube Simple Test`. You can leave the rest as is. Then, choose **Use the global setting**.
+
+Got it? Perfect! We can see that we are now in a project (if you're unsure, click on the **Projects** menu, and you will see the project listed). Now, we need to tell SonarQube how the analysis will proceed (in other words, the scan). Choose **Locally**.
+
+Next, generate a token. This token identifies a scan, as it can run on many different platforms to integrate well with the existing tools. The name doesn't matter much. Generate it and set it aside (although you can always return to the page to retrieve it).
+
+The next step is to select the language on which we will **Run analysis**. For this example, choose **Other** because these are simple PHP files (haven't you looked at them yet? What are you waiting for?!). SonarQube kindly provides us with the command (which uses the `sonnar-scanner` CLI, the utility that scans directories) to use based on the OS. For Kali Linux, it will be:
+
+```bash
+sonar-scanner \
+  -Dsonar.projectKey=SonarQube-Simple-Test \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=<YOUR TOKEN HERE>
+```
+
+Go to the directory where the files are located. It should look like this:
+
+```bash
+sonarqube_simple
+├── bad_code.php
+├── good_code.php
+└── index.php
+```
+
+And run the command! You should see `INFO` outputs and an `INFO  EXECUTION SUCCESS` at the end. Perfect! We've just run our first scan.
+
+Now, let's return to the SonarQube interface.
+
+![SonarQube Simple Test](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic3.png)
+
+We see that our interface now contains several new fields. Notably, we have 2 open issues in Security with a High impact, 2 open issues in Reliability with a Low impact, and finally 5 open issues in Maintainability with 2 of Medium impact and 3 of Low impact.
+
+There's some work to do! Take the time to explore the different issues. We will focus on one issue and see how to manage it best. Click on the **2 H** which indicates the two major security issues. We arrive at a description of the detected issue: "Revoke and change this password, as it is compromised."
+
+![SonarQube Simple Test Issue](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic4.png)
+
+Let's select the first issue and see what's there.
+
+![SonarQube Simple Test Issue Detail](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic5.png)
+
+This is the core of the analysis we have before us. In the main window, we can see the piece of code that is flagged. We also find a number of metadata like the file name, etc.
+
+What is interesting is that SonarQube helps you solve a number of problems: did you notice the "Why is this an issue?" or "How can I fix it?" links? These are very practical, especially for helping developers understand and fix issues effectively.
+
+We can also manage the status of this issue by clicking on **Open**:
+
+![SonarQube Status](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic6.png)
+
+You can classify this issue as a **False Positive**, which is very useful if you want to clean these up.
+
+Next to that, you can assign people to the task to ensure follow-up on this issue. We haven't created any users other than ourselves (and this goes beyond the scope of this demonstration), but we can assign ourselves as Administrator. Let's do it!
+
+Now, if you go to the **Issues** page from the menu and select **My issues**, you will see the issue appear:
+
+![SonarQube My Issues](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic7.png)
+
+Let's fix this issue! Open the `bad_code.php` file with your favourite text editor and change line 13:
+
+```php
+// Example of bad practice: SQL Injection vulnerability
+public function unsafeQuery($userInput) {
+	$conn = new mysqli("localhost", "user", "password", "database");
+	$result = $conn->query("SELECT * FROM users WHERE username = '$userInput'");
+	while ($row = $result->fetch_assoc()) {
+		echo "User: " . $row["username"] . "\n";
+	}
+	$conn->close();
+}
+```
+
+With:
+
+```php
+// Example of bad practice: SQL Injection vulnerability
+public function unsafeQuery($userInput) {
+	$conn = new mysqli("localhost", getenv('DB_USER'), getenv('DB_PASSWORD'), "database");
+	$result = $conn->query("SELECT * FROM users WHERE username = '$userInput'");
+	while ($row = $result->fetch_assoc()) {
+		echo "User: " . $row["username"] . "\n";
+	}
+	$conn->close();
+}
+```
+
+We have just used environment variables to hide the password. This is better in terms of security (though not a perfect solution).
+
+Let's run another scan! Go back to the interface: we've just resolved the issue! We even have a progress graph displayed to track the number of errors across scans. This is a good indicator of the "health" of our codebase.
+
+![SonarQube Simple Test Fixed](https://cyber-lead-assets.s3.amazonaws.com/M01-Security_Evaluation_and_Testing_(Red)/D02-Static_Code_Analysis/01-lectures/sonarqube-basic8.png)

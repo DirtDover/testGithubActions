@@ -1,0 +1,90 @@
+# Report Writing
+
+To write a report on a forensic investigation, it is crucial to follow precise **guidelines** and to structure the document clearly and coherently. Here is a detailed explanation of the important elements to include, following the proposed outline, with examples to illustrate each point.
+
+## 1. Guidelines
+
+The **guidelines** for writing a forensic report are essential to ensure the clarity, accuracy, and relevance of the information presented. Writing a good report always begins with thorough planning and preparation. It is essential to understand the objectives of the investigation and to gather all necessary information before starting to write. For example, if the objective is to determine how malware was introduced into the system, the report should focus on this question without deviating from the main topic.
+
+Next, a logical and coherent organisation is necessary. Use sections and subsections to facilitate reading and comprehension. For example, divide the report into sections such as "Introduction", "Methodology", "Results", and "Conclusion". It is also important to use clear and precise language. Avoid unnecessary technical jargon and ensure that the report is understandable to non-specialists. For instance, instead of saying "the Windows API was exploited", explain that "the malicious program used a Windows operating system feature to execute commands".
+
+It is crucial to clearly separate data and interpretation. Each assertion should be supported by specific evidence gathered during the investigation. For example, if you claim that the malware modified the registry, provide screenshots or logs that prove it. To reinforce the credibility of your conclusions, use multiple sources. Combine data from system logs, network captures, and file analyses for a comprehensive overview.
+
+Moreover, it is essential to consider alternative hypotheses to demonstrate a thorough and impartial analysis of the facts. For example, if you suspect that the attack originated from a phishing email, also explore the possibility of a vulnerability in a web service. Finally, avoid common mistakes such as making claims without sufficient evidence, using tautologies, or addressing questions outside your field of expertise.
+
+## 2. Structure
+
+The structure of a forensic report is essential to organise the information in a clear and methodical way. Start with a cover page that includes the report title, the name of the author or investigation team, the date of writing, and contact information. For example, "Forensic Investigation Report on the Incident of 22 October 2024". Next, present a table of contents with page numbers for each section. For example, "Introduction - Page 3", "Methodology - Page 5".
+
+The executive summary should succinctly present the objectives, methods, main findings, and recommendations of the investigation. This section should be written last and be understandable to a non-technical audience. For example, "This report details the analysis of a security incident that occurred on 22 October 2024, where malware compromised a computer via a browser vulnerability". In the introduction, describe the context and justification of the investigation, the objectives and scope of the investigation, and the specific questions the report will answer. For example, "The objective of this investigation is to determine how the malware was introduced and what data was compromised".
+
+The methodology section should describe the methods and tools used to collect, preserve, examine, and analyse the data. For example, "We used the FTK Imager tool to create a disk image and Wireshark to analyse network captures". Then, present the evidence and analysis in detail, supported by relevant data (screenshots, logs, etc.). For example, "Analysis of the logs revealed that the malware was downloaded from the site `www.my-monster-trucks.com` at 11:56 AM on 22 October 2024".
+
+The conclusions and recommendations section should summarise the main findings and implications of the investigation, answer the questions posed in the introduction, and propose practical recommendations based on the conclusions. For example, "It is recommended to update browsers to fix the exploited vulnerability and to strengthen email security filters". Finally, in the appendices and references, include additional information or details that support the main body of the report (raw data, tables, graphs) and properly formatted and cited references. For example, "Appendix A: Screenshot of the modified registry", "Reference 1: McAfee Security Report on Malware".
+
+## Other Considerations
+
+Case notes are detailed records that the analyst takes during the case analysis. These notes are essential to document the process and results of the investigation and can be used to refresh the analyst's memory when writing the final report or when testifying in court. Use appropriate software and templates to manage case notes and reports. For example, Forensic Notes is an option that stores all notes, images, and attachments in a read-only, timestamped PDF format to protect the integrity and admissibility of evidence.
+
+Reports should include a page number with total page accountability (e.g., "6 of 7, 7 of 7"). This ensures that it will be easy to spot if a page is removed or separated from the report. A common header or footer with distinctive elements such as an agency logo, address, examiner's name, etc., is also good practice. All figures and tables should include a descriptive caption. Each caption should include a figure/table number (in bold) followed by a detailed description of what the figure/table represents.
+
+### Detailed Steps for Forensic Report Writing
+
+Digital and multimedia evidence, as well as the tools, techniques, and methodologies used in an examination, are subject to challenge in a court of law or other formal proceedings. Proper documentation is essential in providing individuals the ability to reproduce the forensic process and the results. The Scientific Working Group on Digital Evidence (SWGDE) states that reporting is the process of preparing a summary of steps taken during the examination of digital media. A thorough examination report is written using documentation collected by the examiner, including photographs, drawings, case notes, tool-generated content, etc. Many forensic tools come with built-in reporting functionality that is specific to that tool’s actions and results, but does not typically document the full scope of the examination. Tool reports may be considered supporting documentation to the examination report or referenced as an appendix.
+
+The purpose of the forensic report is simply to tell the story of what the presence or absence of the digital artifact indicates, regardless of whether it is inculpatory or exculpatory in nature. Reports generally follow a logical flow:
+
+1. This is what I was asked to do.
+2. This is why I am qualified to do it.
+3. This is what I did.
+4. This is what I found.
+5. These are my opinions/conclusions.
+
+There isn’t a de-facto standard or format per se. Formatting and layout options are up to the examiner/analyst, or they may be defined by organisational policies or jurisdictional court rules. The report may include something similar or a slightly different flavour to the following:
+
+- Title Page
+- Table of Contents
+- Overview/Case/Executive Summary
+- Evidence
+- Objectives
+- Forensic Analysis (Steps Taken)
+- Relevant Findings
+- Conclusion
+- Exhibit
+
+The title page should, at minimum, include the case name, date, investigator name, and contact information. The table of contents should include each section of the report along with page numbers. If drafting in Microsoft Word, a table of contents can be generated automatically.
+
+The overview/case/executive summary section will vary in length but generally should be a one-paragraph summary of the entire report. Summaries should be short, sweet, and to the point. You will include any relevant information regarding what led to you as the digital forensic examiner/analyst becoming involved with the digital evidence. This is an overview and a summary of how the case was initiated and where you as the examiner/analyst became involved.
+
+The evidence section should be a table or listing of evidence containing the descriptive details of the physical evidence items submitted (hard drives, mobile devices, etc.). A good evidence listing will include make, model, serial numbers, description, condition, hash values, custodian information, etc.
+
+The objectives section outlines specifically what you are being asked to do. You will include your hypothesis here. It is especially important to include if you were asked to perform a targeted investigation. Also, it is a good idea to include any specific search terms requested.
+
+The forensic analysis section details what you did, what you did it with (including make, model, and version of software, tools, etc.). This section is very important, as you must detail your interaction with the digital evidence and the steps taken to preserve and forensically acquire the evidence. Any additional steps that you take (e.g., forensically wiping storage/examination media, utilising bootloaders in mobile acquisition, etc.) should be noted in this section of your report. Remember, this section of your report is usually where you as the examiner/analyst came into contact with the digital evidence, and thoroughly documenting what you have done is very important to the integrity of the digital evidence and your chain of custody.
+
+The relevant findings should be the most detailed section of your investigation. You will include all artefacts and relevant findings during your analysis relating to the case. These should be directly related/linked to the objectives/falsifiable hypothesis. Each piece of evidence must be fully explained in a way that a layperson can understand it.
+
+Good appendices can make or break a good report. It’s a good rule of thumb to reserve exhibits A and B for your CV and Evidence Chain of Custody, respectively. You will need to include a PDF copy of any automated, tool-generated reports (i.e., Cellebrite, Axiom, Autopsy) in your appendices as well. A very good practice when you are including your evidence into your report is to include hyperlinks to exhibits/figures/tables, etc. Make sure you test and validate that the hyperlinks work properly so when your report is being reviewed, the reader can navigate easily to the evidence that you are including in your report.
+
+Reports should include a page number with total page accountability (e.g., "6 of 7, 7 of 7"). This will ensure that if a page is removed or separated from your report, it will be easy to spot. A common header and/or footer with distinguishing elements such as an agency logo, address, examiner name, etc., is also good practice. A title similar to “Report of Examination,” to provide immediate and accurate identification of the information being provided, should also be included. SWGDE also defines general information elements which include:
+
+- A title similar to “Report of Examination,” to provide immediate and accurate identification of the information being provided
+- Name and address of the examining organisation/laboratory
+- Case identifier and page accountability (page number and total number of pages)
+- Date of report (date of final signed version)
+- Acronyms and abbreviations defined at first use, if not in the common vernacular of the general public
+
+All figures and tables must include a descriptive caption. Each caption must include a figure/table number (in bold) followed by a detailed description of what the figure/table depicts.
+
+### Glossary and Terminology
+
+It’s nearly impossible not to utilise scientific terminology when writing a report, especially when describing methodology. The Scientific Working Group on Digital Evidence (SWGDE) provides a Glossary of Terms with general, as well as discipline-specific, definitions as they apply across the spectrum of image analysis, digital forensics, video analysis, and forensic audio. ASTM has also developed Standard Guide E2916-Standard Terminology for Digital and Multimedia Evidence Examination. In addition, NIST OSAC has created a lexicon of over 4,000 terms organised by forensic discipline. These terms are aggregated from sources such as the aforementioned SWGDE & ASTM glossaries. The Lexicon also includes the source document of the definition. Although it doesn’t include every term you would need to define in your forensic reports, each of these are reputable sources with definitions that should stand up in court.
+
+### Writing Style: 1st or 3rd Person?
+
+One question that commonly pops up is: “Do I write reports in 1st or 3rd person?” The answer is quite simple: “It depends…” Agency policy may dictate that an analyst/examiner write reports in 1st or 3rd person, while an expert report may require you to write in 1st person. That said, it comes down to the decision of the analyst. It’s the reason they call us analysts or experts, right?
+
+## Resources
+
+- [How to write a Good Cyber Security Incident Response](https://bytebyoska.medium.com/how-to-write-a-good-cyber-security-incident-report-e12c50912f43)
+- [Computer Forensic Report Format](https://www.geeksforgeeks.org/computer-forensic-report-format/)
